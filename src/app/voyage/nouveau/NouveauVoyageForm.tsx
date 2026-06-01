@@ -1,0 +1,437 @@
+'use client'
+
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { creerVoyage } from '../actions'
+
+type Pays = { code: string; nom_fr: string; emoji: string | null }
+type MembreFoyer = { id: string; prenom: string; type: string }
+
+type Participant = {
+  prenom: string
+  type: 'adulte' | 'enfant'
+}
+
+const TYPE_VOYAGE = [
+  { value: 'solo', label: 'Solo', emoji: '🧳', desc: 'Je pars seul(e)' },
+  { value: 'couple', label: 'En couple', emoji: '💑', desc: 'Nous partons à deux' },
+  { value: 'famille', label: 'En famille', emoji: '👨‍👩‍👧', desc: 'Avec enfants' },
+  { value: 'amis', label: 'Entre amis', emoji: '🎉', desc: 'Entre amis ou collègues' },
+]
+
+const MODE_GESTION = [
+  {
+    value: 'A',
+    label: 'Je gère tout',
+    emoji: '🎯',
+    desc: "Je m'occupe des valises, documents et dépenses pour tout le groupe.",
+  },
+  {
+    value: 'B',
+    label: 'On gère ensemble',
+    emoji: '🔗',
+    desc: 'Chacun gère sa valise. Je partage un lien à chaque participant.',
+  },
+]
+
+const PROFIL_TO_TYPE: Record<string, string> = {
+  solo: 'solo', couple: 'couple', famille: 'famille', groupe: 'amis',
+}
+
+export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }: {
+  pays: Pays[]
+  membresFoyer: MembreFoyer[]
+  profilVoyageur: string | null
+}) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const [step, setStep] = useState(1)
+
+  // Step 1 — infos de base
+  const [search, setSearch] = useState('')
+  const [selectedPays, setSelectedPays] = useState<Pays | null>(null)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [nom, setNom] = useState('')
+  const [dateDepart, setDateDepart] = useState('')
+  const [dateRetour, setDateRetour] = useState('')
+
+  // Step 2 — type de voyage + participants
+  const [typeVoyage, setTypeVoyage] = useState<string>(
+    profilVoyageur ? (PROFIL_TO_TYPE[profilVoyageur] ?? '') : ''
+  )
+  const [participants, setParticipants] = useState<Participant[]>([])
+  const [newPrenom, setNewPrenom] = useState('')
+  const [newType, setNewType] = useState<'adulte' | 'enfant'>('adulte')
+
+  // Step 3 — mode de gestion
+  const [modeGestion, setModeGestion] = useState<string>('')
+
+  const paysFiltered = pays.filter(p =>
+    p.nom_fr.toLowerCase().includes(search.toLowerCase())
+  ).slice(0, 6)
+
+  const today = new Date().toISOString().split('T')[0]
+
+  function handleSelectPays(p: Pays) {
+    setSelectedPays(p)
+    setSearch(p.nom_fr)
+    setShowDropdown(false)
+  }
+
+  function ajouterParticipant() {
+    const prenom = newPrenom.trim()
+    if (!prenom) return
+    setParticipants(prev => [...prev, { prenom, type: newType }])
+    setNewPrenom('')
+    setNewType('adulte')
+  }
+
+  function supprimerParticipant(index: number) {
+    setParticipants(prev => prev.filter((_, i) => i !== index))
+  }
+
+  function validerStep1() {
+    if (!nom.trim()) return setError('Le nom du voyage est requis.')
+    if (!search.trim()) return setError('La destination est requise.')
+    if (!dateDepart) return setError('La date de départ est requise.')
+    if (!dateRetour) return setError('La date de retour est requise.')
+    if (dateRetour <= dateDepart) return setError('La date de retour doit être après le départ.')
+    setError(null)
+    setStep(2)
+  }
+
+  function validerStep2() {
+    if (!typeVoyage) return setError('Choisis un type de voyage.')
+    if (typeVoyage !== 'solo' && participants.length === 0)
+      return setError('Ajoute au moins un autre participant.')
+    setError(null)
+    if (typeVoyage === 'solo') {
+      handleSubmit()
+    } else {
+      setStep(3)
+    }
+  }
+
+  function handleSubmit(modeOverride?: string) {
+    const mode = modeOverride ?? modeGestion
+    if (typeVoyage !== 'solo' && !mode) return setError('Choisis un mode de gestion.')
+    setError(null)
+
+    startTransition(async () => {
+      const result = await creerVoyage({
+        nom: nom.trim(),
+        destination: search.trim(),
+        pays_code: selectedPays?.code ?? null,
+        date_depart: dateDepart,
+        date_retour: dateRetour,
+        type_voyage: typeVoyage,
+        mode_gestion: typeVoyage === 'solo' ? null : mode,
+        participants: typeVoyage === 'solo' ? [] : participants,
+      })
+      if (result?.error) {
+        setError(result.error)
+      } else if (result?.voyageId) {
+        router.push(`/voyage/${result.voyageId}`)
+      }
+    })
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Indicateur d'étapes */}
+      <div className="flex items-center gap-2">
+        {[1, 2, ...(typeVoyage !== 'solo' ? [3] : [])].map((s) => (
+          <div key={s} className="flex items-center gap-2">
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+              style={{
+                background: step >= s ? '#534AB7' : '#E5E7EB',
+                color: step >= s ? 'white' : '#9CA3AF',
+              }}
+            >
+              {s}
+            </div>
+            {s < (typeVoyage !== 'solo' ? 3 : 2) && (
+              <div className="h-0.5 w-8 rounded" style={{ background: step > s ? '#534AB7' : '#E5E7EB' }} />
+            )}
+          </div>
+        ))}
+        <span className="text-xs text-gray-400 ml-2">
+          {step === 1 && 'Infos du voyage'}
+          {step === 2 && 'Qui voyage ?'}
+          {step === 3 && 'Mode de gestion'}
+        </span>
+      </div>
+
+      {/* ───── STEP 1 — Infos générales ───── */}
+      {step === 1 && (
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-4">
+          <h2 className="font-semibold text-gray-800">Informations générales</h2>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nom du voyage</label>
+            <input
+              type="text"
+              value={nom}
+              onChange={e => setNom(e.target.value)}
+              placeholder="Ex : Vacances au Japon 2025"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+            />
+          </div>
+
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+            <input
+              type="text"
+              value={search}
+              onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelectedPays(null) }}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+              placeholder="Rechercher un pays..."
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+            />
+            {showDropdown && search.length > 0 && paysFiltered.length > 0 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
+                {paysFiltered.map(p => (
+                  <button
+                    key={p.code}
+                    type="button"
+                    onMouseDown={() => handleSelectPays(p)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-left transition"
+                  >
+                    <span className="text-xl">{p.emoji}</span>
+                    <span className="text-gray-800">{p.nom_fr}</span>
+                    {selectedPays?.code === p.code && <span className="ml-auto text-[#534AB7]">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Départ</label>
+              <input
+                type="date"
+                value={dateDepart}
+                min={today}
+                onChange={e => setDateDepart(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Retour</label>
+              <input
+                type="date"
+                value={dateRetour}
+                min={dateDepart || today}
+                onChange={e => setDateRetour(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <button
+            type="button"
+            onClick={validerStep1}
+            className="w-full py-4 rounded-xl font-semibold text-white text-lg"
+            style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+          >
+            Continuer →
+          </button>
+        </div>
+      )}
+
+      {/* ───── STEP 2 — Qui voyage ? ───── */}
+      {step === 2 && (
+        <div className="flex flex-col gap-4">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <h2 className="font-semibold text-gray-800 mb-1">Comment tu voyages ?</h2>
+            <p className="text-sm text-gray-400 mb-4">On adapte l&apos;app selon ton profil de voyage.</p>
+            <div className="flex flex-col gap-2">
+              {TYPE_VOYAGE.map(t => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => { setTypeVoyage(t.value); setParticipants([]) }}
+                  className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left transition ${typeVoyage === t.value ? 'border-[#534AB7] bg-purple-50' : 'border-gray-100 hover:border-gray-200'}`}
+                >
+                  <span className="text-2xl">{t.emoji}</span>
+                  <div>
+                    <p className="font-semibold text-gray-800">{t.label}</p>
+                    <p className="text-xs text-gray-400">{t.desc}</p>
+                  </div>
+                  {typeVoyage === t.value && <span className="ml-auto text-[#534AB7] font-bold">✓</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ajouter participants si pas solo */}
+          {typeVoyage && typeVoyage !== 'solo' && (
+            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <h2 className="font-semibold text-gray-800 mb-1">Qui part avec toi ?</h2>
+              <p className="text-sm text-gray-400 mb-4">Ajoute les prénoms des participants.</p>
+
+              {/* Liste des participants ajoutés */}
+              {participants.length > 0 && (
+                <div className="flex flex-col gap-2 mb-4">
+                  {participants.map((p, i) => (
+                    <div key={i} className="flex items-center gap-3 px-3 py-2 bg-purple-50 rounded-xl border border-purple-100">
+                      <span className="text-lg">{p.type === 'enfant' ? '👶' : '🧑'}</span>
+                      <span className="font-medium text-gray-800 flex-1">{p.prenom}</span>
+                      <span className="text-xs text-gray-400 capitalize">{p.type}</span>
+                      <button
+                        type="button"
+                        onClick={() => supprimerParticipant(i)}
+                        className="text-gray-300 hover:text-red-400 transition text-sm ml-2"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Suggestions depuis /famille */}
+              {membresFoyer.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-xs text-gray-400 mb-2">Depuis ton foyer :</p>
+                  <div className="flex flex-wrap gap-2">
+                    {membresFoyer
+                      .filter(m => !participants.find(p => p.prenom === m.prenom))
+                      .map(m => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setParticipants(prev => [...prev, { prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }])}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-purple-300 text-xs font-medium text-[#534AB7] hover:bg-purple-50 transition"
+                        >
+                          <span>{m.type === 'enfant' ? '👶' : '🧑'}</span>
+                          + {m.prenom}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Formulaire ajout participant */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newPrenom}
+                  onChange={e => setNewPrenom(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
+                  placeholder="Prénom"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition text-sm"
+                />
+                {typeVoyage === 'famille' && (
+                  <select
+                    value={newType}
+                    onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
+                    className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition text-sm"
+                  >
+                    <option value="adulte">Adulte</option>
+                    <option value="enfant">Enfant</option>
+                  </select>
+                )}
+                <button
+                  type="button"
+                  onClick={ajouterParticipant}
+                  className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm"
+                  style={{ background: '#534AB7' }}
+                >
+                  + Ajouter
+                </button>
+              </div>
+            </div>
+          )}
+
+          {error && <p className="text-red-500 text-sm px-1">{error}</p>}
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => { setStep(1); setError(null) }}
+              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border-2 border-gray-200 hover:border-gray-300 transition"
+            >
+              ← Retour
+            </button>
+            <button
+              type="button"
+              onClick={validerStep2}
+              disabled={isPending}
+              className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+            >
+              {isPending ? 'Création...' : typeVoyage === 'solo' ? '✈️ Créer le voyage' : 'Continuer →'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ───── STEP 3 — Mode de gestion ───── */}
+      {step === 3 && (
+        <div className="flex flex-col gap-4">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <h2 className="font-semibold text-gray-800 mb-1">Comment vous organisez-vous ?</h2>
+            <p className="text-sm text-gray-400 mb-4">Tu pourras changer d&apos;avis plus tard.</p>
+            <div className="flex flex-col gap-3">
+              {MODE_GESTION.map(m => (
+                <button
+                  key={m.value}
+                  type="button"
+                  onClick={() => setModeGestion(m.value)}
+                  className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition ${modeGestion === m.value ? 'border-[#534AB7] bg-purple-50' : 'border-gray-100 hover:border-gray-200'}`}
+                >
+                  <span className="text-2xl mt-0.5">{m.emoji}</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-800">{m.label}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
+                  </div>
+                  {modeGestion === m.value && <span className="text-[#534AB7] font-bold mt-0.5">✓</span>}
+                </button>
+              ))}
+            </div>
+
+            {/* Récap participants */}
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-400 mb-2">Participants :</p>
+              <div className="flex flex-wrap gap-2">
+                {participants.map((p, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-50 text-[#534AB7] text-sm font-medium">
+                    {p.type === 'enfant' ? '👶' : '🧑'} {p.prenom}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {error && <p className="text-red-500 text-sm px-1">{error}</p>}
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => { setStep(2); setError(null) }}
+              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border-2 border-gray-200 hover:border-gray-300 transition"
+            >
+              ← Retour
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSubmit()}
+              disabled={isPending}
+              className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
+              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+            >
+              {isPending ? 'Création...' : '✈️ Créer le voyage'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

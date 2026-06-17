@@ -17,20 +17,6 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-
-  // Redirige vers onboarding si pas encore complété
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('profil_voyageur')
-      .eq('id', user.id)
-      .single()
-    if (!profile?.profil_voyageur) {
-      redirect('/onboarding')
-    }
-  }
-
   redirect('/dashboard')
 }
 
@@ -50,6 +36,7 @@ export async function signup(formData: FormData) {
       data: {
         prenom: formData.get('prenom') as string,
         nom: formData.get('nom') as string,
+        emoji_avatar: formData.get('emoji_avatar') as string,
       },
     },
   })
@@ -70,7 +57,7 @@ export async function forgotPassword(formData: FormData) {
   const { error } = await supabase.auth.resetPasswordForEmail(
     formData.get('email') as string,
     {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/reset-password`,
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback?next=/auth/reset-password`,
     }
   )
 
@@ -79,6 +66,23 @@ export async function forgotPassword(formData: FormData) {
   }
 
   return { success: true }
+}
+
+export async function updatePassword(formData: FormData) {
+  const supabase = await createClient()
+
+  const password = formData.get('password') as string
+  if (password.length < 8) {
+    return { error: 'Le mot de passe doit contenir au moins 8 caractères.' }
+  }
+
+  const { error } = await supabase.auth.updateUser({ password })
+
+  if (error) {
+    return { error: 'Une erreur est survenue. Le lien a peut-être expiré, redemande une réinitialisation.' }
+  }
+
+  redirect('/dashboard')
 }
 
 export async function signout() {

@@ -11,7 +11,11 @@ export default function DeleteVoyageButton({ voyageId, voyageNom }: { voyageId: 
     e.stopPropagation()
     if (!confirm(`Supprimer "${voyageNom}" définitivement ?`)) return
     setLoading(true)
-    await supprimerVoyage(voyageId)
+    const result = await supprimerVoyage(voyageId)
+    if (result?.error) {
+      alert(result.error)
+      setLoading(false)
+    }
   }
 
   return (

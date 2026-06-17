@@ -9,10 +9,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
   await supabase
-    .from('voyage_participants')
-    .update({ statut: 'lien_copie' })
+    .from('voyage_membres')
+    .update({ statut_invitation: 'lien_copie' })
     .eq('id', id)
-    .eq('statut', 'en_attente')
+    .eq('statut_invitation', 'pending')
 
   return NextResponse.json({ ok: true })
 }

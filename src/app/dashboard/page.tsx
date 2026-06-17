@@ -1,9 +1,10 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { signout } from '@/app/auth/actions'
 import DeleteVoyageButton from './DeleteVoyageButton'
-
+import VoyagesPasses from './VoyagesPasses'
+import DerniereMiseAJour from '@/components/DerniereMiseAJour'
+import { getPaysCode } from '@/lib/utils/paysCode'
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 }
@@ -12,36 +13,9 @@ function joursAvantDepart(dateDepart: string) {
   return Math.ceil((new Date(dateDepart).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
 }
 
-const CODE_TO_EMOJI: Record<string, string> = {
-  MA: '🇲🇦', JP: '🇯🇵', TH: '🇹🇭', PT: '🇵🇹', GR: '🇬🇷',
-  US: '🇺🇸', ID: '🇮🇩', MX: '🇲🇽', IT: '🇮🇹', SN: '🇸🇳',
-}
-
-const DESTINATION_TO_CODE: Record<string, string> = {
-  maroc: 'MA', morocco: 'MA',
-  japon: 'JP', japan: 'JP',
-  'thaïlande': 'TH', thailande: 'TH', thailand: 'TH',
-  portugal: 'PT',
-  'grèce': 'GR', grece: 'GR', greece: 'GR',
-  'états-unis': 'US', 'etats-unis': 'US', usa: 'US', 'united states': 'US',
-  bali: 'ID', 'indonésie': 'ID', indonesie: 'ID', indonesia: 'ID',
-  mexique: 'MX', mexico: 'MX',
-  italie: 'IT', italy: 'IT',
-  'sénégal': 'SN', senegal: 'SN',
-}
-
-function getPaysCode(paysCode: string | null, destination: string): string | null {
-  if (paysCode) return paysCode
-  const key = destination.toLowerCase().trim()
-  for (const [pattern, code] of Object.entries(DESTINATION_TO_CODE)) {
-    if (key.includes(pattern)) return code
-  }
-  return null
-}
-
 function scoreColor(score: number) {
   if (score === 100) return { bar: '#1D9E75', text: '#065F46', bg: '#D1FAE5' }
-  if (score >= 60) return { bar: '#534AB7', text: '#534AB7', bg: '#EDE9FF' }
+  if (score >= 60) return { bar: '#147046', text: '#147046', bg: '#F6F08F' }
   if (score >= 30) return { bar: '#D97706', text: '#92400E', bg: '#FEF3C7' }
   return { bar: '#E11D48', text: '#9F1239', bg: '#FFE4E6' }
 }
@@ -51,19 +25,24 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [{ data: profile }, { data: voyagesPropres }, { data: participations }] = await Promise.all([
-    supabase.from('users').select('prenom, profil_voyageur').eq('id', user.id).single(),
+  const [{ data: profile }, { data: voyagesPropres }, { data: participations }, { data: paysList }] = await Promise.all([
+    supabase.from('users').select('prenom').eq('id', user.id).single(),
     supabase.from('voyages')
       .select('id, nom, destination, pays_code, date_depart, date_retour, statut')
       .eq('user_id', user.id)
-      .eq('statut', 'en_preparation')
       .order('date_depart', { ascending: true }),
-    // Voyages où l'utilisateur est invité (Mode B)
-    supabase.from('voyage_participants')
+    // Voyages où l'utilisateur est invité (en tant que membre, pas organisateur)
+    supabase.from('voyage_membres')
       .select('voyage_id')
       .eq('user_id', user.id)
-      .eq('statut', 'rejoint'),
+      .eq('role', 'membre')
+      .eq('statut_invitation', 'joined'),
+    supabase.from('pays').select('code, emoji'),
   ])
+
+  const CODE_TO_EMOJI: Record<string, string> = Object.fromEntries(
+    (paysList ?? []).map(p => [p.code, p.emoji ?? ''])
+  )
 
   // Récupérer les voyages partagés (dont l'user est participant)
   const participationIds = (participations ?? []).map(p => p.voyage_id)
@@ -73,75 +52,78 @@ export default async function DashboardPage() {
       .from('voyages')
       .select('id, nom, destination, pays_code, date_depart, date_retour, statut')
       .in('id', participationIds)
-      .eq('statut', 'en_preparation')
       .order('date_depart', { ascending: true })
     voyagesPartages = data ?? []
   }
 
   const voyagesEnCours = voyagesPropres ?? []
   // Fusionner les deux listes sans doublons
-  const tousLesVoyages = [
+  const tousLesVoyagesBruts = [
     ...voyagesEnCours.map(v => ({ ...v, estInvite: false })),
     ...((voyagesPartages ?? []).filter(v => !voyagesEnCours.find(vp => vp.id === v.id)).map(v => ({ ...v, estInvite: true }))),
-  ].sort((a, b) => new Date(a.date_depart).getTime() - new Date(b.date_depart).getTime())
+  ]
 
-  // Trouver les voyages Mode B où l'utilisateur est participant (pour filtrer la checklist)
-  const voyagesOuJeSuisParticipant = new Set(
-    (participations ?? []).map(p => p.voyage_id)
-  )
+  // Sépare les voyages à venir / en cours des voyages passés (date de retour révolue)
+  const maintenant = Date.now()
+  const tousLesVoyages = tousLesVoyagesBruts
+    .filter(v => v.statut !== 'termine' && new Date(v.date_retour).getTime() >= maintenant)
+    .sort((a, b) => new Date(a.date_depart).getTime() - new Date(b.date_depart).getTime())
 
-  // Récupérer les participations avec leur id (pour filtrer la checklist par participant_id)
-  const { data: mesParticipations } = await supabase
-    .from('voyage_participants')
-    .select('voyage_id, id')
-    .eq('user_id', user.id)
-    .eq('statut', 'rejoint')
+  const voyagesPasses = tousLesVoyagesBruts
+    .filter(v => v.statut === 'termine' || new Date(v.date_retour).getTime() < maintenant)
+    .sort((a, b) => new Date(b.date_depart).getTime() - new Date(a.date_depart).getTime())
 
-  const participantIdParVoyage: Record<string, string> = {}
-  for (const p of mesParticipations ?? []) {
-    participantIdParVoyage[p.voyage_id] = p.id
-  }
-
+  // Ma propre valise pour chaque voyage (organisateur ou membre invité — j'ai toujours
+  // une ligne voyage_membres) : la progression affichée sur le dashboard est la mienne.
   const progressions: Record<string, { total: number; done: number }> = {}
   if (tousLesVoyages.length > 0) {
+    const { data: mesMembres } = await supabase
+      .from('voyage_membres')
+      .select('id, voyage_id')
+      .in('voyage_id', tousLesVoyages.map(v => v.id))
+      .eq('user_id', user.id)
+
+    const membreIdParVoyage: Record<string, string> = {}
+    for (const m of mesMembres ?? []) membreIdParVoyage[m.voyage_id] = m.id
+
+    const { data: mesValises } = await supabase
+      .from('checklist_valises')
+      .select('id, voyage_membre_id')
+      .in('voyage_membre_id', Object.values(membreIdParVoyage))
+
+    const valiseIdParMembre: Record<string, string> = {}
+    for (const v of mesValises ?? []) valiseIdParMembre[v.voyage_membre_id] = v.id
+
+    const valiseIds = Object.values(valiseIdParMembre)
+    const { data: allItems } = valiseIds.length > 0
+      ? await supabase.from('checklist_items').select('valise_id, completed').in('valise_id', valiseIds)
+      : { data: [] }
+
     for (const voyage of tousLesVoyages) {
-      const isParticipant = voyagesOuJeSuisParticipant.has(voyage.id)
-      const participantId = participantIdParVoyage[voyage.id]
-
-      let q = supabase.from('checklist_items')
-        .select('voyage_id, completed')
-        .eq('voyage_id', voyage.id)
-
-      // Mode B participant : ne compter que sa checklist personnelle
-      if (isParticipant && participantId) {
-        q = q.eq('participant_id', participantId)
-      } else {
-        // Organisateur ou solo : checklist partagée (sans participant_id)
-        q = q.is('participant_id', null)
-      }
-
-      const { data: items } = await q
-      progressions[voyage.id] = { total: items?.length ?? 0, done: items?.filter(i => i.completed).length ?? 0 }
+      const membreId = membreIdParVoyage[voyage.id]
+      const valiseId = membreId ? valiseIdParMembre[membreId] : undefined
+      const items = (allItems ?? []).filter(i => i.valise_id === valiseId)
+      progressions[voyage.id] = { total: items.length, done: items.filter(i => i.completed).length }
     }
   }
 
   const prenom = profile?.prenom ?? user.email?.split('@')[0]
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#EDE9FF' }}>
+    <div className="min-h-screen pb-24" style={{ background: '#FEFCE8' }}>
 
       {/* Header mobile */}
       <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">✈️</span>
-            <span className="font-bold text-lg" style={{ color: '#534AB7' }}>ReadyToFly</span>
+            <span className="font-bold text-lg" style={{ color: '#147046' }}>ReadyToFly</span>
           </div>
-          <form action={signout}>
-            <button type="submit" className="text-sm text-gray-400 hover:text-gray-600 transition">
-              Déconnexion
-            </button>
-          </form>
+          <Link href="/compte"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+            style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+            {(prenom?.[0] ?? '?').toUpperCase()}
+          </Link>
         </div>
       </header>
 
@@ -165,7 +147,7 @@ export default async function DashboardPage() {
             <p className="text-gray-400 text-sm mb-6">Crée ton premier voyage pour générer ta checklist.</p>
             <Link href="/voyage/nouveau"
               className="inline-block px-6 py-3 rounded-2xl font-semibold text-white"
-              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
               + Créer un voyage
             </Link>
           </div>
@@ -185,7 +167,7 @@ export default async function DashboardPage() {
                   className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
 
                   {/* Image */}
-                  <div style={{ position: 'relative', aspectRatio: '16/9', background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+                  <div style={{ position: 'relative', aspectRatio: '16/9', background: 'linear-gradient(135deg, #147046, #25C490)' }}>
                     {photo && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -203,7 +185,7 @@ export default async function DashboardPage() {
 
                     {/* Badge J- */}
                     <div style={{ position: 'absolute', top: 12, right: 12 }}>
-                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#534AB7' : '#065F46' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#147046' : '#065F46' }}>
                         {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
                       </span>
                     </div>
@@ -222,7 +204,7 @@ export default async function DashboardPage() {
                   {/* Infos bas */}
                   <div className="px-4 py-3 flex flex-col gap-2">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold" style={{ color: '#534AB7' }}>
+                      <p className="text-xs font-semibold" style={{ color: '#147046' }}>
                         {formatDate(voyage.date_depart)} - {formatDate(voyage.date_retour)}
                       </p>
                       {!voyage.estInvite && <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />}
@@ -246,30 +228,17 @@ export default async function DashboardPage() {
             })}
           </div>
         )}
+
+        <VoyagesPasses voyages={voyagesPasses} />
+
+        <DerniereMiseAJour />
       </main>
 
-      {/* Navigation bas (mobile) */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-20 safe-area-pb">
-        <div className="max-w-2xl mx-auto flex items-center justify-around py-2">
-          <Link href="/dashboard" className="flex flex-col items-center gap-0.5 px-4 py-2">
-            <span className="text-xl">🏠</span>
-            <span className="text-xs font-semibold" style={{ color: '#534AB7' }}>Voyages</span>
-          </Link>
-          <Link href="/voyage/nouveau" className="flex flex-col items-center gap-0.5 px-4 py-2">
-            <span className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xl"
-              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>+</span>
-            <span className="text-xs text-gray-400 font-medium">Nouveau</span>
-          </Link>
-          <Link href="/famille" className="flex flex-col items-center gap-0.5 px-4 py-2">
-            <span className="text-xl">👨‍👩‍👧</span>
-            <span className="text-xs text-gray-400 font-medium">Famille</span>
-          </Link>
-          <Link href="/compte" className="flex flex-col items-center gap-0.5 px-4 py-2">
-            <span className="text-xl">👤</span>
-            <span className="text-xs text-gray-400 font-medium">Compte</span>
-          </Link>
-        </div>
-      </nav>
+      <Link href="/voyage/nouveau"
+        className="fixed right-5 bottom-24 w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-light shadow-lg z-10"
+        style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+        +
+      </Link>
 
     </div>
   )

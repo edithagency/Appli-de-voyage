@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #FEFCE8;
   --foreground: #171717;
-  --primary: #534AB7;
-  --primary-light: #6B63C8;
-  --primary-dark: #3D3690;
+  --primary: #147046;
+  --primary-light: #25C490;
+  --primary-dark: #0D4F30;
   --secondary: #1D9E75;
   --secondary-light: #25C490;
   --amber: #F59E0B;
   --danger: #EF4444;
-  --surface: #F8F7FF;
-  --border: #E5E3F5;
+  --surface: #FBFBE6;
+  --border: #E6E4C2;
 }
 
 @theme inline {
@@ -30,15 +30,84 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0F0E1A;
-    --foreground: #F0EFFF;
-    --surface: #1A1830;
-    --border: #2D2A50;
+    --background: #0B1410;
+    --foreground: #EAF7EC;
+    --surface: #102018;
+    --border: #1E3A2A;
   }
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Mockup téléphone : sur grand écran, l'app s'affiche dans un cadre de
+   smartphone centré ; sur petit écran (vrai téléphone), elle occupe tout
+   l'espace comme une app normale. */
+.app-backdrop {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+}
+
+.phone-frame {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.phone-notch {
+  display: none;
+}
+
+.phone-screen {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@media (min-width: 640px) {
+  .app-backdrop {
+    padding: 40px 16px;
+    background: linear-gradient(135deg, #FFF6CC, #EAF7EE);
+  }
+
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+    max-height: calc(100dvh - 80px);
+    border-radius: 48px;
+    padding: 14px;
+    background: #16141f;
+    box-shadow: 0 30px 80px -20px rgba(10, 50, 30, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  }
+
+  .phone-notch {
+    display: block;
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 26px;
+    background: #16141f;
+    border-radius: 14px;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .phone-screen {
+    border-radius: 36px 36px 0 0;
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+  }
 }

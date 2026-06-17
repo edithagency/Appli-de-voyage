@@ -5,43 +5,29 @@ import { useRouter } from 'next/navigation'
 import { creerVoyage } from '../actions'
 
 type Pays = { code: string; nom_fr: string; emoji: string | null }
-type MembreFoyer = { id: string; prenom: string; type: string }
 
 type Participant = {
   prenom: string
   type: 'adulte' | 'enfant'
 }
 
-const TYPE_VOYAGE = [
-  { value: 'solo', label: 'Solo', emoji: '🧳', desc: 'Je pars seul(e)' },
-  { value: 'couple', label: 'En couple', emoji: '💑', desc: 'Nous partons à deux' },
-  { value: 'famille', label: 'En famille', emoji: '👨‍👩‍👧', desc: 'Avec enfants' },
-  { value: 'amis', label: 'Entre amis', emoji: '🎉', desc: 'Entre amis ou collègues' },
-]
-
 const MODE_GESTION = [
   {
-    value: 'A',
+    value: 'organisateur',
     label: 'Je gère tout',
     emoji: '🎯',
     desc: "Je m'occupe des valises, documents et dépenses pour tout le groupe.",
   },
   {
-    value: 'B',
+    value: 'partage',
     label: 'On gère ensemble',
     emoji: '🔗',
     desc: 'Chacun gère sa valise. Je partage un lien à chaque participant.',
   },
 ]
 
-const PROFIL_TO_TYPE: Record<string, string> = {
-  solo: 'solo', couple: 'couple', famille: 'famille', groupe: 'amis',
-}
-
-export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }: {
+export default function NouveauVoyageForm({ pays }: {
   pays: Pays[]
-  membresFoyer: MembreFoyer[]
-  profilVoyageur: string | null
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -56,22 +42,20 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
   const [dateDepart, setDateDepart] = useState('')
   const [dateRetour, setDateRetour] = useState('')
 
-  // Step 2 — type de voyage + participants
-  const [typeVoyage, setTypeVoyage] = useState<string>(
-    profilVoyageur ? (PROFIL_TO_TYPE[profilVoyageur] ?? '') : ''
-  )
+  // Step 2 — participants
   const [participants, setParticipants] = useState<Participant[]>([])
   const [newPrenom, setNewPrenom] = useState('')
   const [newType, setNewType] = useState<'adulte' | 'enfant'>('adulte')
 
   // Step 3 — mode de gestion
-  const [modeGestion, setModeGestion] = useState<string>('')
+  const [modeGestion, setModeGestion] = useState<'organisateur' | 'partage' | ''>('')
 
   const paysFiltered = pays.filter(p =>
     p.nom_fr.toLowerCase().includes(search.toLowerCase())
   ).slice(0, 6)
 
   const today = new Date().toISOString().split('T')[0]
+  const aDesParticipants = participants.length > 0
 
   function handleSelectPays(p: Pays) {
     setSelectedPays(p)
@@ -102,20 +86,17 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
   }
 
   function validerStep2() {
-    if (!typeVoyage) return setError('Choisis un type de voyage.')
-    if (typeVoyage !== 'solo' && participants.length === 0)
-      return setError('Ajoute au moins un autre participant.')
     setError(null)
-    if (typeVoyage === 'solo') {
-      handleSubmit()
-    } else {
+    if (aDesParticipants) {
       setStep(3)
+    } else {
+      handleSubmit()
     }
   }
 
-  function handleSubmit(modeOverride?: string) {
-    const mode = modeOverride ?? modeGestion
-    if (typeVoyage !== 'solo' && !mode) return setError('Choisis un mode de gestion.')
+  function handleSubmit() {
+    const mode = modeGestion
+    if (aDesParticipants && !mode) return setError('Choisis un mode de gestion.')
     setError(null)
 
     startTransition(async () => {
@@ -125,9 +106,8 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
         pays_code: selectedPays?.code ?? null,
         date_depart: dateDepart,
         date_retour: dateRetour,
-        type_voyage: typeVoyage,
-        mode_gestion: typeVoyage === 'solo' ? null : mode,
-        participants: typeVoyage === 'solo' ? [] : participants,
+        mode_gestion: aDesParticipants ? (mode as 'organisateur' | 'partage') : null,
+        participants,
       })
       if (result?.error) {
         setError(result.error)
@@ -141,19 +121,19 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
     <div className="flex flex-col gap-6">
       {/* Indicateur d'étapes */}
       <div className="flex items-center gap-2">
-        {[1, 2, ...(typeVoyage !== 'solo' ? [3] : [])].map((s) => (
+        {[1, 2, ...(aDesParticipants ? [3] : [])].map((s) => (
           <div key={s} className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
               style={{
-                background: step >= s ? '#534AB7' : '#E5E7EB',
+                background: step >= s ? '#147046' : '#E5E7EB',
                 color: step >= s ? 'white' : '#9CA3AF',
               }}
             >
               {s}
             </div>
-            {s < (typeVoyage !== 'solo' ? 3 : 2) && (
-              <div className="h-0.5 w-8 rounded" style={{ background: step > s ? '#534AB7' : '#E5E7EB' }} />
+            {s < (aDesParticipants ? 3 : 2) && (
+              <div className="h-0.5 w-8 rounded" style={{ background: step > s ? '#147046' : '#E5E7EB' }} />
             )}
           </div>
         ))}
@@ -176,7 +156,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Ex : Vacances au Japon 2025"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
             />
           </div>
 
@@ -189,7 +169,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
               onFocus={() => setShowDropdown(true)}
               onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
               placeholder="Rechercher un pays..."
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
             />
             {showDropdown && search.length > 0 && paysFiltered.length > 0 && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
@@ -198,11 +178,11 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
                     key={p.code}
                     type="button"
                     onMouseDown={() => handleSelectPays(p)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-left transition"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-yellow-50 text-left transition"
                   >
                     <span className="text-xl">{p.emoji}</span>
                     <span className="text-gray-800">{p.nom_fr}</span>
-                    {selectedPays?.code === p.code && <span className="ml-auto text-[#534AB7]">✓</span>}
+                    {selectedPays?.code === p.code && <span className="ml-auto text-[#147046]">✓</span>}
                   </button>
                 ))}
               </div>
@@ -217,7 +197,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
                 value={dateDepart}
                 min={today}
                 onChange={e => setDateDepart(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
               />
             </div>
             <div>
@@ -227,7 +207,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
                 value={dateRetour}
                 min={dateDepart || today}
                 onChange={e => setDateRetour(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
               />
             </div>
           </div>
@@ -238,7 +218,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
             type="button"
             onClick={validerStep1}
             className="w-full py-4 rounded-xl font-semibold text-white text-lg"
-            style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+            style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
           >
             Continuer →
           </button>
@@ -249,106 +229,57 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
       {step === 2 && (
         <div className="flex flex-col gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <h2 className="font-semibold text-gray-800 mb-1">Comment tu voyages ?</h2>
-            <p className="text-sm text-gray-400 mb-4">On adapte l&apos;app selon ton profil de voyage.</p>
-            <div className="flex flex-col gap-2">
-              {TYPE_VOYAGE.map(t => (
-                <button
-                  key={t.value}
-                  type="button"
-                  onClick={() => { setTypeVoyage(t.value); setParticipants([]) }}
-                  className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left transition ${typeVoyage === t.value ? 'border-[#534AB7] bg-purple-50' : 'border-gray-100 hover:border-gray-200'}`}
-                >
-                  <span className="text-2xl">{t.emoji}</span>
-                  <div>
-                    <p className="font-semibold text-gray-800">{t.label}</p>
-                    <p className="text-xs text-gray-400">{t.desc}</p>
+            <h2 className="font-semibold text-gray-800 mb-1">Qui part avec toi ?</h2>
+            <p className="text-sm text-gray-400 mb-4">Laisse vide si tu pars seul(e). Sinon, ajoute chaque participant.</p>
+
+            {/* Liste des participants ajoutés */}
+            {participants.length > 0 && (
+              <div className="flex flex-col gap-2 mb-4">
+                {participants.map((p, i) => (
+                  <div key={i} className="flex items-center gap-3 px-3 py-2 bg-yellow-50 rounded-xl border border-yellow-100">
+                    <span className="text-lg">{p.type === 'enfant' ? '👶' : '🧑'}</span>
+                    <span className="font-medium text-gray-800 flex-1">{p.prenom}</span>
+                    <span className="text-xs text-gray-400 capitalize">{p.type}</span>
+                    <button
+                      type="button"
+                      onClick={() => supprimerParticipant(i)}
+                      className="text-gray-300 hover:text-red-400 transition text-sm ml-2"
+                    >
+                      ✕
+                    </button>
                   </div>
-                  {typeVoyage === t.value && <span className="ml-auto text-[#534AB7] font-bold">✓</span>}
-                </button>
-              ))}
+                ))}
+              </div>
+            )}
+
+            {/* Formulaire ajout participant — adulte/enfant toujours disponible */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newPrenom}
+                onChange={e => setNewPrenom(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
+                placeholder="Prénom"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] transition text-sm"
+              />
+              <select
+                value={newType}
+                onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
+                className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#147046] transition text-sm"
+              >
+                <option value="adulte">Adulte</option>
+                <option value="enfant">Enfant</option>
+              </select>
+              <button
+                type="button"
+                onClick={ajouterParticipant}
+                className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm"
+                style={{ background: '#147046' }}
+              >
+                + Ajouter
+              </button>
             </div>
           </div>
-
-          {/* Ajouter participants si pas solo */}
-          {typeVoyage && typeVoyage !== 'solo' && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-              <h2 className="font-semibold text-gray-800 mb-1">Qui part avec toi ?</h2>
-              <p className="text-sm text-gray-400 mb-4">Ajoute les prénoms des participants.</p>
-
-              {/* Liste des participants ajoutés */}
-              {participants.length > 0 && (
-                <div className="flex flex-col gap-2 mb-4">
-                  {participants.map((p, i) => (
-                    <div key={i} className="flex items-center gap-3 px-3 py-2 bg-purple-50 rounded-xl border border-purple-100">
-                      <span className="text-lg">{p.type === 'enfant' ? '👶' : '🧑'}</span>
-                      <span className="font-medium text-gray-800 flex-1">{p.prenom}</span>
-                      <span className="text-xs text-gray-400 capitalize">{p.type}</span>
-                      <button
-                        type="button"
-                        onClick={() => supprimerParticipant(i)}
-                        className="text-gray-300 hover:text-red-400 transition text-sm ml-2"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Suggestions depuis /famille */}
-              {membresFoyer.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-xs text-gray-400 mb-2">Depuis ton foyer :</p>
-                  <div className="flex flex-wrap gap-2">
-                    {membresFoyer
-                      .filter(m => !participants.find(p => p.prenom === m.prenom))
-                      .map(m => (
-                        <button
-                          key={m.id}
-                          type="button"
-                          onClick={() => setParticipants(prev => [...prev, { prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }])}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-purple-300 text-xs font-medium text-[#534AB7] hover:bg-purple-50 transition"
-                        >
-                          <span>{m.type === 'enfant' ? '👶' : '🧑'}</span>
-                          + {m.prenom}
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Formulaire ajout participant */}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newPrenom}
-                  onChange={e => setNewPrenom(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
-                  placeholder="Prénom"
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition text-sm"
-                />
-                {typeVoyage === 'famille' && (
-                  <select
-                    value={newType}
-                    onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                    className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#534AB7] transition text-sm"
-                  >
-                    <option value="adulte">Adulte</option>
-                    <option value="enfant">Enfant</option>
-                  </select>
-                )}
-                <button
-                  type="button"
-                  onClick={ajouterParticipant}
-                  className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm"
-                  style={{ background: '#534AB7' }}
-                >
-                  + Ajouter
-                </button>
-              </div>
-            </div>
-          )}
 
           {error && <p className="text-red-500 text-sm px-1">{error}</p>}
 
@@ -365,9 +296,9 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
               onClick={validerStep2}
               disabled={isPending}
               className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
             >
-              {isPending ? 'Création...' : typeVoyage === 'solo' ? '✈️ Créer le voyage' : 'Continuer →'}
+              {isPending ? 'Création...' : aDesParticipants ? 'Continuer →' : '✈️ Créer le voyage'}
             </button>
           </div>
         </div>
@@ -384,15 +315,15 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
                 <button
                   key={m.value}
                   type="button"
-                  onClick={() => setModeGestion(m.value)}
-                  className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition ${modeGestion === m.value ? 'border-[#534AB7] bg-purple-50' : 'border-gray-100 hover:border-gray-200'}`}
+                  onClick={() => setModeGestion(m.value as 'organisateur' | 'partage')}
+                  className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition ${modeGestion === m.value ? 'border-[#147046] bg-yellow-50' : 'border-gray-100 hover:border-gray-200'}`}
                 >
                   <span className="text-2xl mt-0.5">{m.emoji}</span>
                   <div className="flex-1">
                     <p className="font-semibold text-gray-800">{m.label}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
                   </div>
-                  {modeGestion === m.value && <span className="text-[#534AB7] font-bold mt-0.5">✓</span>}
+                  {modeGestion === m.value && <span className="text-[#147046] font-bold mt-0.5">✓</span>}
                 </button>
               ))}
             </div>
@@ -402,7 +333,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
               <p className="text-xs text-gray-400 mb-2">Participants :</p>
               <div className="flex flex-wrap gap-2">
                 {participants.map((p, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-50 text-[#534AB7] text-sm font-medium">
+                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-50 text-[#147046] text-sm font-medium">
                     {p.type === 'enfant' ? '👶' : '🧑'} {p.prenom}
                   </span>
                 ))}
@@ -425,7 +356,7 @@ export default function NouveauVoyageForm({ pays, membresFoyer, profilVoyageur }
               onClick={() => handleSubmit()}
               disabled={isPending}
               className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
             >
               {isPending ? 'Création...' : '✈️ Créer le voyage'}
             </button>

@@ -8,7 +8,6 @@ export async function modifierVoyage(voyageId: string, data: {
   destination: string
   date_depart: string
   date_retour: string
-  membres_ids: string[]
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -29,7 +28,6 @@ export async function modifierVoyage(voyageId: string, data: {
       destination: data.destination,
       date_depart: data.date_depart,
       date_retour: data.date_retour,
-      membres_ids: data.membres_ids,
     })
     .eq('id', voyageId)
     .eq('user_id', user.id)

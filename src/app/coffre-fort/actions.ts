@@ -13,11 +13,18 @@ export async function uploadDocument(formData: FormData) {
   const membreId = formData.get('membre_id') as string || null
   const voyageId = formData.get('voyage_id') as string || null
   const dateExpiration = formData.get('date_expiration') as string || null
+  const nomPersonnalise = (formData.get('nom') as string)?.trim() || null
 
   if (!file || file.size === 0) return { error: 'Aucun fichier sélectionné.' }
   if (file.size > 10 * 1024 * 1024) return { error: 'Fichier trop lourd (max 10 Mo).' }
 
-  const ext = file.name.split('.').pop()
+  const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png']
+  const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png']
+  const ext = (file.name.split('.').pop() ?? '').toLowerCase()
+  if (!ALLOWED_EXTENSIONS.includes(ext) || !ALLOWED_TYPES.includes(file.type)) {
+    return { error: 'Type de fichier non autorisé (PDF, JPG ou PNG uniquement).' }
+  }
+
   const storagePath = `${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
 
   const { error: uploadError } = await supabase.storage
@@ -27,11 +34,11 @@ export async function uploadDocument(formData: FormData) {
   if (uploadError) return { error: 'Erreur lors de l\'upload.' }
 
   const { error: dbError } = await supabase.from('documents').insert({
-    user_id: user.id,
-    membre_id: membreId,
+    uploaded_by: user.id,
+    belongs_to: membreId,
     voyage_id: voyageId,
     type,
-    nom_fichier: file.name,
+    nom_fichier: nomPersonnalise || file.name,
     storage_path: storagePath,
     date_expiration: dateExpiration || null,
   })
@@ -42,18 +49,20 @@ export async function uploadDocument(formData: FormData) {
   }
 
   revalidatePath('/coffre-fort')
+  if (voyageId) revalidatePath(`/voyage/${voyageId}`)
   return { success: true }
 }
 
-export async function supprimerDocument(id: string, storagePath: string) {
+export async function supprimerDocument(id: string, storagePath: string, voyageId?: string | null) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non connecté.' }
 
   await supabase.storage.from('documents').remove([storagePath])
-  await supabase.from('documents').delete().eq('id', id).eq('user_id', user.id)
+  await supabase.from('documents').delete().eq('id', id).eq('uploaded_by', user.id)
 
   revalidatePath('/coffre-fort')
+  if (voyageId) revalidatePath(`/voyage/${voyageId}`)
   return { success: true }
 }
 

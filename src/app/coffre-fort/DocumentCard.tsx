@@ -9,6 +9,7 @@ type Doc = {
   nom_fichier: string
   storage_path: string
   date_expiration: string | null
+  voyage_id: string | null
   membre: { prenom: string } | null
 }
 
@@ -20,7 +21,7 @@ const TYPE_LABELS: Record<string, { label: string; emoji: string }> = {
   reservation_hotel: { label: 'Hôtel', emoji: '🏨' },
   assurance: { label: 'Assurance', emoji: '🛡️' },
   carnet_vaccins: { label: 'Vaccins', emoji: '💉' },
-  autorisation_sortie_territoire: { label: 'AST', emoji: '📄' },
+  autorisation_sortie_territoire: { label: 'Visites', emoji: '🎫' },
   ordonnance: { label: 'Ordonnance', emoji: '💊' },
   autre: { label: 'Autre', emoji: '📎' },
 }
@@ -36,7 +37,7 @@ function expirationStatus(dateStr: string | null): { color: string; bg: string; 
   return { color: '#1D9E75', bg: '#D1FAE5', label: `Valide jusqu'au ${new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}` }
 }
 
-export default function DocumentCard({ doc }: { doc: Doc }) {
+export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voyageNom?: string; shared?: boolean }) {
   const [deleting, setDeleting] = useState(false)
   const [opening, setOpening] = useState(false)
   const meta = TYPE_LABELS[doc.type] ?? { label: doc.type, emoji: '📎' }
@@ -52,7 +53,7 @@ export default function DocumentCard({ doc }: { doc: Doc }) {
   async function handleDelete() {
     if (!confirm('Supprimer ce document ?')) return
     setDeleting(true)
-    await supprimerDocument(doc.id, doc.storage_path)
+    await supprimerDocument(doc.id, doc.storage_path, doc.voyage_id)
   }
 
   return (
@@ -68,8 +69,23 @@ export default function DocumentCard({ doc }: { doc: Doc }) {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-gray-900 text-sm">{meta.label}</span>
           {doc.membre && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-green-700">
               {doc.membre.prenom}
+            </span>
+          )}
+          {voyageNom && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
+              ✈️ {voyageNom}
+            </span>
+          )}
+          {!voyageNom && !doc.voyage_id && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">
+              📌 Permanent
+            </span>
+          )}
+          {shared && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-500">
+              Partagé
             </span>
           )}
         </div>
@@ -86,13 +102,15 @@ export default function DocumentCard({ doc }: { doc: Doc }) {
       <div className="flex flex-col gap-2 shrink-0">
         <button onClick={handleOpen} disabled={opening}
           className="text-xs px-3 py-1.5 rounded-xl font-semibold text-white disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+          style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
           {opening ? '...' : '👁️'}
         </button>
-        <button onClick={handleDelete} disabled={deleting}
-          className="text-xs px-3 py-1.5 rounded-xl font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50">
-          {deleting ? '...' : '🗑️'}
-        </button>
+        {!shared && (
+          <button onClick={handleDelete} disabled={deleting}
+            className="text-xs px-3 py-1.5 rounded-xl font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50">
+            {deleting ? '...' : '🗑️'}
+          </button>
+        )}
       </div>
     </div>
   )

@@ -36,26 +36,25 @@ export default function BagagesSection({
   )
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
-        <h2 className="font-bold text-gray-900">🧳 Bagages</h2>
+    <div className="flex flex-col gap-3">
+      <div className="flex justify-end">
         <button
           onClick={() => setShowSelect(!showSelect)}
           className="text-xs px-3 py-2 rounded-xl font-semibold transition"
-          style={{ background: '#EDE9FF', color: '#534AB7' }}>
+          style={{ background: '#F6F08F', color: '#147046' }}>
           {compagnie ? '✏️ Changer' : '+ Choisir ma compagnie'}
         </button>
       </div>
 
       {/* Sélecteur */}
       {showSelect && (
-        <div className="px-5 py-4 border-b border-gray-50 bg-gray-50">
+        <div className="rounded-xl bg-gray-50 px-3 py-3">
           <input
             type="text"
             placeholder="Rechercher une compagnie..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#534AB7] mb-3"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#147046] mb-3"
             autoFocus
           />
           <div className="flex flex-col gap-1 max-h-52 overflow-y-auto">
@@ -77,7 +76,7 @@ export default function BagagesSection({
 
       {/* Affichage des règles */}
       {compagnie ? (
-        <div className="px-5 py-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <span className="px-3 py-1.5 rounded-full text-xs font-semibold"
               style={{ background: compagnie.couleur, color: '#ffffff' }}>
@@ -85,7 +84,7 @@ export default function BagagesSection({
             </span>
             <div>
               <span className="text-xs px-2 py-0.5 rounded-full"
-                style={{ background: compagnie.type === 'low_cost' ? '#FEF3C7' : compagnie.type === 'long_courrier' ? '#EDE9FF' : '#F3F4F6', color: compagnie.type === 'low_cost' ? '#92400E' : compagnie.type === 'long_courrier' ? '#534AB7' : '#6B7280' }}>
+                style={{ background: compagnie.type === 'low_cost' ? '#FEF3C7' : compagnie.type === 'long_courrier' ? '#F6F08F' : '#F3F4F6', color: compagnie.type === 'low_cost' ? '#92400E' : compagnie.type === 'long_courrier' ? '#147046' : '#6B7280' }}>
                 {compagnie.type === 'low_cost' ? 'Low cost' : compagnie.type === 'long_courrier' ? 'Long-courrier' : 'Classique'}
               </span>
             </div>
@@ -122,9 +121,9 @@ export default function BagagesSection({
           )}
         </div>
       ) : (
-        <div className="px-5 py-8 text-center">
-          <div className="text-4xl mb-2">✈️</div>
-          <p className="text-sm text-gray-400">Sélectionne ta compagnie aérienne pour voir les règles bagages.</p>
+        <div className="py-4 text-center">
+          <div className="text-3xl mb-2">✈️</div>
+          <p className="text-xs text-gray-400">Sélectionne ta compagnie aérienne pour voir les règles bagages.</p>
         </div>
       )}
     </div>

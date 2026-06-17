@@ -14,13 +14,16 @@ export async function ajouterDepense(voyageId: string, data: {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non connecté.' }
 
+  const { data: membres } = await supabase.from('voyage_membres').select('id, prenom').eq('voyage_id', voyageId)
+  const idByPrenom = Object.fromEntries((membres ?? []).map(m => [m.prenom, m.id]))
+
   const { error } = await supabase.from('depenses').insert({
     voyage_id: voyageId,
     user_id: user.id,
+    payeur_membre_id: idByPrenom[data.payeur_prenom] ?? null,
+    participants_membre_ids: data.participants.map(p => idByPrenom[p]).filter(Boolean),
     label: data.label,
     montant: data.montant,
-    payeur_prenom: data.payeur_prenom,
-    participants: data.participants,
     categorie: data.categorie ?? 'autre',
   })
 

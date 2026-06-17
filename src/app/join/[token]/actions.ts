@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
-export async function rejoindreVoyage(formData: FormData, token: string, participantId: string) {
+export async function rejoindreVoyage(formData: FormData, token: string, membreId: string) {
   const supabase = await createClient()
   const mode = formData.get('mode') as 'signup' | 'login'
   const email = formData.get('email') as string
@@ -20,7 +20,7 @@ export async function rejoindreVoyage(formData: FormData, token: string, partici
       password,
       options: {
         data: { prenom, nom },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3001'}/rejoindre/${token}`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3001'}/join/${token}`,
       },
     })
 
@@ -40,24 +40,24 @@ export async function rejoindreVoyage(formData: FormData, token: string, partici
     if (error) return { error: 'Email ou mot de passe incorrect.' }
   }
 
-  // Lier le compte au participant
+  // Lier le compte au membre
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Connexion échouée.' }
 
   // Récupérer le voyage_id
-  const { data: participant } = await supabase
-    .from('voyage_participants')
+  const { data: membre } = await supabase
+    .from('voyage_membres')
     .select('voyage_id')
-    .eq('id', participantId)
+    .eq('id', membreId)
     .single()
 
-  if (!participant) return { error: 'Invitation introuvable.' }
+  if (!membre) return { error: 'Invitation introuvable.' }
 
-  await supabase.from('voyage_participants').update({
+  await supabase.from('voyage_membres').update({
     user_id: user.id,
-    statut: 'rejoint',
+    statut_invitation: 'joined',
     rejoint_le: new Date().toISOString(),
-  }).eq('id', participantId)
+  }).eq('id', membreId)
 
   // Créer le profil utilisateur si besoin
   await supabase.from('users').upsert({
@@ -67,19 +67,19 @@ export async function rejoindreVoyage(formData: FormData, token: string, partici
     nom: user.user_metadata?.nom ?? null,
   }, { onConflict: 'id', ignoreDuplicates: true })
 
-  redirect(`/voyage/${participant.voyage_id}`)
+  redirect(`/voyage/${membre.voyage_id}`)
 }
 
-export async function rejoindreVoyageConnecte(participantId: string, voyageId: string) {
+export async function rejoindreVoyageConnecte(membreId: string, voyageId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non connecté.' }
 
-  await supabase.from('voyage_participants').update({
+  await supabase.from('voyage_membres').update({
     user_id: user.id,
-    statut: 'rejoint',
+    statut_invitation: 'joined',
     rejoint_le: new Date().toISOString(),
-  }).eq('id', participantId)
+  }).eq('id', membreId)
 
   redirect(`/voyage/${voyageId}`)
 }

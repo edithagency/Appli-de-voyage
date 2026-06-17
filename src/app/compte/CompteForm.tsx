@@ -3,42 +3,28 @@
 import { useState, useTransition } from 'react'
 import { sauvegarderProfil } from './actions'
 
-const PROFILS = [
-  { value: 'solo',    label: 'Solo',      emoji: '🧳' },
-  { value: 'couple',  label: 'En couple', emoji: '💑' },
-  { value: 'famille', label: 'En famille',emoji: '👨‍👩‍👧' },
-  { value: 'groupe',  label: 'En groupe', emoji: '🎉' },
-]
-
-const TYPES_VOYAGE = [
-  { value: 'aventure',   label: 'Aventure',    emoji: '🏔️' },
-  { value: 'plage',      label: 'Plage',       emoji: '🏖️' },
-  { value: 'city-trip',  label: 'City-trip',   emoji: '🏙️' },
-  { value: 'luxe',       label: 'Luxe',        emoji: '✨' },
-]
+const EMOJIS = ['🐼', '🦊', '🐶', '🐱', '🦁', '🐯', '🐨', '🐸', '🐵', '🦄', '🐙', '🦋', '🐝', '🦉', '🐢', '🦜', '🐳', '🦦', '🐧', '🦒']
 
 export default function CompteForm({
-  userId, initialPrenom, initialNom, initialProfil, initialTypeVoyage,
+  userId, initialPrenom, initialNom, initialEmoji,
 }: {
   userId: string
   initialPrenom: string
   initialNom: string
-  initialProfil: string
-  initialTypeVoyage: string
+  initialEmoji: string
 }) {
   const [isPending, startTransition] = useTransition()
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [prenom, setPrenom] = useState(initialPrenom)
   const [nom, setNom] = useState(initialNom)
-  const [profil, setProfil] = useState(initialProfil)
-  const [typeVoyage, setTypeVoyage] = useState(initialTypeVoyage)
+  const [emoji, setEmoji] = useState(initialEmoji || EMOJIS[0])
 
   function handleSave() {
     setError(null)
     setSaved(false)
     startTransition(async () => {
-      const result = await sauvegarderProfil({ prenom, nom, profil_voyageur: profil, type_voyage_prefere: typeVoyage })
+      const result = await sauvegarderProfil({ prenom, nom, emoji_avatar: emoji })
       if (result.error) setError(result.error)
       else setSaved(true)
     })
@@ -57,7 +43,7 @@ export default function CompteForm({
               value={prenom}
               onChange={e => setPrenom(e.target.value)}
               placeholder="Marie"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]"
             />
           </div>
           <div>
@@ -66,47 +52,24 @@ export default function CompteForm({
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Dupont"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]"
             />
           </div>
         </div>
       </div>
 
-      {/* Profil voyageur */}
+      {/* Avatar */}
       <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-3">
-        <h2 className="font-semibold text-gray-800">Je voyage plutôt…</h2>
-        <div className="grid grid-cols-2 gap-2">
-          {PROFILS.map(p => (
-            <button key={p.value} type="button" onClick={() => setProfil(p.value)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition"
+        <h2 className="font-semibold text-gray-800">Mon avatar</h2>
+        <div className="grid grid-cols-5 gap-2">
+          {EMOJIS.map(e => (
+            <button key={e} type="button" onClick={() => setEmoji(e)}
+              className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border-2 transition"
               style={{
-                borderColor: profil === p.value ? '#534AB7' : 'transparent',
-                background: profil === p.value ? '#EDE9FF' : '#F9FAFB',
+                borderColor: emoji === e ? '#147046' : 'transparent',
+                background: emoji === e ? '#F6F08F' : '#F9FAFB',
               }}>
-              <span className="text-xl">{p.emoji}</span>
-              <span className="text-sm font-semibold" style={{ color: profil === p.value ? '#534AB7' : '#374151' }}>
-                {p.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Type de voyage préféré */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-3">
-        <h2 className="font-semibold text-gray-800">Mon style de voyage</h2>
-        <div className="grid grid-cols-2 gap-2">
-          {TYPES_VOYAGE.map(t => (
-            <button key={t.value} type="button" onClick={() => setTypeVoyage(t.value)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition"
-              style={{
-                borderColor: typeVoyage === t.value ? '#534AB7' : 'transparent',
-                background: typeVoyage === t.value ? '#EDE9FF' : '#F9FAFB',
-              }}>
-              <span className="text-xl">{t.emoji}</span>
-              <span className="text-sm font-semibold" style={{ color: typeVoyage === t.value ? '#534AB7' : '#374151' }}>
-                {t.label}
-              </span>
+              {e}
             </button>
           ))}
         </div>
@@ -120,7 +83,7 @@ export default function CompteForm({
         onClick={handleSave}
         disabled={isPending}
         className="w-full py-4 rounded-2xl font-semibold text-white disabled:opacity-60"
-        style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+        style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
       >
         {isPending ? 'Sauvegarde...' : 'Sauvegarder'}
       </button>

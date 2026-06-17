@@ -4,24 +4,17 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const next = searchParams.get('next')
 
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // Vérifie si l'onboarding est fait
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('profil_voyageur')
-          .eq('id', user.id)
-          .single()
-
-        if (!profile?.profil_voyageur) {
-          return NextResponse.redirect(`${origin}/onboarding`)
-        }
+      // Redirection explicite (ex : réinitialisation de mot de passe)
+      if (next) {
+        return NextResponse.redirect(`${origin}${next}`)
       }
+
       return NextResponse.redirect(`${origin}/dashboard`)
     }
   }

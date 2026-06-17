@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
         </p>
         <Link
           href="/auth/login"
-          className="text-[#534AB7] font-semibold hover:underline text-sm"
+          className="text-[#147046] font-semibold hover:underline text-sm"
         >
           ← Retour à la connexion
         </Link>
@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
             required
             autoComplete="email"
             placeholder="toi@exemple.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
           />
         </div>
 
@@ -73,14 +73,14 @@ export default function ForgotPasswordPage() {
           type="submit"
           disabled={loading}
           className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: loading ? '#9990D8' : 'linear-gradient(135deg, #534AB7, #6B63C8)' }}
+          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #147046, #25C490)' }}
         >
           {loading ? 'Envoi...' : 'Envoyer le lien'}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-        <Link href="/auth/login" className="text-[#534AB7] font-semibold hover:underline">
+        <Link href="/auth/login" className="text-[#147046] font-semibold hover:underline">
           ← Retour à la connexion
         </Link>
       </p>

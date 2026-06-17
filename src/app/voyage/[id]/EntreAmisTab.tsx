@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import { ajouterDepense, supprimerDepense, mettreAJourBudget } from './depenses-actions'
 
 type Depense = {
@@ -16,7 +16,7 @@ type Depense = {
 type Membre = { id: string; prenom: string; type: string }
 
 const CATEGORIES: { key: string; emoji: string; label: string }[] = [
-  { key: 'hebergement', emoji: '🏨', label: 'Hébergement' },
+  { key: 'hebergement', emoji: '🏨', label: 'Hôtel' },
   { key: 'repas',       emoji: '🍽️', label: 'Repas' },
   { key: 'transport',   emoji: '🚕', label: 'Transport' },
   { key: 'activite',    emoji: '🎡', label: 'Activité' },
@@ -64,17 +64,23 @@ function calculerRemboursements(depenses: Depense[]) {
   return { balances, transactions }
 }
 
+type BudgetQuotidien = { emoji: string; label: string; montant: string }
+
 export default function EntreAmisTab({
-  voyageId, membres, depensesInitiales, budgetTotal,
+  voyageId, membres, depensesInitiales, budgetTotal, budgetQuotidien, argentNotes,
 }: {
   voyageId: string
   membres: Membre[]
   depensesInitiales: Depense[]
   budgetTotal: number
+  budgetQuotidien: BudgetQuotidien[] | null
+  argentNotes: string | null
 }) {
   const [depenses, setDepenses] = useState(depensesInitiales)
   const [showAll, setShowAll] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [filterCategorie, setFilterCategorie] = useState<string | null>(null)
+  const [filterPersonne, setFilterPersonne] = useState<string | null>(null)
   const [form, setForm] = useState({
     label: '',
     categorie: 'repas',
@@ -86,12 +92,31 @@ export default function EntreAmisTab({
   const [formError, setFormError] = useState<string | null>(null)
   const [, startTransition] = useTransition()
 
+  useEffect(() => {
+    if (!showModal) return
+    const scrollEl = document.querySelector('.phone-screen') as HTMLElement | null
+    if (!scrollEl) return
+    const original = scrollEl.style.overflow
+    scrollEl.style.overflow = 'hidden'
+    return () => { scrollEl.style.overflow = original }
+  }, [showModal])
+
   const totalDepenses = depenses.reduce((s, d) => s + d.montant, 0)
   const { balances, transactions } = calculerRemboursements(depenses)
-  const visibles = showAll ? depenses : depenses.slice(0, 3)
 
-  const COLORS = ['#534AB7', '#1D9E75', '#D97706', '#E11D48', '#2563EB', '#7C3AED']
-  const colorFor = (prenom: string) => COLORS[membres.findIndex(m => m.prenom === prenom) % COLORS.length] ?? '#534AB7'
+  const categoriesPresentes = CATEGORIES.filter(c => depenses.some(d => d.categorie === c.key))
+  const depensesFiltrees = depenses.filter(d =>
+    (!filterCategorie || d.categorie === filterCategorie) &&
+    (!filterPersonne || d.participants.includes(filterPersonne))
+  )
+  const totalFiltre = depensesFiltrees.reduce((s, d) => s + d.montant, 0)
+  const partFiltree = filterPersonne
+    ? depensesFiltrees.reduce((s, d) => s + (d.participants.includes(filterPersonne) ? d.montant / d.participants.length : 0), 0)
+    : 0
+  const visibles = showAll ? depensesFiltrees : depensesFiltrees.slice(0, 3)
+
+  const COLORS = ['#147046', '#1D9E75', '#D97706', '#E11D48', '#2563EB', '#0D9488']
+  const colorFor = (prenom: string) => COLORS[membres.findIndex(m => m.prenom === prenom) % COLORS.length] ?? '#147046'
 
   function toggleParticipant(prenom: string) {
     setForm(f => ({
@@ -139,11 +164,30 @@ export default function EntreAmisTab({
   return (
     <div className="flex flex-col gap-4">
 
+      {/* Coût de la vie */}
+      {((budgetQuotidien && budgetQuotidien.length > 0) || argentNotes) && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-5">
+          <h3 className="font-bold text-gray-900 mb-3">💰 Coût de la vie</h3>
+          <div className="flex flex-col gap-2.5">
+            {budgetQuotidien?.map((b, i) => (
+              <div key={i} className="flex items-center gap-2.5 bg-gray-50 rounded-xl px-3 py-2.5">
+                <span className="text-xl">{b.emoji}</span>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700">{b.label}</p>
+                  <p className="text-xs text-gray-500">{b.montant}</p>
+                </div>
+              </div>
+            ))}
+            {argentNotes && <p className="text-xs text-gray-500 leading-relaxed">{argentNotes}</p>}
+          </div>
+        </div>
+      )}
+
       {/* En-tête participants + total */}
-      <div className="rounded-3xl p-5" style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+      <div className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-purple-200 text-xs font-semibold uppercase tracking-wide">Total dépensé</p>
+            <p className="text-yellow-100 text-xs font-semibold uppercase tracking-wide">Total dépensé</p>
             <p className="text-white text-3xl font-bold mt-0.5">{totalDepenses.toFixed(2)}€</p>
           </div>
           <button onClick={() => setShowModal(true)}
@@ -182,12 +226,12 @@ export default function EntreAmisTab({
 
       {/* Remboursements */}
       {transactions.length > 0 && (
-        <div className="bg-white rounded-3xl border border-gray-100 p-5">
+        <div className="bg-white rounded-2xl border border-gray-200 p-5">
           <h3 className="font-bold text-gray-900 mb-3">💸 Remboursements</h3>
           <div className="flex flex-col gap-2">
             {transactions.map((t, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-2xl"
-                style={{ background: '#EDE9FF' }}>
+                style={{ background: '#F6F08F' }}>
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
                   style={{ background: colorFor(t.de) }}>
                   {t.de[0]}
@@ -195,7 +239,7 @@ export default function EntreAmisTab({
                 <p className="text-sm text-gray-700 flex-1">
                   <span className="font-semibold">{t.de}</span>
                   {' doit '}
-                  <span className="font-bold" style={{ color: '#534AB7' }}>{t.montant.toFixed(2)}€</span>
+                  <span className="font-bold" style={{ color: '#147046' }}>{t.montant.toFixed(2)}€</span>
                   {' à '}
                   <span className="font-semibold">{t.a}</span>
                 </p>
@@ -210,11 +254,74 @@ export default function EntreAmisTab({
       )}
 
       {/* Liste des dépenses */}
-      <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
           <h3 className="font-bold text-gray-900">🧾 Dépenses</h3>
           <span className="text-xs text-gray-400">{depenses.length} au total</span>
         </div>
+
+        {depenses.length > 0 && (
+          <div className="px-5 py-3 border-b border-gray-50 flex flex-col gap-2">
+            {/* Filtre par catégorie */}
+            <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+              <button type="button" onClick={() => setFilterCategorie(null)}
+                className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                style={{
+                  background: filterCategorie === null ? '#147046' : '#F3F4F6',
+                  color: filterCategorie === null ? 'white' : '#6B7280',
+                }}>
+                Toutes
+              </button>
+              {categoriesPresentes.map(c => (
+                <button key={c.key} type="button" onClick={() => setFilterCategorie(f => f === c.key ? null : c.key)}
+                  className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1"
+                  style={{
+                    background: filterCategorie === c.key ? '#147046' : '#F3F4F6',
+                    color: filterCategorie === c.key ? 'white' : '#6B7280',
+                  }}>
+                  <span>{c.emoji}</span>{c.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Filtre par personne */}
+            {membres.length > 0 && (
+              <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                <button type="button" onClick={() => setFilterPersonne(null)}
+                  className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                  style={{
+                    background: filterPersonne === null ? '#147046' : '#F3F4F6',
+                    color: filterPersonne === null ? 'white' : '#6B7280',
+                  }}>
+                  Tous
+                </button>
+                {membres.map(m => (
+                  <button key={m.id} type="button" onClick={() => setFilterPersonne(f => f === m.prenom ? null : m.prenom)}
+                    className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                    style={{
+                      background: filterPersonne === m.prenom ? colorFor(m.prenom) : `${colorFor(m.prenom)}15`,
+                      color: filterPersonne === m.prenom ? 'white' : colorFor(m.prenom),
+                    }}>
+                    {m.prenom}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Résumé du filtre */}
+            {(filterCategorie || filterPersonne) && (
+              <div className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
+                <span className="text-xs text-gray-500">
+                  {depensesFiltrees.length} dépense{depensesFiltrees.length > 1 ? 's' : ''}
+                  {filterPersonne ? ` · part de ${filterPersonne}` : ''}
+                </span>
+                <span className="text-sm font-bold" style={{ color: '#147046' }}>
+                  {(filterPersonne ? partFiltree : totalFiltre).toFixed(2)}€
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
         {depenses.length === 0 ? (
           <div className="py-12 text-center">
@@ -222,9 +329,13 @@ export default function EntreAmisTab({
             <p className="text-sm text-gray-400 mb-5">Aucune dépense enregistrée</p>
             <button onClick={() => setShowModal(true)}
               className="px-6 py-3 rounded-2xl text-sm font-semibold text-white"
-              style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
               + Ajouter la première dépense
             </button>
+          </div>
+        ) : depensesFiltrees.length === 0 ? (
+          <div className="py-10 text-center">
+            <p className="text-sm text-gray-400">Aucune dépense pour ce filtre</p>
           </div>
         ) : (
           <>
@@ -275,11 +386,11 @@ export default function EntreAmisTab({
               })}
             </div>
 
-            {depenses.length > 3 && (
+            {depensesFiltrees.length > 3 && (
               <button onClick={() => setShowAll(v => !v)}
                 className="w-full py-4 text-sm font-semibold border-t border-gray-50 transition hover:bg-gray-50"
-                style={{ color: '#534AB7' }}>
-                {showAll ? 'Voir moins ↑' : `Voir toutes les dépenses (${depenses.length - 3} de plus) ↓`}
+                style={{ color: '#147046' }}>
+                {showAll ? 'Voir moins ↑' : `Voir toutes les dépenses (${depensesFiltrees.length - 3} de plus) ↓`}
               </button>
             )}
           </>
@@ -289,9 +400,8 @@ export default function EntreAmisTab({
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={() => setShowModal(false)}>
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+          style={{ background: 'rgba(0,0,0,0.4)' }}>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="font-bold text-gray-900 text-lg">Nouvelle dépense</h3>
@@ -308,12 +418,16 @@ export default function EntreAmisTab({
                       style={{
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                         gap: 4, padding: '10px 4px', borderRadius: 14, transition: 'all 0.15s',
-                        background: form.categorie === c.key ? '#EDE9FF' : '#F9FAFB',
-                        border: `2px solid ${form.categorie === c.key ? '#534AB7' : 'transparent'}`,
-                        minHeight: 70,
+                        background: form.categorie === c.key ? '#F6F08F' : '#F9FAFB',
+                        border: `2px solid ${form.categorie === c.key ? '#147046' : 'transparent'}`,
+                        height: 78,
                       }}>
-                      <span style={{ fontSize: 24 }}>{c.emoji}</span>
-                      <span style={{ fontSize: 10, color: form.categorie === c.key ? '#534AB7' : '#6B7280', fontWeight: 500, textAlign: 'center', lineHeight: 1.2 }}>{c.label}</span>
+                      <span style={{ fontSize: 20, lineHeight: 1 }}>{c.emoji}</span>
+                      <span style={{
+                        fontSize: 10, color: form.categorie === c.key ? '#147046' : '#6B7280', fontWeight: 500,
+                        textAlign: 'center', lineHeight: 1.15,
+                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                      }}>{c.label}</span>
                     </button>
                   ))}
                 </div>
@@ -324,7 +438,7 @@ export default function EntreAmisTab({
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description</label>
                 <input value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))}
                   placeholder="Ex : Dîner au restaurant, Hôtel..."
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7]"
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046]"
                   autoFocus />
               </div>
 
@@ -333,7 +447,7 @@ export default function EntreAmisTab({
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Montant (€)</label>
                 <input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))}
                   placeholder="0.00"
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046]" />
               </div>
 
               {/* Qui a payé */}
@@ -366,6 +480,23 @@ export default function EntreAmisTab({
                       : ''}
                   </label>
                   <div className="flex flex-wrap gap-2">
+                    {(() => {
+                      const tousSelectionnes = membres.every(m => form.participants.includes(m.prenom))
+                      return (
+                        <button type="button"
+                          onClick={() => setForm(f => ({
+                            ...f,
+                            participants: tousSelectionnes ? [] : membres.map(m => m.prenom),
+                          }))}
+                          className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                          style={{
+                            background: tousSelectionnes ? '#147046' : '#14704615',
+                            color: tousSelectionnes ? 'white' : '#147046',
+                          }}>
+                          {tousSelectionnes ? '✓ ' : ''}Tout le monde
+                        </button>
+                      )
+                    })()}
                     {membres.map(m => {
                       const sel = form.participants.includes(m.prenom)
                       return (
@@ -392,7 +523,7 @@ export default function EntreAmisTab({
               <button onClick={handleAjouter}
                 disabled={saving || !form.label.trim() || !form.montant || form.participants.length === 0}
                 className="w-full py-3.5 rounded-2xl font-semibold text-white disabled:opacity-40"
-                style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+                style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
                 {saving ? 'Enregistrement...' : 'Ajouter la dépense'}
               </button>
             </div>

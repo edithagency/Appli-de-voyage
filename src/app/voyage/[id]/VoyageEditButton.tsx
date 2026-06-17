@@ -4,9 +4,17 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { modifierVoyage } from './voyage-edit-actions'
 import { supprimerVoyage } from '../supprimerVoyage-action'
-import { createClient } from '@/lib/supabase/client'
+import { creerInvitation, retirerParticipant } from './participants-actions'
+import ParticipantsPanel from './ParticipantsPanel'
 
-type Membre = { id: string; prenom: string; type: string }
+type Membre = {
+  id: string
+  prenom: string
+  type: string
+  statut_invitation: 'pending' | 'lien_copie' | 'joined'
+  token_invitation: string
+  token_expire_at: string | null
+}
 
 type Voyage = {
   id: string
@@ -14,14 +22,14 @@ type Voyage = {
   destination: string
   date_depart: string
   date_retour: string
-  membres_ids: string[]
 }
 
 export default function VoyageEditButton({
-  voyage, membres
+  voyage, membres: membresInitiaux, modeGestion,
 }: {
   voyage: Voyage
   membres: Membre[]
+  modeGestion: 'organisateur' | 'partage' | 'solo'
 }) {
   const router = useRouter()
   const [showEdit, setShowEdit] = useState(false)
@@ -30,51 +38,50 @@ export default function VoyageEditButton({
   const [destination, setDestination] = useState(voyage.destination)
   const [dateDepart, setDateDepart] = useState(voyage.date_depart)
   const [dateRetour, setDateRetour] = useState(voyage.date_retour)
-  const [membresIds, setMembresIds] = useState<string[]>(voyage.membres_ids ?? [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [showAddMembre, setShowAddMembre] = useState(false)
-  const [newPrenom, setNewPrenom] = useState('')
-  const [newDate, setNewDate] = useState('')
-  const [addingMembre, setAddingMembre] = useState(false)
-  const [localMembres, setLocalMembres] = useState<Membre[]>(membres)
 
-  function toggleMembre(id: string) {
-    setMembresIds(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id])
+  const [membres, setMembres] = useState(membresInitiaux)
+  const [newPrenom, setNewPrenom] = useState('')
+  const [newType, setNewType] = useState<'adulte' | 'enfant'>('adulte')
+  const [addingMembre, setAddingMembre] = useState(false)
+
+  const modeEffectif = modeGestion === 'solo' ? 'organisateur' : modeGestion
+
+  async function handleAjouterMembre(prenom: string, type: 'adulte' | 'enfant') {
+    if (!prenom.trim()) return
+    setAddingMembre(true)
+    const result = await creerInvitation(voyage.id, prenom.trim(), type)
+    setAddingMembre(false)
+    if (result.error || !result.membre) {
+      setError(result.error ?? "Erreur lors de l'ajout du participant.")
+      return
+    }
+    setMembres(prev => [...prev, {
+      id: result.membre!.id,
+      prenom: prenom.trim(),
+      type,
+      statut_invitation: result.membre!.statut_invitation as Membre['statut_invitation'],
+      token_invitation: result.membre!.token_invitation,
+      token_expire_at: result.membre!.token_expire_at,
+    }])
+    setNewPrenom('')
+    setNewType('adulte')
+    router.refresh()
   }
 
-  async function handleAddMembre() {
-    if (!newPrenom.trim()) return
-    setAddingMembre(true)
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setAddingMembre(false); return }
-
-    const age = newDate
-      ? (Date.now() - new Date(newDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25)
-      : 99
-    const type = age < 18 ? 'enfant' : 'adulte'
-
-    const { data } = await supabase.from('membres_foyer').insert({
-      user_id: user.id, prenom: newPrenom, date_naissance: newDate || null, type
-    }).select('id, prenom, type').single()
-
-    if (data) {
-      setLocalMembres(prev => [...prev, data])
-      setMembresIds(prev => [...prev, data.id])
-    }
-    setNewPrenom('')
-    setNewDate('')
-    setShowAddMembre(false)
-    setAddingMembre(false)
+  function handleRetirerMembre(membre: Membre) {
+    if (!confirm(`Retirer ${membre.prenom} du voyage ?`)) return
+    setMembres(prev => prev.filter(p => p.id !== membre.id))
+    retirerParticipant(membre.id, voyage.id).then(() => router.refresh())
   }
 
   async function handleSave() {
     setError(null)
     setLoading(true)
     const result = await modifierVoyage(voyage.id, {
-      nom, destination, date_depart: dateDepart, date_retour: dateRetour, membres_ids: membresIds
+      nom, destination, date_depart: dateDepart, date_retour: dateRetour,
     })
     if (result?.error) {
       setError(result.error)
@@ -116,7 +123,7 @@ export default function VoyageEditButton({
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
           style={{ background: 'rgba(0,0,0,0.4)' }}
           onClick={() => setShowEdit(false)}>
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="font-bold text-gray-900 text-lg">Modifier le voyage</h3>
@@ -127,76 +134,71 @@ export default function VoyageEditButton({
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nom du voyage</label>
                 <input value={nom} onChange={e => setNom(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046]" />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Destination</label>
                 <input value={destination} onChange={e => setDestination(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046]" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Départ</label>
                   <input type="date" value={dateDepart} onChange={e => setDateDepart(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Retour</label>
                   <input type="date" value={dateRetour} onChange={e => setDateRetour(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Participants</label>
                 <div className="flex flex-col gap-2">
-                  {localMembres.map(m => (
-                    <div key={m.id} onClick={() => toggleMembre(m.id)}
-                      className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition"
-                      style={{ background: membresIds.includes(m.id) ? '#EDE9FF' : '#F9FAFB', border: `1.5px solid ${membresIds.includes(m.id) ? '#534AB7' : 'transparent'}` }}>
-                      <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
-                        style={{ borderColor: membresIds.includes(m.id) ? '#534AB7' : '#D1D5DB', background: membresIds.includes(m.id) ? '#534AB7' : 'white' }}>
-                        {membresIds.includes(m.id) && (
-                          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                            <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        )}
-                      </div>
-                      <span className="text-sm font-medium text-gray-800">{m.prenom}</span>
-                      <span className="text-xs text-gray-400 ml-auto capitalize">{m.type}</span>
+                  {membres.map(p => (
+                    <div key={p.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                      <span className="text-lg">{p.type === 'enfant' ? '👶' : '🧑'}</span>
+                      <span className="text-sm font-medium text-gray-800 flex-1">{p.prenom}</span>
+                      <span className="text-xs text-gray-400 capitalize">{p.type}</span>
+                      <button type="button" onClick={() => handleRetirerMembre(p)}
+                        className="text-gray-300 hover:text-red-400 transition text-sm ml-1">
+                        ✕
+                      </button>
                     </div>
                   ))}
 
-                  {/* Ajouter un participant */}
-                  {showAddMembre ? (
-                    <div className="flex flex-col gap-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
-                      <div className="grid grid-cols-2 gap-2">
-                        <input value={newPrenom} onChange={e => setNewPrenom(e.target.value)}
-                          placeholder="Prénom"
-                          className="px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
-                        <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)}
-                          className="px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]" />
-                      </div>
-                      <div className="flex gap-2">
-                        <button type="button" onClick={handleAddMembre} disabled={addingMembre || !newPrenom.trim()}
-                          className="flex-1 py-2 rounded-xl text-xs font-semibold text-white disabled:opacity-50"
-                          style={{ background: '#534AB7' }}>
-                          {addingMembre ? '...' : '✓ Ajouter'}
-                        </button>
-                        <button type="button" onClick={() => setShowAddMembre(false)}
-                          className="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-500">
-                          Annuler
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button type="button" onClick={() => setShowAddMembre(true)}
-                      className="flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-xs font-semibold text-gray-400 hover:border-[#534AB7] hover:text-[#534AB7] transition">
-                      + Ajouter un participant
+                  {/* Ajout manuel */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newPrenom}
+                      onChange={e => setNewPrenom(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAjouterMembre(newPrenom, newType))}
+                      placeholder="Prénom"
+                      className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+                    />
+                    <select
+                      value={newType}
+                      onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
+                      className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+                    >
+                      <option value="adulte">Adulte</option>
+                      <option value="enfant">Enfant</option>
+                    </select>
+                    <button
+                      type="button"
+                      disabled={addingMembre || !newPrenom.trim()}
+                      onClick={() => handleAjouterMembre(newPrenom, newType)}
+                      className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm disabled:opacity-50"
+                      style={{ background: '#147046' }}
+                    >
+                      {addingMembre ? '...' : '+ Ajouter'}
                     </button>
-                  )}
+                  </div>
                 </div>
               </div>
 
@@ -204,14 +206,16 @@ export default function VoyageEditButton({
 
               <button onClick={handleSave} disabled={loading}
                 className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
+                style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
                 {loading ? 'Enregistrement...' : '✓ Sauvegarder'}
               </button>
 
               <button
                 onClick={async () => {
                   if (!confirm('Supprimer définitivement ce voyage et toutes ses données ?')) return
-                  await supprimerVoyage(voyage.id)
+                  setError(null)
+                  const result = await supprimerVoyage(voyage.id)
+                  if (result?.error) setError(result.error)
                 }}
                 className="w-full py-3 rounded-2xl font-semibold border-2 border-red-200 text-red-500 hover:bg-red-50 transition">
                 🗑️ Supprimer ce voyage
@@ -226,26 +230,42 @@ export default function VoyageEditButton({
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
           style={{ background: 'rgba(0,0,0,0.4)' }}
           onClick={() => setShowShare(false)}>
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl"
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="font-bold text-gray-900 text-lg">Partager ce voyage</h3>
               <button onClick={() => setShowShare(false)} className="text-gray-300 text-2xl">×</button>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <p className="text-sm text-gray-500">Partage ce lien avec les autres voyageurs pour qu'ils puissent accéder au voyage.</p>
+            {membres.length > 0 ? (
+              <>
+                <p className="text-sm text-gray-500 mb-4">
+                  {modeEffectif === 'partage'
+                    ? "Partage le lien à chaque participant pour qu'il rejoigne le voyage."
+                    : 'Membres du groupe — tu gères tout pour eux.'}
+                </p>
+                <ParticipantsPanel
+                  participants={membres}
+                  modeGestion={modeEffectif}
+                  voyageId={voyage.id}
+                  showHeader={false}
+                />
+              </>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <p className="text-sm text-gray-500">Ajoute d&apos;abord des participants depuis &quot;✏️ Modifier le voyage&quot;, puis partage-leur un lien d&apos;invitation ici.</p>
 
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-gray-50 border border-gray-100">
-                <p className="text-xs text-gray-500 flex-1 truncate">{typeof window !== 'undefined' ? window.location.href : ''}</p>
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-gray-50 border border-gray-200">
+                  <p className="text-xs text-gray-500 flex-1 truncate">{typeof window !== 'undefined' ? window.location.href : ''}</p>
+                </div>
+
+                <button onClick={handleCopy}
+                  className="w-full py-3 rounded-2xl font-semibold text-white transition"
+                  style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #147046, #25C490)' }}>
+                  {copied ? '✓ Lien copié !' : '🔗 Copier le lien'}
+                </button>
               </div>
-
-              <button onClick={handleCopy}
-                className="w-full py-3 rounded-2xl font-semibold text-white transition"
-                style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #534AB7, #6B63C8)' }}>
-                {copied ? '✓ Lien copié !' : '🔗 Copier le lien'}
-              </button>
-            </div>
+            )}
           </div>
         </div>
       )}

@@ -18,15 +18,15 @@ export default function ConfirmEmailPage({
         Vérifie aussi tes spams si tu ne le vois pas.
       </p>
 
-      <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-4 mb-6">
-        <p className="text-sm text-purple-700 dark:text-purple-300">
+      <div className="bg-yellow-50 dark:bg-green-900/20 border border-yellow-100 dark:border-green-800 rounded-xl p-4 mb-6">
+        <p className="text-sm text-green-700 dark:text-green-300">
           Une fois confirmé, tu seras redirigé vers ReadyToFly pour finaliser ton profil.
         </p>
       </div>
 
       <Link
         href="/auth/login"
-        className="text-[#534AB7] font-semibold hover:underline text-sm"
+        className="text-[#147046] font-semibold hover:underline text-sm"
       >
         Déjà confirmé ? Se connecter →
       </Link>

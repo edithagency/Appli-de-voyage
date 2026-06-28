@@ -1,8 +1,8 @@
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
+    <div className="h-full overflow-hidden flex flex-col items-center justify-center px-4 py-4"
       style={{ background: '#FFFFFF' }}>
-      <div className="mb-6 flex flex-col items-center gap-1">
+      <div className="mb-4 flex flex-col items-center gap-1">
         <div className="flex items-center gap-1.5">
           <span className="text-lg">✈️</span>
           <span className="text-lg font-bold" style={{ color: '#1D4ED8' }}>Bon Vol</span>

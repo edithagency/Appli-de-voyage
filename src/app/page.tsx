@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 text-center"
+    <main className="h-full overflow-hidden flex flex-col items-center justify-center px-4 text-center"
       style={{ background: '#FFFFFF' }}>
       <div className="max-w-xl">
         <h1 className="sr-only">Bon Vol</h1>

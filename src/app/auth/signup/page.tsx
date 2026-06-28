@@ -4,12 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { signup } from '../actions'
 
-const EMOJIS = ['🐼', '🦊', '🐶', '🐱', '🦁', '🐯', '🐨', '🐸', '🐵', '🦄', '🐙', '🦋', '🐝', '🦉', '🐢', '🦜', '🐳', '🦦', '🐧', '🦒']
+const DEFAULT_EMOJI = '🐼'
 
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [emoji, setEmoji] = useState(EMOJIS[0])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -23,7 +22,7 @@ export default function SignupPage() {
     }
     setLoading(true)
     const formData = new FormData(form)
-    formData.set('emoji_avatar', emoji)
+    formData.set('emoji_avatar', DEFAULT_EMOJI)
     const result = await signup(formData)
     if (result?.error) {
       setError(result.error)
@@ -36,7 +35,7 @@ export default function SignupPage() {
       <h1 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Créer un compte</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Gratuit, sans carte bancaire</p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label htmlFor="prenom" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -49,7 +48,7 @@ export default function SignupPage() {
               required
               autoComplete="given-name"
               placeholder="Marie"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
             />
           </div>
           <div>
@@ -63,7 +62,7 @@ export default function SignupPage() {
               required
               autoComplete="family-name"
               placeholder="Dupont"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
             />
           </div>
         </div>
@@ -79,7 +78,7 @@ export default function SignupPage() {
             required
             autoComplete="email"
             placeholder="toi@exemple.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -95,7 +94,7 @@ export default function SignupPage() {
             minLength={8}
             autoComplete="new-password"
             placeholder="Minimum 8 caractères"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -110,30 +109,8 @@ export default function SignupPage() {
             required
             autoComplete="new-password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Ton avatar
-          </label>
-          <div className="grid grid-cols-5 gap-2">
-            {EMOJIS.map(e => (
-              <button
-                key={e}
-                type="button"
-                onClick={() => setEmoji(e)}
-                className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border-2 transition"
-                style={{
-                  borderColor: emoji === e ? '#1D4ED8' : 'transparent',
-                  background: emoji === e ? '#DBEAFE' : '#F9FAFB',
-                }}
-              >
-                {e}
-              </button>
-            ))}
-          </div>
         </div>
 
         {error && (
@@ -152,12 +129,12 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <p className="text-center text-xs text-gray-400 mt-4">
+      <p className="text-center text-xs text-gray-400 mt-3">
         En créant un compte tu acceptes nos{' '}
         <Link href="/politique-confidentialite" className="underline hover:text-[#1D4ED8]">conditions de confidentialité</Link>
       </p>
 
-      <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+      <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-3">
         Déjà un compte ?{' '}
         <Link href="/auth/login" className="text-[#1D4ED8] font-semibold hover:underline">
           Se connecter

@@ -106,6 +106,20 @@ export default async function DashboardPage() {
     }
   }
 
+  // Participants de chaque voyage (pour les avatars sur les cartes)
+  const membresParVoyage: Record<string, { prenom: string; type: string }[]> = {}
+  if (tousLesVoyages.length > 0) {
+    const { data: tousMembres } = await supabase
+      .from('voyage_membres')
+      .select('voyage_id, prenom, type')
+      .in('voyage_id', tousLesVoyages.map(v => v.id))
+
+    for (const m of tousMembres ?? []) {
+      if (!membresParVoyage[m.voyage_id]) membresParVoyage[m.voyage_id] = []
+      membresParVoyage[m.voyage_id].push({ prenom: m.prenom, type: m.type })
+    }
+  }
+
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
 
@@ -146,11 +160,12 @@ export default async function DashboardPage() {
               const code = getPaysCode(voyage.pays_code, voyage.destination)
               const photo = code ? `/images/pays/${code}.png` : null
               const emoji = code ? CODE_TO_EMOJI[code] : null
+              const membresVoyage = membresParVoyage[voyage.id] ?? []
 
               return (
                 <Link key={voyage.id} href={`/voyage/${voyage.id}`}
                   className="rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
-                  style={{ position: 'relative', height: 220, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+                  style={{ position: 'relative', height: 260, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
 
                   {photo && (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -177,13 +192,38 @@ export default async function DashboardPage() {
 
                   {/* Titre + infos */}
                   <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
-                    <div className="flex items-center gap-2 mb-1">
-                      {emoji && <span style={{ fontSize: 20 }}>{emoji}</span>}
-                      <p style={{ fontWeight: 800, color: 'white', fontSize: '20px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
-                        {voyage.nom}
-                      </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {emoji && <span style={{ fontSize: 20, flexShrink: 0 }}>{emoji}</span>}
+                        <p style={{ fontWeight: 800, color: 'white', fontSize: '20px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
+                          {voyage.nom}
+                        </p>
+                      </div>
+
+                      {/* Avatars participants */}
+                      {membresVoyage.length > 0 && (
+                        <div className="flex shrink-0">
+                          {membresVoyage.slice(0, 2).map((m, i) => (
+                            <div key={i}
+                              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                              style={{
+                                background: 'linear-gradient(135deg, #534AB7, #8B7FE8)',
+                                border: '2px solid white',
+                                marginLeft: i === 0 ? 0 : -10,
+                              }}>
+                              {m.type === 'enfant' ? '👶' : m.prenom[0]?.toUpperCase()}
+                            </div>
+                          ))}
+                          {membresVoyage.length > 2 && (
+                            <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                              style={{ background: 'rgba(0,0,0,0.6)', border: '2px solid white', marginLeft: -10 }}>
+                              +{membresVoyage.length - 2}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: 0, fontWeight: 500 }}>
+                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: '4px 0 0', fontWeight: 500 }}>
                       {formatDate(voyage.date_depart)} – {formatDate(voyage.date_retour)}
                     </p>
 

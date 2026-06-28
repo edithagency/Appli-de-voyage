@@ -591,7 +591,7 @@ export default function ChecklistSection({
                 <div className="grid grid-cols-3 gap-2">
                   {[...CATEGORIES, { key: 'bagages', label: 'Bagages', emoji: '🧳', color: '#EA580C', light: '#FFEDD5' }].map(cat => (
                     <button key={cat.key} type="button" onClick={() => setAddForm(f => ({ ...f, categorie: cat.key }))}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-2xl border-2 text-xs font-semibold transition-all"
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-2xl border text-xs font-semibold transition-all"
                       style={{ borderColor: addForm.categorie === cat.key ? cat.color : 'transparent', background: addForm.categorie === cat.key ? cat.light : '#F9FAFB', color: addForm.categorie === cat.key ? cat.color : '#6B7280' }}>
                       <span>{cat.emoji}</span><span>{cat.label}</span>
                     </button>
@@ -669,7 +669,7 @@ export default function ChecklistSection({
                       <div className="grid grid-cols-2 gap-3">
                         {[{ value: 'femme', label: 'Femme', emoji: '👩' }, { value: 'homme', label: 'Homme', emoji: '👨' }].map(s => (
                           <button key={s.value} onClick={() => setQ(prev => ({ ...prev, sexe: s.value as 'homme' | 'femme' }))}
-                            className="flex items-center gap-2 px-4 py-3 rounded-2xl border-2 transition-all"
+                            className="flex items-center gap-2 px-4 py-3 rounded-2xl border transition-all"
                             style={{ borderColor: q.sexe === s.value ? '#36A6B2' : 'transparent', background: q.sexe === s.value ? '#DBEAFE' : '#F9FAFB', color: q.sexe === s.value ? '#36A6B2' : '#6B7280' }}>
                             <span className="text-2xl">{s.emoji}</span><span className="font-semibold">{s.label}</span>
                           </button>
@@ -684,7 +684,7 @@ export default function ChecklistSection({
                           const sel = q.bagages?.includes(b.value)
                           return (
                             <button key={b.value} onClick={() => setQ(prev => ({ ...prev, bagages: sel ? (prev.bagages ?? []).filter(x => x !== b.value) : [...(prev.bagages ?? []), b.value] }))}
-                              className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all"
+                              className="flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all"
                               style={{ borderColor: sel ? '#36A6B2' : 'transparent', background: sel ? '#DBEAFE' : '#F9FAFB' }}>
                               <span className="text-2xl">{b.emoji}</span><p className="font-semibold text-gray-800">{b.label}</p>
                               {sel && <span className="ml-auto text-[#36A6B2]">✓</span>}
@@ -709,7 +709,7 @@ export default function ChecklistSection({
                     <div className="flex flex-col gap-2">
                       {TEMPERATURES.map(t => (
                         <button key={t.value} onClick={() => setQ(prev => ({ ...prev, temperature: t.value as QuestionnaireValise['temperature'] }))}
-                          className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all"
+                          className="flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all"
                           style={{ borderColor: q.temperature === t.value ? '#36A6B2' : 'transparent', background: q.temperature === t.value ? '#DBEAFE' : '#F9FAFB' }}>
                           <span className="text-2xl">{t.emoji}</span>
                           <div><p className="font-semibold text-gray-800">{t.label}</p><p className="text-xs text-gray-400">{t.sub}</p></div>
@@ -728,7 +728,7 @@ export default function ChecklistSection({
                         const sel = q.activites?.includes(a.value)
                         return (
                           <button key={a.value} onClick={() => setQ(prev => ({ ...prev, activites: sel ? (prev.activites ?? []).filter(x => x !== a.value) : [...(prev.activites ?? []), a.value] }))}
-                            className="flex items-center gap-2 px-4 py-3 rounded-2xl border-2 transition-all"
+                            className="flex items-center gap-2 px-4 py-3 rounded-2xl border transition-all"
                             style={{ borderColor: sel ? '#36A6B2' : 'transparent', background: sel ? '#DBEAFE' : '#F9FAFB', color: sel ? '#36A6B2' : '#6B7280' }}>
                             <span className="text-xl">{a.emoji}</span><span className="font-semibold text-sm">{a.label}</span>
                           </button>
@@ -739,7 +739,7 @@ export default function ChecklistSection({
                 )}
               </div>
               <div className="px-6 py-4 flex gap-3 border-t border-gray-50">
-                {step > 0 && <button onClick={() => setStep(s => s - 1)} className="flex-1 py-3 rounded-2xl font-semibold border-2 border-gray-200 text-gray-600">← Retour</button>}
+                {step > 0 && <button onClick={() => setStep(s => s - 1)} className="flex-1 py-3 rounded-2xl font-semibold border border-gray-200 text-gray-600">← Retour</button>}
                 {step < 2 ? (
                   <button onClick={() => setStep(s => s + 1)} disabled={!q.sexe}
                     className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-40" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>

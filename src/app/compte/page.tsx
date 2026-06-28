@@ -51,7 +51,7 @@ export default async function ComptePage() {
         {/* Déconnexion */}
         <form action={signout}>
           <button type="submit"
-            className="w-full py-4 rounded-2xl font-semibold border-2 border-red-200 text-red-400 hover:bg-red-50 transition">
+            className="w-full py-4 rounded-2xl font-semibold border border-red-200 text-red-400 hover:bg-red-50 transition">
             Se déconnecter
           </button>
         </form>

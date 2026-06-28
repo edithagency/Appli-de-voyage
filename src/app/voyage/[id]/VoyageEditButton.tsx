@@ -217,7 +217,7 @@ export default function VoyageEditButton({
                   const result = await supprimerVoyage(voyage.id)
                   if (result?.error) setError(result.error)
                 }}
-                className="w-full py-3 rounded-2xl font-semibold border-2 border-red-200 text-red-500 hover:bg-red-50 transition">
+                className="w-full py-3 rounded-2xl font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition">
                 🗑️ Supprimer ce voyage
               </button>
             </div>

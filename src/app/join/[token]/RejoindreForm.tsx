@@ -77,7 +77,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
         <button
           type="button"
           onClick={() => setMode('connecter')}
-          className="w-full py-3 rounded-xl font-semibold border-2 border-[#36A6B2] text-[#36A6B2] hover:bg-blue-50 transition"
+          className="w-full py-3 rounded-xl font-semibold border border-[#36A6B2] text-[#36A6B2] hover:bg-blue-50 transition"
         >
           J&apos;ai déjà un compte
         </button>

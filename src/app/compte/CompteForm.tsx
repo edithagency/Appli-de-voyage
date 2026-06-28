@@ -64,7 +64,7 @@ export default function CompteForm({
         <div className="grid grid-cols-5 gap-2">
           {EMOJIS.map(e => (
             <button key={e} type="button" onClick={() => setEmoji(e)}
-              className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border-2 transition"
+              className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border transition"
               style={{
                 borderColor: emoji === e ? '#36A6B2' : 'transparent',
                 background: emoji === e ? '#DBEAFE' : '#F9FAFB',

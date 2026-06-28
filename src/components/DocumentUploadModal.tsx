@@ -131,7 +131,7 @@ export default function DocumentUploadModal({
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Fichier</p>
             <label
-              className="flex flex-col items-center gap-2 p-5 rounded-2xl border-2 border-dashed cursor-pointer transition-all"
+              className="flex flex-col items-center gap-2 p-5 rounded-2xl border border-dashed cursor-pointer transition-all"
               style={{ borderColor: fileName ? '#36A6B2' : '#E5E7EB', background: fileName ? '#DBEAFE' : '#FAFAFA' }}
             >
               <span className="text-3xl">{fileName ? '✅' : '📎'}</span>
@@ -184,7 +184,7 @@ export default function DocumentUploadModal({
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Associer à</p>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setPermanent(true)}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition"
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition"
                   style={{
                     borderColor: permanent ? '#36A6B2' : '#E5E7EB',
                     background: permanent ? '#DBEAFE' : 'white',
@@ -193,7 +193,7 @@ export default function DocumentUploadModal({
                   📌 Personnel
                 </button>
                 <button type="button" onClick={() => setPermanent(false)}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition"
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition"
                   style={{
                     borderColor: !permanent ? '#36A6B2' : '#E5E7EB',
                     background: !permanent ? '#DBEAFE' : 'white',

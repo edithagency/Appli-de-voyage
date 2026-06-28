@@ -92,7 +92,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
             <button
               key={pill.key}
               onClick={() => setFiltre(pill.key)}
-              className="shrink-0 px-4 py-2 rounded-2xl text-sm font-semibold border-2 transition"
+              className="shrink-0 px-4 py-2 rounded-2xl text-sm font-semibold border transition"
               style={{
                 background: filtre === pill.key ? '#36A6B2' : 'white',
                 color: filtre === pill.key ? 'white' : '#374151',

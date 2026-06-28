@@ -287,7 +287,7 @@ export default function NouveauVoyageForm({ pays }: {
             <button
               type="button"
               onClick={() => { setStep(1); setError(null) }}
-              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border-2 border-gray-200 hover:border-gray-300 transition"
+              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
             >
               ← Retour
             </button>
@@ -316,7 +316,7 @@ export default function NouveauVoyageForm({ pays }: {
                   key={m.value}
                   type="button"
                   onClick={() => setModeGestion(m.value as 'organisateur' | 'partage')}
-                  className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition ${modeGestion === m.value ? 'border-[#36A6B2] bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
+                  className={`flex items-start gap-4 p-4 rounded-xl border text-left transition ${modeGestion === m.value ? 'border-[#36A6B2] bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
                 >
                   <span className="text-2xl mt-0.5">{m.emoji}</span>
                   <div className="flex-1">
@@ -347,7 +347,7 @@ export default function NouveauVoyageForm({ pays }: {
             <button
               type="button"
               onClick={() => { setStep(2); setError(null) }}
-              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border-2 border-gray-200 hover:border-gray-300 transition"
+              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
             >
               ← Retour
             </button>

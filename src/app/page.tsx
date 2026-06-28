@@ -40,7 +40,7 @@ export default function HomePage() {
             <Link
               href="/auth/signup"
               className="w-full px-6 py-3 rounded-full text-sm font-semibold text-white text-center"
-              style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)', boxShadow: '0 4px 12px rgba(54, 166, 178, 0.35)' }}
+              style={{ background: '#36A6B2', boxShadow: '0 4px 12px rgba(54, 166, 178, 0.35)' }}
             >
               S&apos;inscrire gratuitement
             </Link>

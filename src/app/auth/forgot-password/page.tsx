@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
           type="submit"
           disabled={loading}
           className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+          style={{ background: loading ? '#9CC9CD' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
         >
           {loading ? 'Envoi...' : 'Envoyer le lien'}
         </button>

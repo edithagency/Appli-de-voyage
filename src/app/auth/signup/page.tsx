@@ -123,7 +123,7 @@ export default function SignupPage() {
           type="submit"
           disabled={loading}
           className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)', boxShadow: '0 4px 12px rgba(54, 166, 178, 0.35)' }}
+          style={{ background: loading ? '#9CC9CD' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)', boxShadow: '0 4px 12px rgba(54, 166, 178, 0.35)' }}
         >
           {loading ? 'Création...' : 'Créer mon compte'}
         </button>

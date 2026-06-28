@@ -147,7 +147,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
       />
 
       {/* Spacer : pousse le contenu blanc sous l'image fixe */}
-      <div style={{ height: 'calc(45vh - 24px)' }} />
+      <div style={{ height: 'calc(32vh - 24px)' }} />
 
       <div className="relative bg-white rounded-t-3xl pb-28" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.08)', minHeight: '60vh', zIndex: 10 }}>
         <main className="max-w-2xl mx-auto px-5 pt-6 flex flex-col gap-4">

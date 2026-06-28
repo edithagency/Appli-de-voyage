@@ -55,7 +55,7 @@ export default function VoyageHero({
   return createPortal(
     <div
       className="overflow-hidden"
-      style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 0, height: '45vh', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 0, height: '32vh', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
     >
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element

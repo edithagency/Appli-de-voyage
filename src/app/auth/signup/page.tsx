@@ -32,8 +32,8 @@ export default function SignupPage() {
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-gray-800">
-      <h1 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Créer un compte</h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Gratuit, sans carte bancaire</p>
+      <h1 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Créer votre compte</h1>
+      <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Gratuit, sans carte bancaire.</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">

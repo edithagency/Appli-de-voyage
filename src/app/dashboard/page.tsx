@@ -113,12 +113,11 @@ export default async function DashboardPage() {
     <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
 
       {/* Header mobile */}
-      <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">✈️</span>
-            <span className="font-bold text-lg" style={{ color: '#36A6B2' }}>Bon Vol</span>
-          </div>
+      <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto pt-2 sm:pt-8 pb-1 flex justify-center">
+          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-5" />
+        </div>
+        <div className="max-w-2xl mx-auto flex items-center justify-end pb-3">
           <Link href="/compte"
             className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>

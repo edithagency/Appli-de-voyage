@@ -56,7 +56,7 @@ export default function OutilsPage() {
   return (
     <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-2 pb-1 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-2 sm:pt-8 pb-1 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-5" />
         </div>
         <div className="max-w-2xl mx-auto pb-3">

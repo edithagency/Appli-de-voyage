@@ -25,8 +25,7 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [{ data: profile }, { data: voyagesPropres }, { data: participations }, { data: paysList }] = await Promise.all([
-    supabase.from('users').select('prenom').eq('id', user.id).single(),
+  const [{ data: voyagesPropres }, { data: participations }, { data: paysList }] = await Promise.all([
     supabase.from('voyages')
       .select('id, nom, destination, pays_code, date_depart, date_retour, statut')
       .eq('user_id', user.id)
@@ -107,8 +106,6 @@ export default async function DashboardPage() {
     }
   }
 
-  const prenom = profile?.prenom ?? user.email?.split('@')[0]
-
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
 
@@ -126,23 +123,6 @@ export default async function DashboardPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-
-        {/* Greeting */}
-        <div className="mb-6 flex items-center justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bonjour {prenom} 👋</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              {tousLesVoyages.length === 0
-                ? 'Prêt à planifier ton prochain voyage ?'
-                : `${tousLesVoyages.length} voyage${tousLesVoyages.length > 1 ? 's' : ''} en préparation`}
-            </p>
-          </div>
-          <Link href="/compte"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            {(prenom?.[0] ?? '?').toUpperCase()}
-          </Link>
-        </div>
 
         {/* Voyages */}
         {tousLesVoyages.length === 0 ? (

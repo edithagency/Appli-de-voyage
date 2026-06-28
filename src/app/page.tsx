@@ -18,7 +18,7 @@ export default function HomePage() {
         style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.55) 100%)' }}
       />
 
-      <div className="absolute top-20 sm:top-28 inset-x-0 flex flex-col items-center text-center px-6">
+      <div className="absolute top-28 sm:top-36 inset-x-0 flex flex-col items-center text-center px-6">
         <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44 mb-3" />
         <p className="text-white text-sm font-bold leading-snug drop-shadow">
           Préparez votre voyage sereinement.<br />

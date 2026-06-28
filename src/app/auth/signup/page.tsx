@@ -49,7 +49,7 @@ export default function SignupPage() {
               required
               autoComplete="given-name"
               placeholder="Marie"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
             />
           </div>
           <div>
@@ -63,7 +63,7 @@ export default function SignupPage() {
               required
               autoComplete="family-name"
               placeholder="Dupont"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
             />
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function SignupPage() {
             required
             autoComplete="email"
             placeholder="toi@exemple.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -95,7 +95,7 @@ export default function SignupPage() {
             minLength={8}
             autoComplete="new-password"
             placeholder="Minimum 8 caractères"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -110,7 +110,7 @@ export default function SignupPage() {
             required
             autoComplete="new-password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -126,8 +126,8 @@ export default function SignupPage() {
                 onClick={() => setEmoji(e)}
                 className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border-2 transition"
                 style={{
-                  borderColor: emoji === e ? '#147046' : 'transparent',
-                  background: emoji === e ? '#F6F08F' : '#F9FAFB',
+                  borderColor: emoji === e ? '#1D4ED8' : 'transparent',
+                  background: emoji === e ? '#DBEAFE' : '#F9FAFB',
                 }}
               >
                 {e}
@@ -146,7 +146,7 @@ export default function SignupPage() {
           type="submit"
           disabled={loading}
           className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #147046, #25C490)' }}
+          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           {loading ? 'Création...' : 'Créer mon compte'}
         </button>
@@ -154,12 +154,12 @@ export default function SignupPage() {
 
       <p className="text-center text-xs text-gray-400 mt-4">
         En créant un compte tu acceptes nos{' '}
-        <Link href="/politique-confidentialite" className="underline hover:text-[#147046]">conditions de confidentialité</Link>
+        <Link href="/politique-confidentialite" className="underline hover:text-[#1D4ED8]">conditions de confidentialité</Link>
       </p>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
         Déjà un compte ?{' '}
-        <Link href="/auth/login" className="text-[#147046] font-semibold hover:underline">
+        <Link href="/auth/login" className="text-[#1D4ED8] font-semibold hover:underline">
           Se connecter
         </Link>
       </p>

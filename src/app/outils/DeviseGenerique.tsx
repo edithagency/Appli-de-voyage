@@ -124,9 +124,9 @@ export default function DeviseGenerique() {
           onClick={() => setPicker(picker === 'from' ? null : 'from')}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-bold shrink-0 transition"
           style={{
-            background: picker === 'from' ? '#147046' : 'white',
-            color: picker === 'from' ? 'white' : '#147046',
-            borderColor: picker === 'from' ? '#147046' : '#e5e7eb',
+            background: picker === 'from' ? '#1D4ED8' : 'white',
+            color: picker === 'from' ? 'white' : '#1D4ED8',
+            borderColor: picker === 'from' ? '#1D4ED8' : '#e5e7eb',
           }}
         >
           <span>{fromInfo.flag}</span>
@@ -162,9 +162,9 @@ export default function DeviseGenerique() {
           onClick={() => setPicker(picker === 'to' ? null : 'to')}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-bold shrink-0 transition"
           style={{
-            background: picker === 'to' ? '#147046' : 'white',
-            color: picker === 'to' ? 'white' : '#147046',
-            borderColor: picker === 'to' ? '#147046' : '#e5e7eb',
+            background: picker === 'to' ? '#1D4ED8' : 'white',
+            color: picker === 'to' ? 'white' : '#1D4ED8',
+            borderColor: picker === 'to' ? '#1D4ED8' : '#e5e7eb',
           }}
         >
           <span>{toInfo.flag}</span>
@@ -178,7 +178,7 @@ export default function DeviseGenerique() {
             value={valTo}
             onChange={e => handleTo(e.target.value)}
             className="w-full bg-transparent text-lg font-bold focus:outline-none"
-            style={{ color: '#147046' }}
+            style={{ color: '#1D4ED8' }}
             placeholder="0"
           />
           <span className="text-sm text-gray-400 shrink-0">{toInfo.symbole}</span>

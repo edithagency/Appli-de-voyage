@@ -80,7 +80,7 @@ export default function DecalageHoraire() {
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-1">
           <p className="text-xs text-gray-400 font-medium">Ici</p>
-          <p className="text-2xl font-bold tabular-nums" style={{ color: '#147046' }}>
+          <p className="text-2xl font-bold tabular-nums" style={{ color: '#1D4ED8' }}>
             {formatHeure(now, ici)}
           </p>
           <p className="text-xs text-gray-500 capitalize leading-tight">{formatJour(now, ici)}</p>
@@ -97,7 +97,7 @@ export default function DecalageHoraire() {
       {/* Badge décalage */}
       <div className="flex justify-center">
         <span className="px-4 py-1.5 rounded-full text-sm font-bold"
-          style={{ background: diff === 0 ? '#F3F4F6' : '#F6F08F', color: diff === 0 ? '#6B7280' : '#92400E' }}>
+          style={{ background: diff === 0 ? '#F3F4F6' : '#DBEAFE', color: diff === 0 ? '#6B7280' : '#92400E' }}>
           {diffLabel} par rapport à chez toi
         </span>
       </div>

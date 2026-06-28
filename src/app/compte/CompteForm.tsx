@@ -43,7 +43,7 @@ export default function CompteForm({
               value={prenom}
               onChange={e => setPrenom(e.target.value)}
               placeholder="Marie"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
             />
           </div>
           <div>
@@ -52,7 +52,7 @@ export default function CompteForm({
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Dupont"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
             />
           </div>
         </div>
@@ -66,8 +66,8 @@ export default function CompteForm({
             <button key={e} type="button" onClick={() => setEmoji(e)}
               className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border-2 transition"
               style={{
-                borderColor: emoji === e ? '#147046' : 'transparent',
-                background: emoji === e ? '#F6F08F' : '#F9FAFB',
+                borderColor: emoji === e ? '#1D4ED8' : 'transparent',
+                background: emoji === e ? '#DBEAFE' : '#F9FAFB',
               }}>
               {e}
             </button>
@@ -83,7 +83,7 @@ export default function CompteForm({
         onClick={handleSave}
         disabled={isPending}
         className="w-full py-4 rounded-2xl font-semibold text-white disabled:opacity-60"
-        style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+        style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
       >
         {isPending ? 'Sauvegarde...' : 'Sauvegarder'}
       </button>

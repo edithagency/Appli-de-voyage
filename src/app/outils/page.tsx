@@ -54,7 +54,7 @@ export default function OutilsPage() {
   const [open, setOpen] = useState<string | null>('devise')
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FEFCE8' }}>
+    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-lg font-bold text-gray-900">🛠️ Outils de voyage</h1>
@@ -102,7 +102,7 @@ export default function OutilsPage() {
                 <div className="flex items-center gap-2">
                   <p className="font-semibold text-gray-800 text-sm">{outil.titre}</p>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                    style={{ background: '#F6F08F', color: '#92400E' }}>
+                    style={{ background: '#DBEAFE', color: '#92400E' }}>
                     Premium
                   </span>
                 </div>

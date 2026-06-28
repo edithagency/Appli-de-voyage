@@ -25,7 +25,7 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
   if (estExpire) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 text-center"
-        style={{ background: '#FEFCE8' }}>
+        style={{ background: '#FFFFFF' }}>
         <div className="w-full max-w-md bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <div className="text-4xl mb-3">⏰</div>
           <h1 className="text-xl font-bold text-gray-900 mb-2">Ce lien a expiré</h1>
@@ -59,13 +59,13 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
-      style={{ background: '#FEFCE8' }}>
+      style={{ background: '#FFFFFF' }}>
 
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">✈️</div>
-          <h1 className="text-2xl font-bold" style={{ color: '#147046' }}>Tu es invité(e) !</h1>
+          <h1 className="text-2xl font-bold" style={{ color: '#1D4ED8' }}>Tu es invité(e) !</h1>
           <p className="text-gray-500 mt-1 text-sm">
             Rejoins le voyage <span className="font-semibold text-gray-700">{voyage.nom}</span>
           </p>
@@ -75,7 +75,7 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
         <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-5 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+              style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
               🌍
             </div>
             <div>

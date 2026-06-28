@@ -33,7 +33,7 @@ export default function PermisGuide() {
   return (
     <div className="flex flex-col gap-4">
       {/* Info IDP */}
-      <div className="rounded-2xl px-4 py-3" style={{ background: '#F6F08F' }}>
+      <div className="rounded-2xl px-4 py-3" style={{ background: '#DBEAFE' }}>
         <p className="text-xs font-bold text-gray-700 mb-1">🌍 Le Permis International (PIC)</p>
         <p className="text-xs text-gray-600 leading-relaxed">{IDP_INFO}</p>
       </div>

@@ -59,7 +59,7 @@ function DocItem({ doc, onDelete }: { doc: Doc; onDelete: (id: string, path: str
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-sm font-semibold text-gray-800">{meta.label}</span>
-          {doc.membre && <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 text-green-700">{doc.membre.prenom}</span>}
+          {doc.membre && <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600">{doc.membre.prenom}</span>}
           {doc.voyage_id
             ? <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Ce voyage</span>
             : <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">Permanent</span>
@@ -71,7 +71,7 @@ function DocItem({ doc, onDelete }: { doc: Doc; onDelete: (id: string, path: str
       <div className="flex gap-2 shrink-0">
         <button onClick={handleOpen} disabled={opening}
           className="w-10 h-10 rounded-2xl flex items-center justify-center text-base transition"
-          style={{ background: '#F6F08F', color: '#147046' }}>
+          style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
           {opening ? '…' : '👁️'}
         </button>
         <button onClick={() => onDelete(doc.id, doc.storage_path, doc.voyage_id)}
@@ -121,7 +121,7 @@ export default function VoyageDocuments({
         <h2 className="font-bold text-gray-900">🔒 Documents</h2>
         <button onClick={() => { setModalPresetType(undefined); setShowModal(true) }}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
           <span>+</span> Ajouter
         </button>
       </div>

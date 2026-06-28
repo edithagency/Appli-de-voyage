@@ -16,7 +16,7 @@ export default async function ComptePage() {
     .single()
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FEFCE8' }}>
+    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <Link href="/dashboard" className="text-gray-400 text-lg">←</Link>
@@ -29,7 +29,7 @@ export default async function ComptePage() {
         {/* Avatar */}
         <div className="flex flex-col items-center pt-2 pb-4">
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-3"
-            style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+            style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
             {profile?.emoji_avatar ?? (profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()}
           </div>
           <p className="font-bold text-gray-900 text-lg">
@@ -54,7 +54,7 @@ export default async function ComptePage() {
         </form>
 
         {/* Version */}
-        <p className="text-center text-xs text-gray-300 pb-2">ReadyToFly · v1.0</p>
+        <p className="text-center text-xs text-gray-300 pb-2">Bon Vol · v1.0</p>
         <DerniereMiseAJour />
       </main>
 

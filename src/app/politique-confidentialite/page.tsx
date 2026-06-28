@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function PolitiqueConfidentialitePage() {
   return (
-    <div className="min-h-screen pb-12" style={{ background: '#FEFCE8' }}>
+    <div className="min-h-screen pb-12" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <Link href="/" className="text-gray-400 text-lg">←</Link>
@@ -14,7 +14,7 @@ export default function PolitiqueConfidentialitePage() {
         <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-6 text-sm text-gray-600 leading-relaxed">
 
           <p>
-            ReadyToFly accorde une grande importance à la protection de tes données personnelles.
+            Bon Vol accorde une grande importance à la protection de tes données personnelles.
             Cette page explique quelles informations sont collectées, pourquoi, et comment elles sont utilisées.
           </p>
 
@@ -61,17 +61,17 @@ export default function PolitiqueConfidentialitePage() {
             <h2 className="font-bold text-gray-900 mb-2">⚖️ Tes droits</h2>
             <p>
               Tu peux à tout moment consulter et modifier tes informations depuis la page{' '}
-              <Link href="/compte" className="underline hover:text-[#147046]">Mon compte</Link>.
+              <Link href="/compte" className="underline hover:text-[#1D4ED8]">Mon compte</Link>.
               Pour exercer ton droit d&apos;accès, de rectification ou de suppression de tes données
               (conformément au RGPD), contacte-nous à l&apos;adresse{' '}
-              <a href="mailto:contact@readytofly.app" className="underline hover:text-[#147046]">contact@readytofly.app</a>.
+              <a href="mailto:contact@readytofly.app" className="underline hover:text-[#1D4ED8]">contact@readytofly.app</a>.
             </p>
           </div>
 
           <div>
             <h2 className="font-bold text-gray-900 mb-2">🍪 Cookies</h2>
             <p>
-              ReadyToFly utilise uniquement des cookies techniques nécessaires à l&apos;authentification et au bon
+              Bon Vol utilise uniquement des cookies techniques nécessaires à l&apos;authentification et au bon
               fonctionnement de l&apos;application. Aucun cookie publicitaire ou de tracking tiers n&apos;est utilisé.
             </p>
           </div>

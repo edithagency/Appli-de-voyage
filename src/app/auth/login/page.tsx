@@ -36,7 +36,7 @@ export default function LoginPage() {
             required
             autoComplete="email"
             placeholder="toi@exemple.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Mot de passe
             </label>
-            <Link href="/auth/forgot-password" className="text-xs text-[#147046] hover:underline">
+            <Link href="/auth/forgot-password" className="text-xs text-[#1D4ED8] hover:underline">
               Mot de passe oublié ?
             </Link>
           </div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -70,7 +70,7 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #147046, #25C490)' }}
+          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           {loading ? 'Connexion...' : 'Se connecter'}
         </button>
@@ -78,7 +78,7 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
         Pas encore de compte ?{' '}
-        <Link href="/auth/signup" className="text-[#147046] font-semibold hover:underline">
+        <Link href="/auth/signup" className="text-[#1D4ED8] font-semibold hover:underline">
           Créer un compte
         </Link>
       </p>

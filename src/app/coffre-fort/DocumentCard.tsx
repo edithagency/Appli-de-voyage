@@ -69,7 +69,7 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-gray-900 text-sm">{meta.label}</span>
           {doc.membre && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-green-700">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
               {doc.membre.prenom}
             </span>
           )}
@@ -102,7 +102,7 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
       <div className="flex flex-col gap-2 shrink-0">
         <button onClick={handleOpen} disabled={opening}
           className="text-xs px-3 py-1.5 rounded-xl font-semibold text-white disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
           {opening ? '...' : '👁️'}
         </button>
         {!shared && (

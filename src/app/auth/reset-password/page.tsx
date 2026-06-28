@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
             minLength={8}
             autoComplete="new-password"
             placeholder="8 caractères minimum"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -65,7 +65,7 @@ export default function ResetPasswordPage() {
             minLength={8}
             autoComplete="new-password"
             placeholder="8 caractères minimum"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent transition"
           />
         </div>
 
@@ -79,14 +79,14 @@ export default function ResetPasswordPage() {
           type="submit"
           disabled={loading}
           className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #147046, #25C490)' }}
+          style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           {loading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-        <Link href="/auth/login" className="text-[#147046] font-semibold hover:underline">
+        <Link href="/auth/login" className="text-[#1D4ED8] font-semibold hover:underline">
           ← Retour à la connexion
         </Link>
       </p>

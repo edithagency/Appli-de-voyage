@@ -126,14 +126,14 @@ export default function NouveauVoyageForm({ pays }: {
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
               style={{
-                background: step >= s ? '#147046' : '#E5E7EB',
+                background: step >= s ? '#1D4ED8' : '#E5E7EB',
                 color: step >= s ? 'white' : '#9CA3AF',
               }}
             >
               {s}
             </div>
             {s < (aDesParticipants ? 3 : 2) && (
-              <div className="h-0.5 w-8 rounded" style={{ background: step > s ? '#147046' : '#E5E7EB' }} />
+              <div className="h-0.5 w-8 rounded" style={{ background: step > s ? '#1D4ED8' : '#E5E7EB' }} />
             )}
           </div>
         ))}
@@ -156,7 +156,7 @@ export default function NouveauVoyageForm({ pays }: {
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Ex : Vacances au Japon 2025"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] transition"
             />
           </div>
 
@@ -169,7 +169,7 @@ export default function NouveauVoyageForm({ pays }: {
               onFocus={() => setShowDropdown(true)}
               onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
               placeholder="Rechercher un pays..."
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] transition"
             />
             {showDropdown && search.length > 0 && paysFiltered.length > 0 && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
@@ -178,11 +178,11 @@ export default function NouveauVoyageForm({ pays }: {
                     key={p.code}
                     type="button"
                     onMouseDown={() => handleSelectPays(p)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-yellow-50 text-left transition"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition"
                   >
                     <span className="text-xl">{p.emoji}</span>
                     <span className="text-gray-800">{p.nom_fr}</span>
-                    {selectedPays?.code === p.code && <span className="ml-auto text-[#147046]">✓</span>}
+                    {selectedPays?.code === p.code && <span className="ml-auto text-[#1D4ED8]">✓</span>}
                   </button>
                 ))}
               </div>
@@ -197,7 +197,7 @@ export default function NouveauVoyageForm({ pays }: {
                 value={dateDepart}
                 min={today}
                 onChange={e => setDateDepart(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] transition"
               />
             </div>
             <div>
@@ -207,7 +207,7 @@ export default function NouveauVoyageForm({ pays }: {
                 value={dateRetour}
                 min={dateDepart || today}
                 onChange={e => setDateRetour(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046] transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] transition"
               />
             </div>
           </div>
@@ -218,7 +218,7 @@ export default function NouveauVoyageForm({ pays }: {
             type="button"
             onClick={validerStep1}
             className="w-full py-4 rounded-xl font-semibold text-white text-lg"
-            style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+            style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
           >
             Continuer →
           </button>
@@ -236,7 +236,7 @@ export default function NouveauVoyageForm({ pays }: {
             {participants.length > 0 && (
               <div className="flex flex-col gap-2 mb-4">
                 {participants.map((p, i) => (
-                  <div key={i} className="flex items-center gap-3 px-3 py-2 bg-yellow-50 rounded-xl border border-yellow-100">
+                  <div key={i} className="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-xl border border-blue-100">
                     <span className="text-lg">{p.type === 'enfant' ? '👶' : '🧑'}</span>
                     <span className="font-medium text-gray-800 flex-1">{p.prenom}</span>
                     <span className="text-xs text-gray-400 capitalize">{p.type}</span>
@@ -260,12 +260,12 @@ export default function NouveauVoyageForm({ pays }: {
                 onChange={e => setNewPrenom(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
                 placeholder="Prénom"
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] transition text-sm"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] transition text-sm"
               />
               <select
                 value={newType}
                 onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#147046] transition text-sm"
+                className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] transition text-sm"
               >
                 <option value="adulte">Adulte</option>
                 <option value="enfant">Enfant</option>
@@ -274,7 +274,7 @@ export default function NouveauVoyageForm({ pays }: {
                 type="button"
                 onClick={ajouterParticipant}
                 className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm"
-                style={{ background: '#147046' }}
+                style={{ background: '#1D4ED8' }}
               >
                 + Ajouter
               </button>
@@ -296,7 +296,7 @@ export default function NouveauVoyageForm({ pays }: {
               onClick={validerStep2}
               disabled={isPending}
               className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+              style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
             >
               {isPending ? 'Création...' : aDesParticipants ? 'Continuer →' : '✈️ Créer le voyage'}
             </button>
@@ -316,14 +316,14 @@ export default function NouveauVoyageForm({ pays }: {
                   key={m.value}
                   type="button"
                   onClick={() => setModeGestion(m.value as 'organisateur' | 'partage')}
-                  className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition ${modeGestion === m.value ? 'border-[#147046] bg-yellow-50' : 'border-gray-100 hover:border-gray-200'}`}
+                  className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition ${modeGestion === m.value ? 'border-[#1D4ED8] bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
                 >
                   <span className="text-2xl mt-0.5">{m.emoji}</span>
                   <div className="flex-1">
                     <p className="font-semibold text-gray-800">{m.label}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
                   </div>
-                  {modeGestion === m.value && <span className="text-[#147046] font-bold mt-0.5">✓</span>}
+                  {modeGestion === m.value && <span className="text-[#1D4ED8] font-bold mt-0.5">✓</span>}
                 </button>
               ))}
             </div>
@@ -333,7 +333,7 @@ export default function NouveauVoyageForm({ pays }: {
               <p className="text-xs text-gray-400 mb-2">Participants :</p>
               <div className="flex flex-wrap gap-2">
                 {participants.map((p, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-50 text-[#147046] text-sm font-medium">
+                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-[#1D4ED8] text-sm font-medium">
                     {p.type === 'enfant' ? '👶' : '🧑'} {p.prenom}
                   </span>
                 ))}
@@ -356,7 +356,7 @@ export default function NouveauVoyageForm({ pays }: {
               onClick={() => handleSubmit()}
               disabled={isPending}
               className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+              style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
             >
               {isPending ? 'Création...' : '✈️ Créer le voyage'}
             </button>

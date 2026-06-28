@@ -117,9 +117,9 @@ export default function DocumentUploadModal({
                 <button key={t.value} type="button" onClick={() => handleTypeChange(t.value)}
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium text-left transition-all"
                   style={{
-                    border: `2px solid ${type === t.value ? '#147046' : 'transparent'}`,
-                    background: type === t.value ? '#F6F08F' : '#F9FAFB',
-                    color: type === t.value ? '#147046' : '#6B7280',
+                    border: `2px solid ${type === t.value ? '#1D4ED8' : 'transparent'}`,
+                    background: type === t.value ? '#DBEAFE' : '#F9FAFB',
+                    color: type === t.value ? '#1D4ED8' : '#6B7280',
                   }}>
                   <span>{t.emoji}</span><span>{t.label}</span>
                 </button>
@@ -132,7 +132,7 @@ export default function DocumentUploadModal({
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Fichier</p>
             <label
               className="flex flex-col items-center gap-2 p-5 rounded-2xl border-2 border-dashed cursor-pointer transition-all"
-              style={{ borderColor: fileName ? '#147046' : '#E5E7EB', background: fileName ? '#F6F08F' : '#FAFAFA' }}
+              style={{ borderColor: fileName ? '#1D4ED8' : '#E5E7EB', background: fileName ? '#DBEAFE' : '#FAFAFA' }}
             >
               <span className="text-3xl">{fileName ? '✅' : '📎'}</span>
               <span className="text-sm text-gray-500 text-center">{fileName ?? 'PDF, JPG ou PNG · max 10 Mo'}</span>
@@ -156,7 +156,7 @@ export default function DocumentUploadModal({
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nom (optionnel)</p>
             <input type="text" name="nom"
               placeholder="Ex : Hôtel Ibis Bangkok, Billets Air France…"
-              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]" />
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
           </div>
 
           {/* Pour qui — pills (même UX partout) */}
@@ -168,8 +168,8 @@ export default function DocumentUploadModal({
                   <button key={m.id} type="button" onClick={() => setMembreId(m.id)}
                     className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                     style={{
-                      background: membreId === m.id ? '#147046' : '#F6F08F',
-                      color: membreId === m.id ? 'white' : '#147046',
+                      background: membreId === m.id ? '#1D4ED8' : '#DBEAFE',
+                      color: membreId === m.id ? 'white' : '#1D4ED8',
                     }}>
                     {m.prenom}
                   </button>
@@ -186,18 +186,18 @@ export default function DocumentUploadModal({
                 <button type="button" onClick={() => setPermanent(true)}
                   className="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition"
                   style={{
-                    borderColor: permanent ? '#147046' : '#E5E7EB',
-                    background: permanent ? '#F6F08F' : 'white',
-                    color: permanent ? '#147046' : '#9CA3AF',
+                    borderColor: permanent ? '#1D4ED8' : '#E5E7EB',
+                    background: permanent ? '#DBEAFE' : 'white',
+                    color: permanent ? '#1D4ED8' : '#9CA3AF',
                   }}>
                   📌 Personnel
                 </button>
                 <button type="button" onClick={() => setPermanent(false)}
                   className="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition"
                   style={{
-                    borderColor: !permanent ? '#147046' : '#E5E7EB',
-                    background: !permanent ? '#F6F08F' : 'white',
-                    color: !permanent ? '#147046' : '#9CA3AF',
+                    borderColor: !permanent ? '#1D4ED8' : '#E5E7EB',
+                    background: !permanent ? '#DBEAFE' : 'white',
+                    color: !permanent ? '#1D4ED8' : '#9CA3AF',
                   }}>
                   {singleVoyage ? `✈️ ${voyages[0].nom}` : '✈️ Un voyage'}
                 </button>
@@ -207,7 +207,7 @@ export default function DocumentUploadModal({
                 <select
                   value={voyageId}
                   onChange={e => setVoyageId(e.target.value)}
-                  className="w-full mt-2 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]"
+                  className="w-full mt-2 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
                 >
                   {voyages.map(v => (
                     <option key={v.id} value={v.id}>{v.nom}</option>
@@ -222,7 +222,7 @@ export default function DocumentUploadModal({
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Date d'expiration</p>
               <input type="date" name="date_expiration"
-                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#147046]" />
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
             </div>
           )}
 
@@ -232,7 +232,7 @@ export default function DocumentUploadModal({
 
           <button type="submit" disabled={loading}
             className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
-            style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+            style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
             {loading ? 'Enregistrement…' : 'Enregistrer le document'}
           </button>
         </form>

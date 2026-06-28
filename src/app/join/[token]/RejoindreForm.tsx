@@ -52,7 +52,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
             })
           }}
           className="w-full py-4 rounded-xl font-semibold text-white text-lg disabled:opacity-60"
-          style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           {isPending ? 'Rejoindre...' : `Rejoindre en tant que ${membrePrenom} →`}
         </button>
@@ -64,20 +64,20 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-3">
         <p className="text-center text-gray-600 text-sm mb-2">
-          Pour rejoindre le voyage en tant que <strong>{membrePrenom}</strong>, tu as besoin d&apos;un compte ReadyToFly.
+          Pour rejoindre le voyage en tant que <strong>{membrePrenom}</strong>, tu as besoin d&apos;un compte Bon Vol.
         </p>
         <button
           type="button"
           onClick={() => setMode('creer')}
           className="w-full py-3 rounded-xl font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           Créer mon compte
         </button>
         <button
           type="button"
           onClick={() => setMode('connecter')}
-          className="w-full py-3 rounded-xl font-semibold border-2 border-[#147046] text-[#147046] hover:bg-yellow-50 transition"
+          className="w-full py-3 rounded-xl font-semibold border-2 border-[#1D4ED8] text-[#1D4ED8] hover:bg-blue-50 transition"
         >
           J&apos;ai déjà un compte
         </button>
@@ -110,7 +110,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
               type="text"
               defaultValue={membrePrenom}
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
             />
           </div>
           <div>
@@ -119,7 +119,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
               name="nom"
               type="text"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
             />
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
             type="email"
             required
             placeholder="toi@exemple.com"
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
           />
         </div>
 
@@ -143,7 +143,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
             required
             minLength={8}
             placeholder="Minimum 8 caractères"
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
           />
         </div>
 
@@ -153,7 +153,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
           type="submit"
           disabled={isPending}
           className="w-full py-3 rounded-xl font-semibold text-white disabled:opacity-60"
-          style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           {isPending ? 'Création...' : 'Créer mon compte et rejoindre →'}
         </button>
@@ -187,7 +187,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
           type="email"
           required
           placeholder="toi@exemple.com"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
         />
       </div>
 
@@ -198,7 +198,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
           type="password"
           required
           placeholder="••••••••"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#147046] text-sm"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
         />
       </div>
 
@@ -208,7 +208,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
         type="submit"
         disabled={isPending}
         className="w-full py-3 rounded-xl font-semibold text-white disabled:opacity-60"
-        style={{ background: 'linear-gradient(135deg, #147046, #25C490)' }}
+        style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
       >
         {isPending ? 'Connexion...' : 'Se connecter et rejoindre →'}
       </button>

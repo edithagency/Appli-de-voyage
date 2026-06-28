@@ -9,13 +9,13 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "ReadyToFly — Préparez votre voyage sereinement",
+  title: "Bon Vol — Préparez votre voyage sereinement",
   description: "L'application qui vous aide à préparer votre départ en toute sérénité. Checklist, documents, rappels — tout en un.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ReadyToFly",
+    title: "Bon Vol",
   },
   other: {
     "mobile-web-app-capable": "yes",

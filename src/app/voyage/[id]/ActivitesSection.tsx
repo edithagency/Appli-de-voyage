@@ -43,7 +43,7 @@ function NoteLines({ notes }: { notes: string }) {
     <div className="flex flex-col gap-1.5 mt-2">
       {lines.map((line, i) => {
         let style = 'bg-gray-50 text-gray-600'
-        if (line.startsWith('💡')) style = 'bg-yellow-50 text-green-700'
+        if (line.startsWith('💡')) style = 'bg-indigo-50 text-indigo-700'
         else if (line.startsWith('⚠️')) style = 'bg-amber-50 text-amber-700'
         else if (line.startsWith('🔗')) style = 'bg-blue-50 text-blue-700'
 
@@ -144,7 +144,7 @@ export default function ActivitesSection({
         {['Toutes', ...villes].map(v => (
           <button key={v} onClick={() => setSelectedVille(v)}
             className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors"
-            style={{ background: selectedVille === v ? '#147046' : '#F3F4F6', color: selectedVille === v ? 'white' : '#6B7280' }}>
+            style={{ background: selectedVille === v ? '#1D4ED8' : '#F3F4F6', color: selectedVille === v ? 'white' : '#6B7280' }}>
             {v}
           </button>
         ))}
@@ -154,13 +154,13 @@ export default function ActivitesSection({
       <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
         <button onClick={() => setSelectedCategorie('Toutes')}
           className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors"
-          style={{ background: selectedCategorie === 'Toutes' ? '#147046' : '#F3F4F6', color: selectedCategorie === 'Toutes' ? 'white' : '#6B7280' }}>
+          style={{ background: selectedCategorie === 'Toutes' ? '#1D4ED8' : '#F3F4F6', color: selectedCategorie === 'Toutes' ? 'white' : '#6B7280' }}>
           Toutes
         </button>
         {categories.map(c => (
           <button key={c} onClick={() => setSelectedCategorie(c)}
             className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors"
-            style={{ background: selectedCategorie === c ? '#147046' : '#F3F4F6', color: selectedCategorie === c ? 'white' : '#6B7280' }}>
+            style={{ background: selectedCategorie === c ? '#1D4ED8' : '#F3F4F6', color: selectedCategorie === c ? 'white' : '#6B7280' }}>
             {CATEGORIES[c].emoji} {CATEGORIES[c].label}
           </button>
         ))}

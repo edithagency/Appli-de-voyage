@@ -69,7 +69,7 @@ export default function TailleConverter() {
           <button key={c.key} onClick={() => setCat(c.key)}
             className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
             style={{
-              background: cat === c.key ? '#147046' : '#F3F4F6',
+              background: cat === c.key ? '#1D4ED8' : '#F3F4F6',
               color: cat === c.key ? 'white' : '#6B7280',
             }}>
             <span>{c.emoji}</span> {c.label}

@@ -1,12 +1,12 @@
 {
-  "name": "ReadyToFly",
-  "short_name": "ReadyToFly",
+  "name": "Bon Vol",
+  "short_name": "Bon Vol",
   "description": "Préparez votre voyage sereinement. Checklist, documents, outils — tout en un.",
   "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FEFCE8",
-  "theme_color": "#147046",
+  "background_color": "#FFFFFF",
+  "theme_color": "#1D4ED8",
   "icons": [
     {
       "src": "/icon-192.svg",

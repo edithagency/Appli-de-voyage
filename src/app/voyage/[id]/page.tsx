@@ -134,7 +134,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FEFCE8' }}>
+    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <Link href="/dashboard" className="text-gray-400 text-lg">←</Link>
@@ -149,7 +149,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
       <main className="max-w-2xl mx-auto px-5 py-4 flex flex-col gap-4">
 
-        <div className="rounded-2xl overflow-hidden border border-gray-200" style={{ aspectRatio: '16/9', position: 'relative', background: 'linear-gradient(135deg, #147046, #25C490)' }}>
+        <div className="rounded-2xl overflow-hidden border border-gray-200" style={{ aspectRatio: '16/9', position: 'relative', background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
           {photo && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -179,7 +179,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
           <div style={{ position: 'absolute', top: 14, right: 14 }}>
             {jours > 0 ? (
-              <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.9)', color: jours <= 7 ? '#92400E' : '#147046' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.9)', color: jours <= 7 ? '#92400E' : '#1D4ED8' }}>
                 J-{jours}
               </span>
             ) : (

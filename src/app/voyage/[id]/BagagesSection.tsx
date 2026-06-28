@@ -41,7 +41,7 @@ export default function BagagesSection({
         <button
           onClick={() => setShowSelect(!showSelect)}
           className="text-xs px-3 py-2 rounded-xl font-semibold transition"
-          style={{ background: '#F6F08F', color: '#147046' }}>
+          style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
           {compagnie ? '✏️ Changer' : '+ Choisir ma compagnie'}
         </button>
       </div>
@@ -54,7 +54,7 @@ export default function BagagesSection({
             placeholder="Rechercher une compagnie..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#147046] mb-3"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] mb-3"
             autoFocus
           />
           <div className="flex flex-col gap-1 max-h-52 overflow-y-auto">
@@ -84,7 +84,7 @@ export default function BagagesSection({
             </span>
             <div>
               <span className="text-xs px-2 py-0.5 rounded-full"
-                style={{ background: compagnie.type === 'low_cost' ? '#FEF3C7' : compagnie.type === 'long_courrier' ? '#F6F08F' : '#F3F4F6', color: compagnie.type === 'low_cost' ? '#92400E' : compagnie.type === 'long_courrier' ? '#147046' : '#6B7280' }}>
+                style={{ background: compagnie.type === 'low_cost' ? '#FEF3C7' : compagnie.type === 'long_courrier' ? '#DBEAFE' : '#F3F4F6', color: compagnie.type === 'low_cost' ? '#92400E' : compagnie.type === 'long_courrier' ? '#1D4ED8' : '#6B7280' }}>
                 {compagnie.type === 'low_cost' ? 'Low cost' : compagnie.type === 'long_courrier' ? 'Long-courrier' : 'Classique'}
               </span>
             </div>

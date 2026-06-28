@@ -56,7 +56,7 @@ export default async function CoffreFortPage() {
   const allDocs = [...(ownDocs ?? []), ...sharedDocs]
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FEFCE8' }}>
+    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <Link href="/dashboard" className="text-gray-400 text-lg">←</Link>

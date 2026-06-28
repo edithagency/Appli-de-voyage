@@ -40,7 +40,7 @@ export default function BottomNav() {
               className="flex flex-col items-center gap-0.5 px-6 py-2"
             >
               <span className="text-xl">{tab.emoji}</span>
-              <span className="text-xs font-semibold" style={{ color: active ? '#147046' : '#9CA3AF' }}>
+              <span className="text-xs font-semibold" style={{ color: active ? '#1D4ED8' : '#9CA3AF' }}>
                 {tab.label}
               </span>
             </Link>

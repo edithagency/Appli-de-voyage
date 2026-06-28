@@ -46,7 +46,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/auth/login"
-              className="w-full px-6 py-3 rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition text-center"
+              className="w-full px-6 py-[10px] rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition text-center"
               style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' }}
             >
               Se connecter

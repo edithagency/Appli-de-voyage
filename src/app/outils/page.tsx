@@ -6,6 +6,7 @@ import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
+import PageHeader from '@/components/PageHeader'
 
 const OUTILS = [
   {
@@ -56,16 +57,15 @@ export default function OutilsPage() {
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-2 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
-        <div className="max-w-2xl mx-auto pb-3">
-          <h1 className="text-lg font-bold text-gray-900">🛠️ Outils de voyage</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Utiles sur le terrain, même sans connexion</p>
-        </div>
+        <PageHeader title="Outils" />
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-5 flex flex-col gap-3">
+
+        <p className="text-xs text-gray-400 text-center -mt-2 mb-1">Utiles sur le terrain, même sans connexion</p>
 
         {/* Gratuits */}
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Gratuit</p>

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import VoyageEditButton from './VoyageEditButton'
 import VoyageTabs from './VoyageTabs'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
+import PageHeader from '@/components/PageHeader'
 import { quitterVoyage } from './quitter-actions'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
@@ -136,21 +137,22 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-2 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
-        <div className="max-w-2xl mx-auto flex items-center gap-3 pb-3">
-          <Link href="/dashboard" className="text-gray-400 text-lg">←</Link>
-          <span className="font-semibold text-gray-800 truncate text-sm">{voyage.nom}</span>
+        <PageHeader title={voyage.nom} />
+      </header>
+
+      <main className="max-w-2xl mx-auto px-5 py-4 flex flex-col gap-4">
+
+        <div className="flex items-center gap-3 -mt-2">
+          <Link href="/dashboard" className="text-gray-400 text-sm">← Retour</Link>
           {!isOrganisateur && (
             <span className="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600">
               Invité
             </span>
           )}
         </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto px-5 py-4 flex flex-col gap-4">
 
         <div className="rounded-2xl overflow-hidden border border-gray-200" style={{ aspectRatio: '16/9', position: 'relative', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
           {photo && (

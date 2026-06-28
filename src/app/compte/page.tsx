@@ -4,6 +4,7 @@ import { signout } from '@/app/auth/actions'
 import CompteForm from './CompteForm'
 import Link from 'next/link'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
+import PageHeader from '@/components/PageHeader'
 export default async function ComptePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -17,14 +18,16 @@ export default async function ComptePage() {
 
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
-      <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <Link href="/dashboard" className="text-gray-400 text-lg">←</Link>
-          <span className="font-semibold text-gray-800">Mon compte</span>
+      <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
+          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
+        <PageHeader title="Mon compte" />
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-5">
+
+        <Link href="/dashboard" className="text-gray-400 text-sm -mb-2">← Retour</Link>
 
         {/* Avatar */}
         <div className="flex flex-col items-center pt-2 pb-4">

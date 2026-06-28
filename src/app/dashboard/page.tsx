@@ -5,6 +5,7 @@ import DeleteVoyageButton from './DeleteVoyageButton'
 import VoyagesPasses from './VoyagesPasses'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { getPaysCode } from '@/lib/utils/paysCode'
+import PageHeader from '@/components/PageHeader'
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 }
@@ -114,28 +115,29 @@ export default async function DashboardPage() {
 
       {/* Header mobile */}
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-2 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
-        <div className="max-w-2xl mx-auto flex items-center justify-end pb-3">
-          <Link href="/compte"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            {(prenom?.[0] ?? '?').toUpperCase()}
-          </Link>
-        </div>
+        <PageHeader title="Mes voyages" />
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
 
         {/* Greeting */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Bonjour {prenom} 👋</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {tousLesVoyages.length === 0
-              ? 'Prêt à planifier ton prochain voyage ?'
-              : `${tousLesVoyages.length} voyage${tousLesVoyages.length > 1 ? 's' : ''} en préparation`}
-          </p>
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Bonjour {prenom} 👋</h1>
+            <p className="text-gray-500 text-sm mt-1">
+              {tousLesVoyages.length === 0
+                ? 'Prêt à planifier ton prochain voyage ?'
+                : `${tousLesVoyages.length} voyage${tousLesVoyages.length > 1 ? 's' : ''} en préparation`}
+            </p>
+          </div>
+          <Link href="/compte"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+            {(prenom?.[0] ?? '?').toUpperCase()}
+          </Link>
         </div>
 
         {/* Voyages */}

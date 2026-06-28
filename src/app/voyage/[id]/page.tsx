@@ -128,7 +128,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen">
       <VoyageHero
         photo={photo}
         paysEmoji={pays?.emoji ?? null}

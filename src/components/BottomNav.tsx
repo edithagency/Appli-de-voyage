@@ -33,9 +33,9 @@ export default function BottomNav() {
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 36px)' }}
     >
       <nav
-        className="pointer-events-auto inline-flex items-center gap-2 mx-4 px-5 py-2.5 rounded-full max-w-[360px]"
+        className="pointer-events-auto inline-flex items-center gap-2 mx-4 px-4 py-2.5 rounded-2xl max-w-[320px]"
         style={{
-          background: 'rgba(255, 254, 237, 0.9)',
+          background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
@@ -47,13 +47,13 @@ export default function BottomNav() {
             <Link
               key={href}
               href={href}
-              className="flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
+              className="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-200"
             >
               <Icon
                 size={24}
                 strokeWidth={active ? 2 : 1.75}
-                color="#36A6B2"
-                fill={active ? '#36A6B2' : 'none'}
+                color="#6B7280"
+                fill={active ? '#6B7280' : 'none'}
               />
             </Link>
           )

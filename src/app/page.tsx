@@ -2,34 +2,45 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <main className="h-full overflow-hidden relative flex flex-col items-center justify-center px-4 text-center"
-      style={{ background: '#FFFFFF' }}>
+    <main className="h-full overflow-hidden relative flex flex-col" style={{ background: '#000000' }}>
+      <h1 className="sr-only">Bon Vol</h1>
+
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-40"
+        className="absolute inset-0 w-full h-full object-cover"
         src="/videos/bon-vol.mp4"
       />
-      <div className="max-w-xl -mt-12 relative z-10">
-        <h1 className="sr-only">Bon Vol</h1>
-        <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="w-32 sm:w-36 mx-auto mb-6" />
-        <p className="text-sm text-gray-600 mb-6">
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.55) 100%)' }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center text-center px-6 pt-14 sm:pt-20">
+        <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44 mb-3" />
+        <p className="text-white text-sm opacity-90 drop-shadow">
           Préparez votre voyage sereinement.<br />
           Visa, documents, activités... tout en un.
         </p>
-        <div className="flex flex-col gap-2.5">
+      </div>
+
+      <div
+        className="relative z-10 mt-auto w-full bg-white rounded-t-[2rem] px-6 pt-7 pb-8"
+        style={{ boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.15)' }}
+      >
+        <div className="flex flex-col gap-2.5 max-w-xs mx-auto">
           <Link
             href="/auth/signup"
-            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold text-white"
+            className="w-full px-6 py-3 rounded-full text-sm font-semibold text-white text-center"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)', boxShadow: '0 4px 12px rgba(54, 166, 178, 0.35)' }}
           >
             S&apos;inscrire gratuitement
           </Link>
           <Link
             href="/auth/login"
-            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition"
+            className="w-full px-6 py-3 rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition text-center"
             style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' }}
           >
             Se connecter

@@ -10,7 +10,7 @@ export default async function NouveauVoyagePage() {
   const { data: pays } = await supabase.from('pays').select('code, nom_fr, emoji').order('nom_fr')
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 py-4">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <a href="/dashboard" className="text-gray-400 hover:text-gray-600 text-sm">← Retour</a>

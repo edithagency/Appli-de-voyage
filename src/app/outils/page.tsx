@@ -54,7 +54,7 @@ export default function OutilsPage() {
   const [open, setOpen] = useState<string | null>('devise')
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-2 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />

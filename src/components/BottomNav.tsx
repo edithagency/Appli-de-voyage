@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Plane, Wrench, Lock, User } from 'lucide-react'
 
 const TABS = [
-  { href: '/dashboard', emoji: '🏠', label: 'Voyages' },
-  { href: '/outils', emoji: '🛠️', label: 'Outils' },
-  { href: '/coffre-fort', emoji: '🔒', label: 'Documents' },
+  { href: '/dashboard', icon: Plane },
+  { href: '/outils', icon: Wrench },
+  { href: '/coffre-fort', icon: Lock },
+  { href: '/compte', icon: User },
 ]
 
 const HIDDEN_PREFIXES = ['/', '/auth', '/join']
@@ -26,27 +28,33 @@ export default function BottomNav() {
   }
 
   return (
-    <nav
-      className="bg-white border-t border-gray-100 flex-shrink-0"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    <div
+      className="absolute inset-x-0 bottom-0 flex justify-center pointer-events-none"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
     >
-      <div className="max-w-2xl mx-auto flex items-center justify-around py-2">
-        {TABS.map(tab => {
-          const active = isActive(tab.href)
+      <nav
+        className="pointer-events-auto inline-flex items-center gap-1 mx-4 px-3 py-2 rounded-full max-w-[360px]"
+        style={{
+          background: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+        }}
+      >
+        {TABS.map(({ href, icon: Icon }) => {
+          const active = isActive(href)
           return (
             <Link
-              key={tab.href}
-              href={tab.href}
-              className="flex flex-col items-center gap-0.5 px-6 py-2"
+              key={href}
+              href={href}
+              className="flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200"
+              style={{ background: active ? '#534AB7' : 'transparent' }}
             >
-              <span className="text-xl">{tab.emoji}</span>
-              <span className="text-xs font-semibold" style={{ color: active ? '#36A6B2' : '#9CA3AF' }}>
-                {tab.label}
-              </span>
+              <Icon size={22} strokeWidth={2.25} color={active ? '#FFFFFF' : '#93C5FD'} />
             </Link>
           )
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   )
 }

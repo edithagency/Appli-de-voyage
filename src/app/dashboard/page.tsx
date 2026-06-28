@@ -110,7 +110,7 @@ export default async function DashboardPage() {
   const prenom = profile?.prenom ?? user.email?.split('@')[0]
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
 
       {/* Header mobile */}
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">

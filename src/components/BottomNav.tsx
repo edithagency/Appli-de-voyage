@@ -11,7 +11,7 @@ const TABS = [
   { href: '/compte', icon: User },
 ]
 
-const HIDDEN_PREFIXES = ['/', '/auth', '/join']
+const HIDDEN_PREFIXES = ['/', '/auth', '/join', '/voyage']
 
 export default function BottomNav() {
   const path = usePathname()

@@ -9,7 +9,7 @@ export default function HomePage() {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-20"
+        className="absolute inset-0 w-full h-full object-cover opacity-40"
         src="/videos/bon-vol.mp4"
       />
       <div className="max-w-xl -mt-12 relative z-10">
@@ -29,7 +29,7 @@ export default function HomePage() {
           </Link>
           <Link
             href="/auth/login"
-            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] hover:bg-blue-50 transition"
+            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition"
             style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' }}
           >
             Se connecter

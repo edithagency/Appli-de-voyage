@@ -22,7 +22,7 @@ export default function LoginPage() {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-gray-800">
       <h1 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Bon retour !</h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Connecte-toi pour accéder à tes voyages</p>
+      <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Connecte-toi pour accéder à tes voyages.</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
         Pas encore de compte ?{' '}
         <Link href="/auth/signup" className="text-[#36A6B2] font-semibold hover:underline">
-          Créer un compte
+          S&apos;inscrire
         </Link>
       </p>
     </div>

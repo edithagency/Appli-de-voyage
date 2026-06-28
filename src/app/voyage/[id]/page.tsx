@@ -5,10 +5,6 @@ import VoyageTabs from './VoyageTabs'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
 function dureeVoyage(depart: string, retour: string) {
   return Math.ceil((new Date(retour).getTime() - new Date(depart).getTime()) / (1000 * 60 * 60 * 24))
 }
@@ -138,7 +134,6 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         paysEmoji={pays?.emoji ?? null}
         nom={voyage.nom}
         destination={voyage.destination}
-        dateLabel={formatDate(voyage.date_depart)}
         duree={duree}
         jours={jours}
         isOrganisateur={isOrganisateur}

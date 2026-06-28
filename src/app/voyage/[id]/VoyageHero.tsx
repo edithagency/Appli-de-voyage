@@ -1,13 +1,9 @@
-'use client'
-
-import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import VoyageEditButton from './VoyageEditButton'
 import { quitterVoyage } from './quitter-actions'
 
 const MAX_H = 280
 const MIN_H = 110
-const SCROLL_RANGE = 170
 
 type Membre = {
   id: string
@@ -19,7 +15,7 @@ type Membre = {
 }
 
 export default function VoyageHero({
-  photo, paysEmoji, nom, destination, dateLabel, duree, jours,
+  photo, paysEmoji, nom, destination, duree, jours,
   isOrganisateur, voyage, membres, modeGestion, isInvite,
   showQuitter, currentMembreId,
 }: {
@@ -27,7 +23,6 @@ export default function VoyageHero({
   paysEmoji: string | null
   nom: string
   destination: string
-  dateLabel: string
   duree: number
   jours: number
   isOrganisateur: boolean
@@ -38,33 +33,16 @@ export default function VoyageHero({
   showQuitter: boolean
   currentMembreId: string
 }) {
-  const [progress, setProgress] = useState(0)
-  const frame = useRef<number | null>(null)
-
-  useEffect(() => {
-    const scrollEl = document.querySelector('.phone-screen')
-    if (!scrollEl) return
-
-    function onScroll() {
-      if (frame.current !== null) return
-      frame.current = requestAnimationFrame(() => {
-        const p = Math.min(Math.max(scrollEl!.scrollTop / SCROLL_RANGE, 0), 1)
-        setProgress(p)
-        frame.current = null
-      })
-    }
-    scrollEl.addEventListener('scroll', onScroll, { passive: true })
-    return () => scrollEl.removeEventListener('scroll', onScroll)
-  }, [])
-
-  const height = MAX_H - (MAX_H - MIN_H) * progress
-  const titleSize = 22 - 6 * progress
-  const subOpacity = Math.max(0, 1 - progress * 1.6)
-
   return (
     <div
-      className="sticky top-0 z-20 overflow-hidden"
-      style={{ height, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+      className="overflow-hidden"
+      style={{
+        position: 'sticky',
+        top: -(MAX_H - MIN_H),
+        height: MAX_H,
+        zIndex: 20,
+        background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)',
+      }}
     >
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element
@@ -116,14 +94,13 @@ export default function VoyageHero({
 
       <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
         <div className="flex items-center gap-2 mb-1">
-          {paysEmoji && <span style={{ fontSize: titleSize }}>{paysEmoji}</span>}
-          <h1 style={{ fontWeight: 800, color: 'white', fontSize: titleSize, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>
+          {paysEmoji && <span style={{ fontSize: 20 }}>{paysEmoji}</span>}
+          <h1 style={{ fontWeight: 800, color: 'white', fontSize: 20, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>
             {nom}
           </h1>
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0, opacity: subOpacity }}>{destination}</p>
-        <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', margin: '3px 0 0', opacity: subOpacity }}>
-          {dateLabel} · {duree} jour{duree > 1 ? 's' : ''}
+        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0 }}>
+          {destination} · {duree} jour{duree > 1 ? 's' : ''}
         </p>
       </div>
     </div>

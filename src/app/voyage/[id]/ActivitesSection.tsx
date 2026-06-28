@@ -144,7 +144,7 @@ export default function ActivitesSection({
         {['Toutes', ...villes].map(v => (
           <button key={v} onClick={() => setSelectedVille(v)}
             className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors"
-            style={{ background: selectedVille === v ? '#1D4ED8' : '#F3F4F6', color: selectedVille === v ? 'white' : '#6B7280' }}>
+            style={{ background: selectedVille === v ? '#36A6B2' : '#F3F4F6', color: selectedVille === v ? 'white' : '#6B7280' }}>
             {v}
           </button>
         ))}
@@ -154,13 +154,13 @@ export default function ActivitesSection({
       <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
         <button onClick={() => setSelectedCategorie('Toutes')}
           className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors"
-          style={{ background: selectedCategorie === 'Toutes' ? '#1D4ED8' : '#F3F4F6', color: selectedCategorie === 'Toutes' ? 'white' : '#6B7280' }}>
+          style={{ background: selectedCategorie === 'Toutes' ? '#36A6B2' : '#F3F4F6', color: selectedCategorie === 'Toutes' ? 'white' : '#6B7280' }}>
           Toutes
         </button>
         {categories.map(c => (
           <button key={c} onClick={() => setSelectedCategorie(c)}
             className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors"
-            style={{ background: selectedCategorie === c ? '#1D4ED8' : '#F3F4F6', color: selectedCategorie === c ? 'white' : '#6B7280' }}>
+            style={{ background: selectedCategorie === c ? '#36A6B2' : '#F3F4F6', color: selectedCategorie === c ? 'white' : '#6B7280' }}>
             {CATEGORIES[c].emoji} {CATEGORIES[c].label}
           </button>
         ))}

@@ -26,7 +26,7 @@ export default function ConfirmEmailPage({
 
       <Link
         href="/auth/login"
-        className="text-[#1D4ED8] font-semibold hover:underline text-sm"
+        className="text-[#36A6B2] font-semibold hover:underline text-sm"
       >
         Déjà confirmé ? Se connecter →
       </Link>

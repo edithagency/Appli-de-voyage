@@ -185,7 +185,7 @@ export default function VoyageTabs({
         {TABS.map(tab => (
           <button key={tab.key} onClick={() => setActive(tab.key)}
             className="flex-1 flex flex-col items-center gap-0.5 py-2.5 rounded-xl text-xs font-semibold transition-all"
-            style={{ background: active === tab.key ? '#1D4ED8' : 'transparent', color: active === tab.key ? 'white' : '#6B7280' }}>
+            style={{ background: active === tab.key ? '#36A6B2' : 'transparent', color: active === tab.key ? 'white' : '#6B7280' }}>
             <span className="text-base">{tab.emoji}</span>
             <span>{tab.label}</span>
           </button>
@@ -201,7 +201,7 @@ export default function VoyageTabs({
             const done = infoCardIds.filter(cid => selfStatus[cid]).length
             const pct = Math.round((done / total) * 100)
             return (
-              <div className="rounded-2xl px-4 py-3.5" style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+              <div className="rounded-2xl px-4 py-3.5" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-bold text-white">✅ Préparation</span>
                   <span className="text-sm font-bold text-white">{done}/{total}</span>

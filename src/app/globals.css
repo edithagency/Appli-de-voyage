@@ -3,15 +3,15 @@
 :root {
   --background: #FFFFFF;
   --foreground: #171717;
-  --primary: #1D4ED8;
-  --primary-light: #60A5FA;
-  --primary-dark: #1E3A8A;
+  --primary: #36A6B2;
+  --primary-light: #8BD4DC;
+  --primary-dark: #287C85;
   --secondary: #1D9E75;
-  --secondary-light: #60A5FA;
+  --secondary-light: #8BD4DC;
   --amber: #F59E0B;
   --danger: #EF4444;
-  --surface: #EFF6FF;
-  --border: #DBEAFE;
+  --surface: #F4FBFC;
+  --border: #E6F6F7;
 }
 
 @theme inline {
@@ -26,14 +26,28 @@
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Repeint la palette "blue" de Tailwind dans le bleu/turquoise de la marque,
+     pour que les classes bg-blue et text-blue déjà utilisées dans l'app
+     restent cohérentes avec #36A6B2 sans devoir éditer chaque composant. */
+  --color-blue-50: #F4FBFC;
+  --color-blue-100: #E6F6F7;
+  --color-blue-200: #D1EEF1;
+  --color-blue-300: #B4E3E8;
+  --color-blue-400: #8BD4DC;
+  --color-blue-500: #62C5CF;
+  --color-blue-600: #3EB8C5;
+  --color-blue-700: #36A6B2;
+  --color-blue-800: #2E8E98;
+  --color-blue-900: #287C85;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0B1220;
-    --foreground: #EAF2FF;
-    --surface: #101828;
-    --border: #1E2A4A;
+    --background: #0B1718;
+    --foreground: #E9F7F8;
+    --surface: #0F1E20;
+    --border: #1B3338;
   }
 }
 
@@ -79,7 +93,7 @@ body {
 @media (min-width: 640px) {
   .app-backdrop {
     padding: 40px 16px;
-    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    background: linear-gradient(135deg, #F4FBFC, #E6F6F7);
   }
 
   .phone-frame {
@@ -89,7 +103,7 @@ body {
     border-radius: 48px;
     padding: 14px;
     background: #16141f;
-    box-shadow: 0 30px 80px -20px rgba(10, 30, 60, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    box-shadow: 0 30px 80px -20px rgba(10, 40, 45, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
   }
 
   .phone-notch {

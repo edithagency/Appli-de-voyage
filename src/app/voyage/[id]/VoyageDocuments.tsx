@@ -71,7 +71,7 @@ function DocItem({ doc, onDelete }: { doc: Doc; onDelete: (id: string, path: str
       <div className="flex gap-2 shrink-0">
         <button onClick={handleOpen} disabled={opening}
           className="w-10 h-10 rounded-2xl flex items-center justify-center text-base transition"
-          style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
+          style={{ background: '#DBEAFE', color: '#36A6B2' }}>
           {opening ? '…' : '👁️'}
         </button>
         <button onClick={() => onDelete(doc.id, doc.storage_path, doc.voyage_id)}
@@ -121,7 +121,7 @@ export default function VoyageDocuments({
         <h2 className="font-bold text-gray-900">🔒 Documents</h2>
         <button onClick={() => { setModalPresetType(undefined); setShowModal(true) }}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+          style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
           <span>+</span> Ajouter
         </button>
       </div>

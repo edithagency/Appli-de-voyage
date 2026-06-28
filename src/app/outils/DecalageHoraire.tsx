@@ -80,7 +80,7 @@ export default function DecalageHoraire() {
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-1">
           <p className="text-xs text-gray-400 font-medium">Ici</p>
-          <p className="text-2xl font-bold tabular-nums" style={{ color: '#1D4ED8' }}>
+          <p className="text-2xl font-bold tabular-nums" style={{ color: '#36A6B2' }}>
             {formatHeure(now, ici)}
           </p>
           <p className="text-xs text-gray-500 capitalize leading-tight">{formatJour(now, ici)}</p>

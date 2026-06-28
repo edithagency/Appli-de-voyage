@@ -15,13 +15,14 @@ export default function HomePage() {
           <Link
             href="/auth/signup"
             className="w-full px-6 py-2.5 rounded-full text-sm font-semibold text-white"
-            style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
+            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)', boxShadow: '0 4px 12px rgba(54, 166, 178, 0.35)' }}
           >
             S&apos;inscrire gratuitement
           </Link>
           <Link
             href="/auth/login"
-            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-[#1D4ED8] text-[#1D4ED8] hover:bg-blue-50 transition"
+            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] hover:bg-blue-50 transition"
+            style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' }}
           >
             Se connecter
           </Link>

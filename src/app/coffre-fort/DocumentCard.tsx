@@ -102,7 +102,7 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
       <div className="flex flex-col gap-2 shrink-0">
         <button onClick={handleOpen} disabled={opening}
           className="text-xs px-3 py-1.5 rounded-xl font-semibold text-white disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+          style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
           {opening ? '...' : '👁️'}
         </button>
         {!shared && (

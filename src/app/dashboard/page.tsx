@@ -15,7 +15,7 @@ function joursAvantDepart(dateDepart: string) {
 
 function scoreColor(score: number) {
   if (score === 100) return { bar: '#1D9E75', text: '#065F46', bg: '#D1FAE5' }
-  if (score >= 60) return { bar: '#1D4ED8', text: '#1D4ED8', bg: '#DBEAFE' }
+  if (score >= 60) return { bar: '#36A6B2', text: '#36A6B2', bg: '#DBEAFE' }
   if (score >= 30) return { bar: '#D97706', text: '#92400E', bg: '#FEF3C7' }
   return { bar: '#E11D48', text: '#9F1239', bg: '#FFE4E6' }
 }
@@ -117,11 +117,11 @@ export default async function DashboardPage() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">✈️</span>
-            <span className="font-bold text-lg" style={{ color: '#1D4ED8' }}>Bon Vol</span>
+            <span className="font-bold text-lg" style={{ color: '#36A6B2' }}>Bon Vol</span>
           </div>
           <Link href="/compte"
             className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-            style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
             {(prenom?.[0] ?? '?').toUpperCase()}
           </Link>
         </div>
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
             <p className="text-gray-400 text-sm mb-6">Crée ton premier voyage pour générer ta checklist.</p>
             <Link href="/voyage/nouveau"
               className="inline-block px-6 py-3 rounded-2xl font-semibold text-white"
-              style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+              style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
               + Créer un voyage
             </Link>
           </div>
@@ -167,7 +167,7 @@ export default async function DashboardPage() {
                   className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
 
                   {/* Image */}
-                  <div style={{ position: 'relative', aspectRatio: '16/9', background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                  <div style={{ position: 'relative', aspectRatio: '16/9', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                     {photo && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -185,7 +185,7 @@ export default async function DashboardPage() {
 
                     {/* Badge J- */}
                     <div style={{ position: 'absolute', top: 12, right: 12 }}>
-                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#1D4ED8' : '#065F46' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46' }}>
                         {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
                       </span>
                     </div>
@@ -204,7 +204,7 @@ export default async function DashboardPage() {
                   {/* Infos bas */}
                   <div className="px-4 py-3 flex flex-col gap-2">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold" style={{ color: '#1D4ED8' }}>
+                      <p className="text-xs font-semibold" style={{ color: '#36A6B2' }}>
                         {formatDate(voyage.date_depart)} - {formatDate(voyage.date_retour)}
                       </p>
                       {!voyage.estInvite && <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />}
@@ -236,7 +236,7 @@ export default async function DashboardPage() {
 
       <Link href="/voyage/nouveau"
         className="fixed right-5 bottom-24 w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-light shadow-lg z-10"
-        style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+        style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
         +
       </Link>
 

@@ -29,7 +29,7 @@ export default async function ComptePage() {
         {/* Avatar */}
         <div className="flex flex-col items-center pt-2 pb-4">
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-3"
-            style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
             {profile?.emoji_avatar ?? (profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()}
           </div>
           <p className="font-bold text-gray-900 text-lg">

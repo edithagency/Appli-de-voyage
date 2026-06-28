@@ -71,7 +71,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
         <button
           onClick={() => setModalOpen(true)}
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl font-semibold text-white text-sm shadow-sm"
-          style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
+          style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
         >
           + Ajouter
         </button>
@@ -94,9 +94,9 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
               onClick={() => setFiltre(pill.key)}
               className="shrink-0 px-4 py-2 rounded-2xl text-sm font-semibold border-2 transition"
               style={{
-                background: filtre === pill.key ? '#1D4ED8' : 'white',
+                background: filtre === pill.key ? '#36A6B2' : 'white',
                 color: filtre === pill.key ? 'white' : '#374151',
-                borderColor: filtre === pill.key ? '#1D4ED8' : '#E5E7EB',
+                borderColor: filtre === pill.key ? '#36A6B2' : '#E5E7EB',
               }}
             >
               {pill.label}

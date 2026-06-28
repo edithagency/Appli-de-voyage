@@ -166,7 +166,7 @@ export default function MedicamentsTraducteur() {
       {/* Résultat */}
       {selected && (
         <div className="flex flex-col gap-3">
-          <div className="rounded-2xl px-4 py-3" style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+          <div className="rounded-2xl px-4 py-3" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
             <p className="text-white font-bold text-sm">{selected.emoji} {selected.generique}</p>
             <p className="text-white/80 text-xs mt-0.5">{selected.categorie}</p>
             <p className="text-white/70 text-xs mt-1">Noms FR : {selected.nom_fr.join(', ')}</p>

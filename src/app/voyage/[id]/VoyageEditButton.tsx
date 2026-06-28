@@ -134,25 +134,25 @@ export default function VoyageEditButton({
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nom du voyage</label>
                 <input value={nom} onChange={e => setNom(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Destination</label>
                 <input value={destination} onChange={e => setDestination(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Départ</label>
                   <input type="date" value={dateDepart} onChange={e => setDateDepart(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Retour</label>
                   <input type="date" value={dateRetour} onChange={e => setDateRetour(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                 </div>
               </div>
 
@@ -179,12 +179,12 @@ export default function VoyageEditButton({
                       onChange={e => setNewPrenom(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAjouterMembre(newPrenom, newType))}
                       placeholder="Prénom"
-                      className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
+                      className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
                     />
                     <select
                       value={newType}
                       onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                      className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] text-sm"
+                      className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
                     >
                       <option value="adulte">Adulte</option>
                       <option value="enfant">Enfant</option>
@@ -194,7 +194,7 @@ export default function VoyageEditButton({
                       disabled={addingMembre || !newPrenom.trim()}
                       onClick={() => handleAjouterMembre(newPrenom, newType)}
                       className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm disabled:opacity-50"
-                      style={{ background: '#1D4ED8' }}
+                      style={{ background: '#36A6B2' }}
                     >
                       {addingMembre ? '...' : '+ Ajouter'}
                     </button>
@@ -206,7 +206,7 @@ export default function VoyageEditButton({
 
               <button onClick={handleSave} disabled={loading}
                 className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                 {loading ? 'Enregistrement...' : '✓ Sauvegarder'}
               </button>
 
@@ -261,7 +261,7 @@ export default function VoyageEditButton({
 
                 <button onClick={handleCopy}
                   className="w-full py-3 rounded-2xl font-semibold text-white transition"
-                  style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                  style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                   {copied ? '✓ Lien copié !' : '🔗 Copier le lien'}
                 </button>
               </div>

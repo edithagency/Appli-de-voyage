@@ -88,7 +88,7 @@ export default function ParticipantsPanel({
                 : 'Membres du groupe — tu gères tout pour eux.'}
             </p>
           </div>
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${modeGestion === 'organisateur' ? 'bg-blue-100 text-[#1D4ED8]' : 'bg-blue-50 text-blue-600'}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${modeGestion === 'organisateur' ? 'bg-blue-100 text-[#36A6B2]' : 'bg-blue-50 text-blue-600'}`}>
             Mode {modeGestion === 'organisateur' ? '🎯 Gestion unique' : '🔗 Partagé'}
           </span>
         </div>
@@ -132,7 +132,7 @@ export default function ParticipantsPanel({
                     className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition disabled:opacity-50"
                     style={{
                       background: copiedId === p.id ? '#D1FAE5' : '#DBEAFE',
-                      color: copiedId === p.id ? '#065F46' : '#1D4ED8',
+                      color: copiedId === p.id ? '#065F46' : '#36A6B2',
                     }}
                   >
                     {copiedId === p.id ? '✓ Copié !' : p.statut_invitation === 'lien_copie' ? '🔄 Renvoyer' : '🔗 Copier le lien'}

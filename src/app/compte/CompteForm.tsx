@@ -43,7 +43,7 @@ export default function CompteForm({
               value={prenom}
               onChange={e => setPrenom(e.target.value)}
               placeholder="Marie"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]"
             />
           </div>
           <div>
@@ -52,7 +52,7 @@ export default function CompteForm({
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Dupont"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]"
             />
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function CompteForm({
             <button key={e} type="button" onClick={() => setEmoji(e)}
               className="w-full aspect-square rounded-xl flex items-center justify-center text-xl border-2 transition"
               style={{
-                borderColor: emoji === e ? '#1D4ED8' : 'transparent',
+                borderColor: emoji === e ? '#36A6B2' : 'transparent',
                 background: emoji === e ? '#DBEAFE' : '#F9FAFB',
               }}>
               {e}
@@ -83,7 +83,7 @@ export default function CompteForm({
         onClick={handleSave}
         disabled={isPending}
         className="w-full py-4 rounded-2xl font-semibold text-white disabled:opacity-60"
-        style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
+        style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
       >
         {isPending ? 'Sauvegarde...' : 'Sauvegarder'}
       </button>

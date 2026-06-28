@@ -30,7 +30,7 @@ type Valise = {
 }
 
 const CATEGORIES = [
-  { key: 'documents',    label: 'Documents',  emoji: '📄', color: '#1D4ED8', light: '#DBEAFE' },
+  { key: 'documents',    label: 'Documents',  emoji: '📄', color: '#36A6B2', light: '#DBEAFE' },
   { key: 'sante',        label: 'Santé',       emoji: '💊', color: '#1D9E75', light: '#D1FAE5' },
   { key: 'argent',       label: 'Argent',      emoji: '💰', color: '#D97706', light: '#FEF3C7' },
   { key: 'logistique',   label: 'Logistique',  emoji: '🔧', color: '#2563EB', light: '#DBEAFE' },
@@ -38,7 +38,7 @@ const CATEGORIES = [
 ]
 
 const SOUS_CATEGORIES = [
-  { key: 'vetements',    label: 'Vêtements',    emoji: '👕', color: '#1D4ED8', light: '#DBEAFE' },
+  { key: 'vetements',    label: 'Vêtements',    emoji: '👕', color: '#36A6B2', light: '#DBEAFE' },
   { key: 'hygiene',      label: 'Hygiène',      emoji: '🧴', color: '#1D9E75', light: '#D1FAE5' },
   { key: 'medicaments',  label: 'Médicaments',  emoji: '💊', color: '#D97706', light: '#FEF3C7' },
   { key: 'electronique', label: 'Électronique', emoji: '🔋', color: '#EA580C', light: '#FFEDD5' },
@@ -355,7 +355,7 @@ export default function ChecklistSection({
         return (
           <div key={valise.id} className="flex flex-col gap-3">
             {/* En-tête + score */}
-            <div className="rounded-2xl shadow-sm p-5" style={{ background: 'linear-gradient(135deg, #1D4ED8 0%, #60A5FA 100%)' }}>
+            <div className="rounded-2xl shadow-sm p-5" style={{ background: 'linear-gradient(135deg, #36A6B2 0%, #8BD4DC 100%)' }}>
               <div className="flex items-center gap-5">
                 <div className="relative shrink-0">
                   <CircleProgress value={score} size={64} />
@@ -389,25 +389,25 @@ export default function ChecklistSection({
             {/* Actions */}
             <div className="flex items-center gap-2 flex-wrap">
               <button onClick={() => setShowAddModal(valise.id)}
-                className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white shadow text-xs font-semibold" style={{ color: '#1D4ED8' }}>
+                className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white shadow text-xs font-semibold" style={{ color: '#36A6B2' }}>
                 ＋ Ajouter
               </button>
               <button onClick={() => handlePrint(valise)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white shadow text-xs font-semibold" style={{ color: '#1D4ED8' }}>
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white shadow text-xs font-semibold" style={{ color: '#36A6B2' }}>
                 🖨️ Imprimer
               </button>
               <button onClick={() => handleGenererChecklist(valise.id)} disabled={generatingChecklist === valise.id}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                 ↺ {generatingChecklist === valise.id ? '...' : 'Checklist'}
               </button>
               <button onClick={() => openQuestionnaire(valise)}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white"
-                style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                 🧳 Valise
               </button>
               {onGoToPratique && bagagesItems.length > 0 && (
-                <button onClick={onGoToPratique} className="text-xs text-gray-400 hover:text-[#1D4ED8] transition underline ml-auto">
+                <button onClick={onGoToPratique} className="text-xs text-gray-400 hover:text-[#36A6B2] transition underline ml-auto">
                   Dimensions autorisées →
                 </button>
               )}
@@ -451,9 +451,9 @@ export default function ChecklistSection({
                         <div key={item.id} className="px-5 py-3.5" style={{ borderBottom: idx < cat.items.length - 1 ? '1px solid #F3F4F6' : 'none' }}>
                           <div className="flex flex-col gap-2">
                             <input value={editForm.label} onChange={e => setEditForm(f => ({ ...f, label: e.target.value }))} placeholder="Tâche" autoFocus
-                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                             <input value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} placeholder="Description (optionnel)"
-                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                             <div className="flex gap-2 mt-1">
                               <button onClick={() => setEditingId(null)} className="flex-1 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-500">Annuler</button>
                               <button onClick={() => handleSaveEdit(valise.id)} disabled={editSaving || !editForm.label.trim()}
@@ -483,7 +483,7 @@ export default function ChecklistSection({
                               className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-gray-500 disabled:opacity-0 text-[10px]">▲</button>
                             <button onClick={e => { e.stopPropagation(); handleDeplacer(item, valise.id, 'bas') }} disabled={idx === cat.items.length - 1}
                               className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-gray-500 disabled:opacity-0 text-[10px]">▼</button>
-                            <button onClick={e => { e.stopPropagation(); handleStartEdit(item) }} className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-[#1D4ED8] text-sm">✎</button>
+                            <button onClick={e => { e.stopPropagation(); handleStartEdit(item) }} className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-[#36A6B2] text-sm">✎</button>
                             <button onClick={e => { e.stopPropagation(); handleSupprimer(item.id, valise.id) }} className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-red-400 text-lg">×</button>
                           </div>
                         </div>
@@ -525,9 +525,9 @@ export default function ChecklistSection({
                         <div key={item.id} className="px-5 py-3.5" style={{ borderBottom: idx < sc.items.length - 1 ? '1px solid #F3F4F6' : 'none' }}>
                           <div className="flex flex-col gap-2">
                             <input value={editForm.label} onChange={e => setEditForm(f => ({ ...f, label: e.target.value }))} placeholder="Article" autoFocus
-                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                             <input value={editForm.quantite} onChange={e => setEditForm(f => ({ ...f, quantite: e.target.value }))} placeholder="Quantité (optionnel)"
-                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                              className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                             <div className="flex gap-2 mt-1">
                               <button onClick={() => setEditingId(null)} className="flex-1 py-2 rounded-xl text-xs font-semibold border border-gray-200 text-gray-500">Annuler</button>
                               <button onClick={() => handleSaveEdit(valise.id)} disabled={editSaving || !editForm.label.trim()}
@@ -557,7 +557,7 @@ export default function ChecklistSection({
                               className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-gray-500 disabled:opacity-0 text-[10px]">▲</button>
                             <button onClick={e => { e.stopPropagation(); handleDeplacer(item, valise.id, 'bas') }} disabled={idx === sc.items.length - 1}
                               className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-gray-500 disabled:opacity-0 text-[10px]">▼</button>
-                            <button onClick={e => { e.stopPropagation(); handleStartEdit(item) }} className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-[#1D4ED8] text-sm">✎</button>
+                            <button onClick={e => { e.stopPropagation(); handleStartEdit(item) }} className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-[#36A6B2] text-sm">✎</button>
                             <button onClick={e => { e.stopPropagation(); handleSupprimer(item.id, valise.id) }} className="w-4 h-4 flex items-center justify-center text-gray-200 hover:text-red-400 text-lg">×</button>
                           </div>
                         </div>
@@ -584,7 +584,7 @@ export default function ChecklistSection({
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Nom</label>
                 <input type="text" placeholder="Ex : Acheter un guide de voyage" value={addForm.label}
                   onChange={e => setAddForm(f => ({ ...f, label: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" autoFocus />
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" autoFocus />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Catégorie</label>
@@ -616,27 +616,27 @@ export default function ChecklistSection({
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Quantité <span className="font-normal normal-case">(optionnel)</span></label>
                   <input value={addForm.quantite} onChange={e => setAddForm(f => ({ ...f, quantite: e.target.value }))} placeholder="Ex : 2 paires..."
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                 </div>
               ) : (
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Description <span className="font-normal normal-case">(optionnel)</span></label>
                   <input type="text" placeholder="Précision, lien, note..." value={addForm.description}
                     onChange={e => setAddForm(f => ({ ...f, description: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                    className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
                 </div>
               )}
               <label className="flex items-center gap-3 cursor-pointer">
                 <div onClick={() => setAddForm(f => ({ ...f, obligatoire: !f.obligatoire }))}
                   className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0"
-                  style={{ borderColor: addForm.obligatoire ? '#1D4ED8' : '#D1D5DB', background: addForm.obligatoire ? '#1D4ED8' : 'white' }}>
+                  style={{ borderColor: addForm.obligatoire ? '#36A6B2' : '#D1D5DB', background: addForm.obligatoire ? '#36A6B2' : 'white' }}>
                   {addForm.obligatoire && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                 </div>
                 <span className="text-sm text-gray-700">Marquer comme obligatoire</span>
               </label>
               <button onClick={() => handleAjouter(showAddModal)} disabled={addSaving || !addForm.label.trim()}
                 className="w-full py-3 rounded-2xl font-semibold text-white transition-all disabled:opacity-40"
-                style={{ background: 'linear-gradient(135deg, #1D4ED8 0%, #60A5FA 100%)' }}>
+                style={{ background: 'linear-gradient(135deg, #36A6B2 0%, #8BD4DC 100%)' }}>
                 {addSaving ? 'Ajout...' : '+ Ajouter'}
               </button>
             </div>
@@ -651,7 +651,7 @@ export default function ChecklistSection({
         return (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={() => setShowQuestionnaire(null)}>
             <div className="bg-white w-full max-w-md shadow-2xl" style={{ borderRadius: '16px' }} onClick={e => e.stopPropagation()}>
-              <div className="px-5 pt-5 pb-4" style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)', borderRadius: '16px 16px 0 0' }}>
+              <div className="px-5 pt-5 pb-4" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)', borderRadius: '16px 16px 0 0' }}>
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="font-bold text-white text-lg">🧳 Valise de {valise.membre.prenom}</h3>
                   <button onClick={() => setShowQuestionnaire(null)} className="text-white/60 hover:text-white text-2xl leading-none shrink-0">×</button>
@@ -659,7 +659,7 @@ export default function ChecklistSection({
                 <p className="text-blue-100 text-xs mt-1">Étape {step + 1} / 3</p>
               </div>
               <div className="h-1" style={{ background: '#DBEAFE' }}>
-                <div className="h-full transition-all" style={{ width: `${((step + 1) / 3) * 100}%`, background: '#1D4ED8' }} />
+                <div className="h-full transition-all" style={{ width: `${((step + 1) / 3) * 100}%`, background: '#36A6B2' }} />
               </div>
               <div className="p-6 max-h-[70vh] overflow-y-auto">
                 {step === 0 && (
@@ -670,7 +670,7 @@ export default function ChecklistSection({
                         {[{ value: 'femme', label: 'Femme', emoji: '👩' }, { value: 'homme', label: 'Homme', emoji: '👨' }].map(s => (
                           <button key={s.value} onClick={() => setQ(prev => ({ ...prev, sexe: s.value as 'homme' | 'femme' }))}
                             className="flex items-center gap-2 px-4 py-3 rounded-2xl border-2 transition-all"
-                            style={{ borderColor: q.sexe === s.value ? '#1D4ED8' : 'transparent', background: q.sexe === s.value ? '#DBEAFE' : '#F9FAFB', color: q.sexe === s.value ? '#1D4ED8' : '#6B7280' }}>
+                            style={{ borderColor: q.sexe === s.value ? '#36A6B2' : 'transparent', background: q.sexe === s.value ? '#DBEAFE' : '#F9FAFB', color: q.sexe === s.value ? '#36A6B2' : '#6B7280' }}>
                             <span className="text-2xl">{s.emoji}</span><span className="font-semibold">{s.label}</span>
                           </button>
                         ))}
@@ -685,9 +685,9 @@ export default function ChecklistSection({
                           return (
                             <button key={b.value} onClick={() => setQ(prev => ({ ...prev, bagages: sel ? (prev.bagages ?? []).filter(x => x !== b.value) : [...(prev.bagages ?? []), b.value] }))}
                               className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all"
-                              style={{ borderColor: sel ? '#1D4ED8' : 'transparent', background: sel ? '#DBEAFE' : '#F9FAFB' }}>
+                              style={{ borderColor: sel ? '#36A6B2' : 'transparent', background: sel ? '#DBEAFE' : '#F9FAFB' }}>
                               <span className="text-2xl">{b.emoji}</span><p className="font-semibold text-gray-800">{b.label}</p>
-                              {sel && <span className="ml-auto text-[#1D4ED8]">✓</span>}
+                              {sel && <span className="ml-auto text-[#36A6B2]">✓</span>}
                             </button>
                           )
                         })}
@@ -710,10 +710,10 @@ export default function ChecklistSection({
                       {TEMPERATURES.map(t => (
                         <button key={t.value} onClick={() => setQ(prev => ({ ...prev, temperature: t.value as QuestionnaireValise['temperature'] }))}
                           className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all"
-                          style={{ borderColor: q.temperature === t.value ? '#1D4ED8' : 'transparent', background: q.temperature === t.value ? '#DBEAFE' : '#F9FAFB' }}>
+                          style={{ borderColor: q.temperature === t.value ? '#36A6B2' : 'transparent', background: q.temperature === t.value ? '#DBEAFE' : '#F9FAFB' }}>
                           <span className="text-2xl">{t.emoji}</span>
                           <div><p className="font-semibold text-gray-800">{t.label}</p><p className="text-xs text-gray-400">{t.sub}</p></div>
-                          {q.temperature === t.value && <span className="ml-auto text-[#1D4ED8]">✓</span>}
+                          {q.temperature === t.value && <span className="ml-auto text-[#36A6B2]">✓</span>}
                         </button>
                       ))}
                     </div>
@@ -729,7 +729,7 @@ export default function ChecklistSection({
                         return (
                           <button key={a.value} onClick={() => setQ(prev => ({ ...prev, activites: sel ? (prev.activites ?? []).filter(x => x !== a.value) : [...(prev.activites ?? []), a.value] }))}
                             className="flex items-center gap-2 px-4 py-3 rounded-2xl border-2 transition-all"
-                            style={{ borderColor: sel ? '#1D4ED8' : 'transparent', background: sel ? '#DBEAFE' : '#F9FAFB', color: sel ? '#1D4ED8' : '#6B7280' }}>
+                            style={{ borderColor: sel ? '#36A6B2' : 'transparent', background: sel ? '#DBEAFE' : '#F9FAFB', color: sel ? '#36A6B2' : '#6B7280' }}>
                             <span className="text-xl">{a.emoji}</span><span className="font-semibold text-sm">{a.label}</span>
                           </button>
                         )
@@ -742,12 +742,12 @@ export default function ChecklistSection({
                 {step > 0 && <button onClick={() => setStep(s => s - 1)} className="flex-1 py-3 rounded-2xl font-semibold border-2 border-gray-200 text-gray-600">← Retour</button>}
                 {step < 2 ? (
                   <button onClick={() => setStep(s => s + 1)} disabled={!q.sexe}
-                    className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-40" style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                    className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-40" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                     Suivant →
                   </button>
                 ) : (
                   <button onClick={() => handleGenererValise(valise)} disabled={generatingValise === valise.id}
-                    className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+                    className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                     {generatingValise === valise.id ? 'Génération...' : '✨ Générer ma valise'}
                   </button>
                 )}

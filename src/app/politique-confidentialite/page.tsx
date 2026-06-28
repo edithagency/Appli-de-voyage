@@ -61,10 +61,10 @@ export default function PolitiqueConfidentialitePage() {
             <h2 className="font-bold text-gray-900 mb-2">⚖️ Tes droits</h2>
             <p>
               Tu peux à tout moment consulter et modifier tes informations depuis la page{' '}
-              <Link href="/compte" className="underline hover:text-[#1D4ED8]">Mon compte</Link>.
+              <Link href="/compte" className="underline hover:text-[#36A6B2]">Mon compte</Link>.
               Pour exercer ton droit d&apos;accès, de rectification ou de suppression de tes données
               (conformément au RGPD), contacte-nous à l&apos;adresse{' '}
-              <a href="mailto:contact@readytofly.app" className="underline hover:text-[#1D4ED8]">contact@readytofly.app</a>.
+              <a href="mailto:contact@readytofly.app" className="underline hover:text-[#36A6B2]">contact@readytofly.app</a>.
             </p>
           </div>
 

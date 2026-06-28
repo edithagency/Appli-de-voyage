@@ -65,7 +65,7 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
         {/* Header */}
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">✈️</div>
-          <h1 className="text-2xl font-bold" style={{ color: '#1D4ED8' }}>Tu es invité(e) !</h1>
+          <h1 className="text-2xl font-bold" style={{ color: '#36A6B2' }}>Tu es invité(e) !</h1>
           <p className="text-gray-500 mt-1 text-sm">
             Rejoins le voyage <span className="font-semibold text-gray-700">{voyage.nom}</span>
           </p>
@@ -75,7 +75,7 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
         <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-5 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-              style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}>
+              style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
               🌍
             </div>
             <div>

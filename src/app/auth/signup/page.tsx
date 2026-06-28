@@ -130,8 +130,8 @@ export default function SignupPage() {
       </form>
 
       <p className="text-center text-xs text-gray-400 mt-3">
-        En créant un compte tu acceptes nos{' '}
-        <Link href="/politique-confidentialite" className="underline hover:text-[#36A6B2]">conditions de confidentialité</Link>
+        En créant un compte tu acceptes<br />
+        nos <Link href="/politique-confidentialite" className="underline hover:text-[#36A6B2]">conditions de confidentialité</Link>.
       </p>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-3">

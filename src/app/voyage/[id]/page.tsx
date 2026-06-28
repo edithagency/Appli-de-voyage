@@ -128,7 +128,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
+    <div className="min-h-screen" style={{ background: '#FFFFFF' }}>
       <VoyageHero
         photo={photo}
         paysEmoji={pays?.emoji ?? null}
@@ -136,6 +136,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         destination={voyage.destination}
         duree={duree}
         jours={jours}
+        dateDepart={voyage.date_depart}
         isOrganisateur={isOrganisateur}
         voyage={{ id: voyage.id, nom: voyage.nom, destination: voyage.destination, date_depart: voyage.date_depart, date_retour: voyage.date_retour }}
         membres={tousLesMembres.filter(m => m.role === 'membre')}
@@ -145,48 +146,50 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         currentMembreId={currentMembre?.id ?? ''}
       />
 
-      <main className="max-w-2xl mx-auto px-5 py-4 flex flex-col gap-4">
+      <div className="relative z-10 bg-white rounded-t-3xl -mt-5 pb-28" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.08)' }}>
+        <main className="max-w-2xl mx-auto px-5 pt-6 flex flex-col gap-4">
 
-        {tousLesMembres.length > 0 && (
-          <div className="flex gap-4 overflow-x-auto pb-1">
-            {tousLesMembres.map(m => (
-              <div key={m.id} className="flex flex-col items-center gap-1.5 shrink-0">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white"
-                  style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-                  {m.type === 'enfant' ? '👶' : m.prenom[0]?.toUpperCase()}
+          {tousLesMembres.length > 0 && (
+            <div className="flex gap-4 overflow-x-auto pb-1">
+              {tousLesMembres.map(m => (
+                <div key={m.id} className="flex flex-col items-center gap-1.5 shrink-0">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white"
+                    style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+                    {m.type === 'enfant' ? '👶' : m.prenom[0]?.toUpperCase()}
+                  </div>
+                  <span className="text-xs text-gray-500 max-w-[56px] truncate">{m.prenom}</span>
                 </div>
-                <span className="text-xs text-gray-500 max-w-[56px] truncate">{m.prenom}</span>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        <VoyageTabs
-          pays={pays}
-          documents={documents ?? []}
-          tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
-          membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
-          valises={valises}
-          voyageId={id}
-          voyageNom={voyage.nom}
-          dateDepart={voyage.date_depart}
-          dateRetour={voyage.date_retour}
-          compagnie={currentMembre?.compagnie_aerienne ?? voyage.compagnie_aerienne ?? null}
-          paysCode={voyage.pays_code ?? null}
-          depenses={depenses}
-          budgetTotal={voyage.budget_total ?? 0}
-          activites={activites ?? []}
-          wishlistActiviteIds={(wishlist ?? []).map(w => w.activite_id)}
-          tauxLive={tauxLive}
-          infoStatusParPersonne={infoStatusParPersonne}
-          jours={duree}
-          modeGestion={voyage.mode_gestion}
-          isOrganisateur={isOrganisateur}
-          currentMembreId={currentMembreId}
-        />
+          <VoyageTabs
+            pays={pays}
+            documents={documents ?? []}
+            tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
+            membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
+            valises={valises}
+            voyageId={id}
+            voyageNom={voyage.nom}
+            dateDepart={voyage.date_depart}
+            dateRetour={voyage.date_retour}
+            compagnie={currentMembre?.compagnie_aerienne ?? voyage.compagnie_aerienne ?? null}
+            paysCode={voyage.pays_code ?? null}
+            depenses={depenses}
+            budgetTotal={voyage.budget_total ?? 0}
+            activites={activites ?? []}
+            wishlistActiviteIds={(wishlist ?? []).map(w => w.activite_id)}
+            tauxLive={tauxLive}
+            infoStatusParPersonne={infoStatusParPersonne}
+            jours={duree}
+            modeGestion={voyage.mode_gestion}
+            isOrganisateur={isOrganisateur}
+            currentMembreId={currentMembreId}
+          />
 
-        <DerniereMiseAJour />
-      </main>
+          <DerniereMiseAJour />
+        </main>
+      </div>
     </div>
   )
 }

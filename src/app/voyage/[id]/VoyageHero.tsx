@@ -1,8 +1,13 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Sun, Snowflake, Leaf } from 'lucide-react'
 import VoyageEditButton from './VoyageEditButton'
 import { quitterVoyage } from './quitter-actions'
 
-const MAX_H = 380
+const MAX_RATIO = 0.55
 const MIN_H = 210
 
 type Membre = {
@@ -14,8 +19,15 @@ type Membre = {
   token_expire_at: string | null
 }
 
+function saisonIcon(dateDepart: string) {
+  const mois = new Date(dateDepart).getMonth()
+  if (mois === 11 || mois <= 1) return Snowflake
+  if (mois >= 5 && mois <= 7) return Sun
+  return Leaf
+}
+
 export default function VoyageHero({
-  photo, paysEmoji, nom, destination, duree, jours,
+  photo, paysEmoji, nom, destination, duree, jours, dateDepart,
   isOrganisateur, voyage, membres, modeGestion, isInvite,
   showQuitter, currentMembreId,
 }: {
@@ -25,6 +37,7 @@ export default function VoyageHero({
   destination: string
   duree: number
   jours: number
+  dateDepart: string
   isOrganisateur: boolean
   voyage: { id: string; nom: string; destination: string; date_depart: string; date_retour: string }
   membres: Membre[]
@@ -33,42 +46,56 @@ export default function VoyageHero({
   showQuitter: boolean
   currentMembreId: string
 }) {
+  const [imageHeight, setImageHeight] = useState(MIN_H)
+  const frame = useRef<number | null>(null)
+  const SaisonIcon = saisonIcon(dateDepart)
+
+  useEffect(() => {
+    const scrollEl = document.querySelector('.phone-screen')
+    if (!scrollEl) return
+
+    function compute() {
+      const maxH = Math.max(MIN_H, scrollEl!.clientHeight * MAX_RATIO)
+      const h = Math.max(MIN_H, maxH - scrollEl!.scrollTop * 0.5)
+      setImageHeight(h)
+    }
+    compute()
+
+    function onScroll() {
+      if (frame.current !== null) return
+      frame.current = requestAnimationFrame(() => {
+        compute()
+        frame.current = null
+      })
+    }
+    scrollEl.addEventListener('scroll', onScroll, { passive: true })
+    return () => scrollEl.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <>
-      {/* Photo : seule cette couche rétrécit au scroll */}
-      <div
-        className="overflow-hidden"
-        style={{ position: 'sticky', top: -(MAX_H - MIN_H), height: MAX_H, zIndex: 10, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
-      >
-        {photo && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-        )}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%)' }} />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      className="relative overflow-hidden"
+      style={{ height: imageHeight, position: 'sticky', top: 0, zIndex: 0, willChange: 'height', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+    >
+      {photo && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+      )}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.05) 55%)' }} />
 
-        <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
-          <div className="flex items-center gap-2 mb-1">
-            {paysEmoji && <span style={{ fontSize: 22 }}>{paysEmoji}</span>}
-            <h1 style={{ fontWeight: 800, color: 'white', fontSize: 22, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>
-              {nom}
-            </h1>
-          </div>
-          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-            {destination} · {duree} jour{duree > 1 ? 's' : ''}
-          </p>
-        </div>
-      </div>
-
-      {/* Contrôles : couche fixe en haut de l'écran, ne bouge jamais */}
-      <div
-        className="flex items-center justify-between px-3.5"
-        style={{ position: 'sticky', top: 0, height: 56, marginTop: -MAX_H, zIndex: 30 }}
-      >
+      {/* Haut : retour + saison à gauche, actions + badges à droite */}
+      <div className="absolute inset-x-0 top-0 pt-3 sm:pt-10 px-3.5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/dashboard"
             style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, color: '#111827', backdropFilter: 'blur(4px)' }}>
             ←
           </Link>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <SaisonIcon size={16} color="white" />
+          </div>
 
           {isOrganisateur && (
             <VoyageEditButton voyage={voyage} membres={membres} modeGestion={modeGestion} />
@@ -103,6 +130,19 @@ export default function VoyageHero({
           )}
         </div>
       </div>
-    </>
+
+      {/* Bas : titre + destination */}
+      <div className="absolute" style={{ bottom: 16, left: 14, right: 14 }}>
+        <div className="flex items-center gap-2 mb-1">
+          {paysEmoji && <span style={{ fontSize: 22 }}>{paysEmoji}</span>}
+          <h1 style={{ fontWeight: 800, color: 'white', fontSize: 22, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>
+            {nom}
+          </h1>
+        </div>
+        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+          {destination} · {duree} jour{duree > 1 ? 's' : ''}
+        </p>
+      </div>
+    </motion.div>
   )
 }

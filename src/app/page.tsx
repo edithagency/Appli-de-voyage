@@ -11,7 +11,6 @@ export default function HomePage() {
         muted
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'brightness(1.12)' }}
         src="/videos/bon-vol.mp4"
       />
       <div

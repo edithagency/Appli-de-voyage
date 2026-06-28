@@ -1,9 +1,16 @@
 import { redirect, notFound } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import VoyageHero from './VoyageHero'
+import VoyageEditButton from './VoyageEditButton'
 import VoyageTabs from './VoyageTabs'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
+import PageHeader from '@/components/PageHeader'
+import { quitterVoyage } from './quitter-actions'
 import { getPaysCode } from '@/lib/utils/paysCode'
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+}
 
 function dureeVoyage(depart: string, retour: string) {
   return Math.ceil((new Date(retour).getTime() - new Date(depart).getTime()) / (1000 * 60 * 60 * 24))
@@ -129,37 +136,75 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
-      <VoyageHero
-        photo={photo}
-        paysEmoji={pays?.emoji ?? null}
-        nom={voyage.nom}
-        destination={voyage.destination}
-        duree={duree}
-        jours={jours}
-        isOrganisateur={isOrganisateur}
-        voyage={{ id: voyage.id, nom: voyage.nom, destination: voyage.destination, date_depart: voyage.date_depart, date_retour: voyage.date_retour }}
-        membres={tousLesMembres.filter(m => m.role === 'membre')}
-        modeGestion={voyage.mode_gestion}
-        isInvite={!isOrganisateur}
-        showQuitter={!isOrganisateur && voyage.mode_gestion === 'partage' && !!currentMembre}
-        currentMembreId={currentMembre?.id ?? ''}
-      />
+      <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
+          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
+        </div>
+        <PageHeader title={voyage.nom} />
+      </header>
 
       <main className="max-w-2xl mx-auto px-5 py-4 flex flex-col gap-4">
 
-        {tousLesMembres.length > 0 && (
-          <div className="flex gap-4 overflow-x-auto pb-1">
-            {tousLesMembres.map(m => (
-              <div key={m.id} className="flex flex-col items-center gap-1.5 shrink-0">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white"
-                  style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-                  {m.type === 'enfant' ? '👶' : m.prenom[0]?.toUpperCase()}
-                </div>
-                <span className="text-xs text-gray-500 max-w-[56px] truncate">{m.prenom}</span>
-              </div>
-            ))}
+        <div className="flex items-center gap-3 -mt-2">
+          <Link href="/dashboard" className="text-gray-400 text-sm">← Retour</Link>
+          {!isOrganisateur && (
+            <span className="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600">
+              Invité
+            </span>
+          )}
+        </div>
+
+        <div className="rounded-2xl overflow-hidden border border-gray-200" style={{ aspectRatio: '16/9', position: 'relative', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+          {photo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          )}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%)' }} />
+
+          {!isOrganisateur && voyage.mode_gestion === 'partage' && currentMembre && (
+            <div style={{ position: 'absolute', top: 14, left: 14 }}>
+              <form action={quitterVoyage.bind(null, currentMembre.id)}>
+                <button type="submit"
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full"
+                  style={{ background: 'rgba(0,0,0,0.5)', color: 'white' }}
+                  onClick={e => { if (!confirm('Quitter ce voyage ?')) e.preventDefault() }}>
+                  ← Quitter
+                </button>
+              </form>
+            </div>
+          )}
+
+          {isOrganisateur && (
+            <VoyageEditButton
+              voyage={{ id: voyage.id, nom: voyage.nom, destination: voyage.destination, date_depart: voyage.date_depart, date_retour: voyage.date_retour }}
+              membres={tousLesMembres.filter(m => m.role === 'membre')}
+              modeGestion={voyage.mode_gestion}
+            />
+          )}
+
+          <div style={{ position: 'absolute', top: 14, right: 14 }}>
+            {jours > 0 ? (
+              <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.9)', color: jours <= 7 ? '#92400E' : '#36A6B2' }}>
+                J-{jours}
+              </span>
+            ) : (
+              <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: '#D1FAE5', color: '#065F46' }}>
+                {jours === 0 ? "Aujourd'hui !" : 'En cours'}
+              </span>
+            )}
           </div>
-        )}
+
+          <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+            <div className="flex items-center gap-2 mb-1">
+              {pays?.emoji && <span className="text-2xl">{pays.emoji}</span>}
+              <h1 style={{ fontWeight: 800, color: 'white', fontSize: '22px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>{voyage.nom}</h1>
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0 }}>{voyage.destination}</p>
+            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', margin: '3px 0 0' }}>
+              {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
+            </p>
+          </div>
+        </div>
 
         <VoyageTabs
           pays={pays}

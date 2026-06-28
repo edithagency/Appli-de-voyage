@@ -106,20 +106,6 @@ export default async function DashboardPage() {
     }
   }
 
-  // Participants de chaque voyage (pour les avatars sur les cartes)
-  const membresParVoyage: Record<string, { prenom: string; type: string }[]> = {}
-  if (tousLesVoyages.length > 0) {
-    const { data: tousMembres } = await supabase
-      .from('voyage_membres')
-      .select('voyage_id, prenom, type')
-      .in('voyage_id', tousLesVoyages.map(v => v.id))
-
-    for (const m of tousMembres ?? []) {
-      if (!membresParVoyage[m.voyage_id]) membresParVoyage[m.voyage_id] = []
-      membresParVoyage[m.voyage_id].push({ prenom: m.prenom, type: m.type })
-    }
-  }
-
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
 
@@ -160,76 +146,57 @@ export default async function DashboardPage() {
               const code = getPaysCode(voyage.pays_code, voyage.destination)
               const photo = code ? `/images/pays/${code}.png` : null
               const emoji = code ? CODE_TO_EMOJI[code] : null
-              const membresVoyage = membresParVoyage[voyage.id] ?? []
 
               return (
                 <Link key={voyage.id} href={`/voyage/${voyage.id}`}
-                  className="rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
-                  style={{ position: 'relative', height: 260, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+                  className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
 
-                  {photo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                  )}
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.05) 60%)' }} />
+                  {/* Image */}
+                  <div style={{ position: 'relative', aspectRatio: '16/9', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+                    {photo && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                    )}
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%)' }} />
 
-                  {/* Badge Invité */}
-                  {voyage.estInvite && (
-                    <div style={{ position: 'absolute', top: 14, left: 14 }}>
-                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: 'rgba(59,130,246,0.9)', color: 'white' }}>
-                        Invité
+                    {/* Badge Invité */}
+                    {voyage.estInvite && (
+                      <div style={{ position: 'absolute', top: 12, left: 12 }}>
+                        <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: 'rgba(59,130,246,0.9)', color: 'white' }}>
+                          Invité
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Badge J- */}
+                    <div style={{ position: 'absolute', top: 12, right: 12 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46' }}>
+                        {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
                       </span>
                     </div>
-                  )}
 
-                  {/* Badge J- + supprimer */}
-                  <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46' }}>
-                      {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
-                    </span>
-                    {!voyage.estInvite && <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />}
+                    {/* Titre + pays */}
+                    <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
+                      <p style={{ fontWeight: 800, color: 'white', fontSize: '20px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
+                        {voyage.nom}
+                      </p>
+                      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: '3px 0 0', fontWeight: 500 }}>
+                        {emoji} {voyage.destination}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Titre + infos */}
-                  <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+                  {/* Infos bas */}
+                  <div className="px-4 py-3 flex flex-col gap-2">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {emoji && <span style={{ fontSize: 20, flexShrink: 0 }}>{emoji}</span>}
-                        <p style={{ fontWeight: 800, color: 'white', fontSize: '20px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
-                          {voyage.nom}
-                        </p>
-                      </div>
-
-                      {/* Avatars participants */}
-                      {membresVoyage.length > 0 && (
-                        <div className="flex shrink-0">
-                          {membresVoyage.slice(0, 2).map((m, i) => (
-                            <div key={i}
-                              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                              style={{
-                                background: 'linear-gradient(135deg, #534AB7, #8B7FE8)',
-                                border: '2px solid white',
-                                marginLeft: i === 0 ? 0 : -10,
-                              }}>
-                              {m.type === 'enfant' ? '👶' : m.prenom[0]?.toUpperCase()}
-                            </div>
-                          ))}
-                          {membresVoyage.length > 2 && (
-                            <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                              style={{ background: 'rgba(0,0,0,0.6)', border: '2px solid white', marginLeft: -10 }}>
-                              +{membresVoyage.length - 2}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <p className="text-xs font-semibold" style={{ color: '#36A6B2' }}>
+                        {formatDate(voyage.date_depart)} - {formatDate(voyage.date_retour)}
+                      </p>
+                      {!voyage.estInvite && <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />}
                     </div>
-                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: '4px 0 0', fontWeight: 500 }}>
-                      {formatDate(voyage.date_depart)} – {formatDate(voyage.date_retour)}
-                    </p>
-
-                    {prog.total > 0 && (
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.3)' }}>
+                    {prog.total > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-gray-100">
                           <div className="h-full rounded-full" style={{ width: `${score}%`, background: colors.bar }} />
                         </div>
                         <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0"
@@ -237,6 +204,8 @@ export default async function DashboardPage() {
                           {score}%
                         </span>
                       </div>
+                    ) : (
+                      <p className="text-xs text-gray-300">Checklist non générée</p>
                     )}
                   </div>
                 </Link>

@@ -27,7 +27,7 @@ export default function HomePage() {
         className="absolute bottom-0 inset-x-0 px-4"
         style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
       >
-        <p className="text-white text-sm leading-snug text-center px-2 mb-4 drop-shadow">
+        <p className="text-white text-sm font-bold leading-snug text-center px-2 mb-4 drop-shadow">
           Préparez votre voyage sereinement.<br />
           Visa, documents, activités... tout en un.
         </p>

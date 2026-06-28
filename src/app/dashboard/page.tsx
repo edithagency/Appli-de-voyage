@@ -149,54 +149,47 @@ export default async function DashboardPage() {
 
               return (
                 <Link key={voyage.id} href={`/voyage/${voyage.id}`}
-                  className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+                  className="rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
+                  style={{ position: 'relative', height: 220, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
 
-                  {/* Image */}
-                  <div style={{ position: 'relative', aspectRatio: '16/9', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-                    {photo && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                    )}
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%)' }} />
+                  {photo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.05) 60%)' }} />
 
-                    {/* Badge Invité */}
-                    {voyage.estInvite && (
-                      <div style={{ position: 'absolute', top: 12, left: 12 }}>
-                        <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: 'rgba(59,130,246,0.9)', color: 'white' }}>
-                          Invité
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Badge J- */}
-                    <div style={{ position: 'absolute', top: 12, right: 12 }}>
-                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46' }}>
-                        {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
+                  {/* Badge Invité */}
+                  {voyage.estInvite && (
+                    <div style={{ position: 'absolute', top: 14, left: 14 }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: 'rgba(59,130,246,0.9)', color: 'white' }}>
+                        Invité
                       </span>
                     </div>
+                  )}
 
-                    {/* Titre + pays */}
-                    <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
+                  {/* Badge J- + supprimer */}
+                  <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46' }}>
+                      {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
+                    </span>
+                    {!voyage.estInvite && <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />}
+                  </div>
+
+                  {/* Titre + infos */}
+                  <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {emoji && <span style={{ fontSize: 20 }}>{emoji}</span>}
                       <p style={{ fontWeight: 800, color: 'white', fontSize: '20px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
                         {voyage.nom}
                       </p>
-                      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: '3px 0 0', fontWeight: 500 }}>
-                        {emoji} {voyage.destination}
-                      </p>
                     </div>
-                  </div>
+                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: 0, fontWeight: 500 }}>
+                      {formatDate(voyage.date_depart)} – {formatDate(voyage.date_retour)}
+                    </p>
 
-                  {/* Infos bas */}
-                  <div className="px-4 py-3 flex flex-col gap-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold" style={{ color: '#36A6B2' }}>
-                        {formatDate(voyage.date_depart)} - {formatDate(voyage.date_retour)}
-                      </p>
-                      {!voyage.estInvite && <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />}
-                    </div>
-                    {prog.total > 0 ? (
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 rounded-full bg-gray-100">
+                    {prog.total > 0 && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex-1 h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.3)' }}>
                           <div className="h-full rounded-full" style={{ width: `${score}%`, background: colors.bar }} />
                         </div>
                         <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0"
@@ -204,8 +197,6 @@ export default async function DashboardPage() {
                           {score}%
                         </span>
                       </div>
-                    ) : (
-                      <p className="text-xs text-gray-300">Checklist non générée</p>
                     )}
                   </div>
                 </Link>

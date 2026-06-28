@@ -5,7 +5,6 @@ import DeleteVoyageButton from './DeleteVoyageButton'
 import VoyagesPasses from './VoyagesPasses'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { getPaysCode } from '@/lib/utils/paysCode'
-import PageHeader from '@/components/PageHeader'
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 }
@@ -118,7 +117,12 @@ export default async function DashboardPage() {
         <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
-        <PageHeader title="Mes voyages" />
+        <div className="max-w-2xl mx-auto px-2 mt-4 mb-6">
+          <p className="text-2xl font-bold text-gray-900 leading-tight">
+            Préparez vos<br />
+            <span className="font-museo" style={{ color: '#36A6B2' }}>voyages</span>
+          </p>
+        </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">

@@ -58,8 +58,8 @@ export default async function CoffreFortPage() {
   return (
     <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-2 sm:pt-8 pb-1 flex justify-center">
-          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-5" />
+        <div className="max-w-2xl mx-auto pt-3 sm:pt-9 pb-2 flex justify-center">
+          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
         <div className="max-w-2xl mx-auto flex items-center gap-3 pb-3">
           <Link href="/dashboard" className="text-gray-400 text-lg">←</Link>

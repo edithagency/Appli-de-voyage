@@ -19,16 +19,17 @@ export default function HomePage() {
       />
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 pt-14 sm:pt-20">
-        <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44 mb-3" />
-        <p className="text-white text-sm opacity-90 drop-shadow">
-          Préparez votre voyage sereinement.<br />
-          Visa, documents, activités... tout en un.
-        </p>
+        <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44" />
       </div>
 
+      <p className="relative z-10 mt-auto text-white text-base font-bold text-center px-6 mb-4 drop-shadow">
+        Préparez votre voyage sereinement.<br />
+        Visa, documents, activités... tout en un.
+      </p>
+
       <div
-        className="relative z-10 mt-auto w-full bg-white rounded-t-[2rem] px-6 pt-7 pb-8"
-        style={{ boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.15)' }}
+        className="relative z-10 w-full bg-white rounded-t-[2rem] px-6 pt-7"
+        style={{ boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.15)', paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
       >
         <div className="flex flex-col gap-2.5 max-w-xs mx-auto">
           <Link

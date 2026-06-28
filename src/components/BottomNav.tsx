@@ -30,12 +30,12 @@ export default function BottomNav() {
   return (
     <div
       className="absolute inset-x-0 bottom-0 flex justify-center pointer-events-none"
-      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 36px)' }}
     >
       <nav
-        className="pointer-events-auto inline-flex items-center gap-1 mx-4 px-3 py-2 rounded-full max-w-[360px]"
+        className="pointer-events-auto inline-flex items-center gap-2 mx-4 px-5 py-2.5 rounded-full max-w-[360px]"
         style={{
-          background: 'rgba(255, 255, 255, 0.8)',
+          background: 'rgba(255, 253, 216, 0.85)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
@@ -47,10 +47,10 @@ export default function BottomNav() {
             <Link
               key={href}
               href={href}
-              className="flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200"
-              style={{ background: active ? '#534AB7' : 'transparent' }}
+              className="flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
+              style={{ background: active ? '#36A6B2' : 'transparent' }}
             >
-              <Icon size={22} strokeWidth={2.25} color={active ? '#FFFFFF' : '#93C5FD'} />
+              <Icon size={22} strokeWidth={2.25} color={active ? '#FFFDD8' : '#36A6B2'} />
             </Link>
           )
         })}

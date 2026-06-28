@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Sun, Snowflake, Leaf } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import DeleteVoyageButton from './DeleteVoyageButton'
 import VoyagesPasses from './VoyagesPasses'
@@ -12,12 +11,6 @@ function formatDate(date: string) {
 
 function joursAvantDepart(dateDepart: string) {
   return Math.ceil((new Date(dateDepart).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-}
-
-function SaisonIcon({ dateDepart }: { dateDepart: string }) {
-  const mois = new Date(dateDepart).getMonth()
-  const Icon = mois === 11 || mois <= 1 ? Snowflake : mois >= 5 && mois <= 7 ? Sun : Leaf
-  return <Icon size={16} color="white" />
 }
 
 function scoreColor(score: number) {
@@ -171,23 +164,18 @@ export default async function DashboardPage() {
 
               return (
                 <Link key={voyage.id} href={`/voyage/${voyage.id}`}
-                  className="rounded-2xl overflow-hidden active:scale-[0.98] transition-transform"
-                  style={{ position: 'relative', height: 180, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+                  className="rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
+                  style={{ position: 'relative', height: 260, background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
 
                   {photo && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                    <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                   )}
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%)' }} />
-
-                  {/* Icône saison */}
-                  <div style={{ position: 'absolute', top: 12, left: 12, width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <SaisonIcon dateDepart={voyage.date_depart} />
-                  </div>
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.05) 60%)' }} />
 
                   {/* Badge Invité */}
                   {voyage.estInvite && (
-                    <div style={{ position: 'absolute', top: 12, left: 48 }}>
+                    <div style={{ position: 'absolute', top: 14, left: 14 }}>
                       <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: 'rgba(59,130,246,0.9)', color: 'white' }}>
                         Invité
                       </span>
@@ -195,7 +183,7 @@ export default async function DashboardPage() {
                   )}
 
                   {/* Badge J- + supprimer */}
-                  <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)', color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46' }}>
                       {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
                     </span>
@@ -203,25 +191,21 @@ export default async function DashboardPage() {
                   </div>
 
                   {/* Titre + infos */}
-                  <div style={{ position: 'absolute', bottom: 14, left: 14, right: 14 }}>
-                    <div className="flex items-center gap-2 min-w-0">
-                      {emoji && <span style={{ fontSize: 18, flexShrink: 0 }}>{emoji}</span>}
-                      <p style={{ fontWeight: 700, color: 'white', fontSize: '22px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
-                        {voyage.nom}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-2 mt-1">
-                      <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', margin: 0, fontWeight: 500 }}>
-                        {formatDate(voyage.date_depart)} · {Math.max(1, Math.round((new Date(voyage.date_retour).getTime() - new Date(voyage.date_depart).getTime()) / (1000 * 60 * 60 * 24)))} jours
-                      </p>
+                  <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {emoji && <span style={{ fontSize: 20, flexShrink: 0 }}>{emoji}</span>}
+                        <p style={{ fontWeight: 800, color: 'white', fontSize: '20px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0, lineHeight: 1.2 }}>
+                          {voyage.nom}
+                        </p>
+                      </div>
 
                       {/* Avatars participants */}
                       {membresVoyage.length > 0 && (
                         <div className="flex shrink-0">
                           {membresVoyage.slice(0, 2).map((m, i) => (
                             <div key={i}
-                              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white"
                               style={{
                                 background: 'linear-gradient(135deg, #534AB7, #8B7FE8)',
                                 border: '2px solid white',
@@ -231,7 +215,7 @@ export default async function DashboardPage() {
                             </div>
                           ))}
                           {membresVoyage.length > 2 && (
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                            <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white"
                               style={{ background: 'rgba(0,0,0,0.6)', border: '2px solid white', marginLeft: -10 }}>
                               +{membresVoyage.length - 2}
                             </div>
@@ -239,6 +223,9 @@ export default async function DashboardPage() {
                         </div>
                       )}
                     </div>
+                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', margin: '4px 0 0', fontWeight: 500 }}>
+                      {formatDate(voyage.date_depart)} – {formatDate(voyage.date_retour)}
+                    </p>
 
                     {prog.total > 0 && (
                       <div className="flex items-center gap-2 mt-2">

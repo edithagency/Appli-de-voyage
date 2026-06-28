@@ -38,7 +38,6 @@ export default function RootLayout({
         <div className="app-backdrop">
           <div className="phone-frame">
             <div className="phone-notch" />
-            <div id="hero-fixed-portal" className="absolute inset-x-0 top-0" />
             <div className="phone-screen">
               {children}
             </div>

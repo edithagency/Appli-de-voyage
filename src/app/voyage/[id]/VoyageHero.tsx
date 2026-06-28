@@ -1,14 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Sun, Snowflake, Leaf } from 'lucide-react'
 import VoyageEditButton from './VoyageEditButton'
 import { quitterVoyage } from './quitter-actions'
 
 const MAX_RATIO = 0.45
-const MIN_H = 140
+const MIN_H = 210
 
 type Membre = {
   id: string
@@ -73,10 +72,7 @@ export default function VoyageHero({
   }, [])
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+    <div
       className="relative overflow-hidden"
       style={{ height: imageHeight, position: 'sticky', top: 0, zIndex: 10, willChange: 'height', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
     >
@@ -143,6 +139,6 @@ export default function VoyageHero({
           {destination} · {duree} jour{duree > 1 ? 's' : ''}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 }

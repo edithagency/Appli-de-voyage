@@ -55,8 +55,11 @@ export default function OutilsPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: '#FFFFFF' }}>
-      <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto">
+      <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto pt-2 pb-1 flex justify-center">
+          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-5" />
+        </div>
+        <div className="max-w-2xl mx-auto pb-3">
           <h1 className="text-lg font-bold text-gray-900">🛠️ Outils de voyage</h1>
           <p className="text-xs text-gray-400 mt-0.5">Utiles sur le terrain, même sans connexion</p>
         </div>

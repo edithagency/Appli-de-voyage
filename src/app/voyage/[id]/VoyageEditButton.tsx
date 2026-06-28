@@ -105,14 +105,14 @@ export default function VoyageEditButton({
         {/* Modifier */}
         <button
           onClick={() => setShowEdit(true)}
-          style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, backdropFilter: 'blur(4px)' }}
+          style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, backdropFilter: 'blur(4px)' }}
           title="Modifier le voyage">
           ✏️
         </button>
         {/* Partager */}
         <button
           onClick={() => setShowShare(true)}
-          style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, backdropFilter: 'blur(4px)' }}
+          style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, backdropFilter: 'blur(4px)' }}
           title="Partager">
           🔗
         </button>

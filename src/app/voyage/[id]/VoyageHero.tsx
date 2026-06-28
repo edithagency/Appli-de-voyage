@@ -2,8 +2,8 @@ import Link from 'next/link'
 import VoyageEditButton from './VoyageEditButton'
 import { quitterVoyage } from './quitter-actions'
 
-const MAX_H = 280
-const MIN_H = 110
+const MAX_H = 220
+const MIN_H = 100
 
 type Membre = {
   id: string
@@ -52,18 +52,18 @@ export default function VoyageHero({
 
       {/* Retour */}
       <Link href="/dashboard"
-        style={{ position: 'absolute', top: 14, left: 14, width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: '#111827', backdropFilter: 'blur(4px)' }}>
+        style={{ position: 'absolute', top: 12, left: 14, width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#111827', backdropFilter: 'blur(4px)' }}>
         ←
       </Link>
 
       {isOrganisateur && (
-        <div style={{ position: 'absolute', top: 14, left: 56 }}>
+        <div style={{ position: 'absolute', top: 12, left: 50 }}>
           <VoyageEditButton voyage={voyage} membres={membres} modeGestion={modeGestion} />
         </div>
       )}
 
       {showQuitter && (
-        <div style={{ position: 'absolute', top: 14, left: 56 }}>
+        <div style={{ position: 'absolute', top: 12, left: 50 }}>
           <form action={quitterVoyage.bind(null, currentMembreId)}>
             <button type="submit"
               className="text-xs font-semibold px-3 py-1.5 rounded-full"
@@ -75,7 +75,7 @@ export default function VoyageHero({
         </div>
       )}
 
-      <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ position: 'absolute', top: 12, right: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
         {isInvite && (
           <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: 'rgba(59,130,246,0.9)', color: 'white' }}>
             Invité

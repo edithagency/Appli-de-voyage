@@ -2,9 +2,17 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <main className="h-full overflow-hidden flex flex-col items-center justify-center px-4 text-center"
+    <main className="h-full overflow-hidden relative flex flex-col items-center justify-center px-4 text-center"
       style={{ background: '#FFFFFF' }}>
-      <div className="max-w-xl -mt-12">
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-20"
+        src="/videos/bon-vol.mp4"
+      />
+      <div className="max-w-xl -mt-12 relative z-10">
         <h1 className="sr-only">Bon Vol</h1>
         <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="w-32 sm:w-36 mx-auto mb-6" />
         <p className="text-sm text-gray-600 mb-6">

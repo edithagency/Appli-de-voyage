@@ -26,6 +26,7 @@
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-museo: var(--font-museo-moderno);
 
   /* Repeint la palette "blue" de Tailwind dans le bleu/turquoise de la marque,
      pour que les classes bg-blue et text-blue déjà utilisées dans l'app

@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, MuseoModerno } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 
 const geist = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const museoModerno = MuseoModerno({
+  variable: "--font-museo-moderno",
   subsets: ["latin"],
 });
 
@@ -28,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${geist.variable} h-full antialiased`}>
+    <html lang="fr" className={`${geist.variable} ${museoModerno.variable} h-full antialiased`}>
       <body className="h-full antialiased">
         <div className="app-backdrop">
           <div className="phone-frame">

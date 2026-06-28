@@ -1,13 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Sun, Snowflake, Leaf } from 'lucide-react'
 import VoyageEditButton from './VoyageEditButton'
 import { quitterVoyage } from './quitter-actions'
-
-const MAX_RATIO = 0.45
-const MIN_H = 210
 
 type Membre = {
   id: string
@@ -45,40 +41,16 @@ export default function VoyageHero({
   showQuitter: boolean
   currentMembreId: string
 }) {
-  const [imageHeight, setImageHeight] = useState(MIN_H)
-  const frame = useRef<number | null>(null)
   const SaisonIcon = saisonIcon(dateDepart)
-
-  useEffect(() => {
-    const scrollEl = document.querySelector('.phone-screen')
-    if (!scrollEl) return
-
-    function compute() {
-      const maxH = Math.max(MIN_H, scrollEl!.clientHeight * MAX_RATIO)
-      const h = Math.max(MIN_H, maxH - scrollEl!.scrollTop * 0.5)
-      setImageHeight(h)
-    }
-    compute()
-
-    function onScroll() {
-      if (frame.current !== null) return
-      frame.current = requestAnimationFrame(() => {
-        compute()
-        frame.current = null
-      })
-    }
-    scrollEl.addEventListener('scroll', onScroll, { passive: true })
-    return () => scrollEl.removeEventListener('scroll', onScroll)
-  }, [])
 
   return (
     <div
-      className="relative overflow-hidden"
-      style={{ height: imageHeight, position: 'sticky', top: 0, zIndex: 10, willChange: 'height', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+      className="relative overflow-hidden w-full"
+      style={{ height: '45vh', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
     >
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+        <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
       )}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.05) 55%)' }} />
 

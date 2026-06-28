@@ -18,19 +18,18 @@ export default function HomePage() {
         style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.55) 100%)' }}
       />
 
-      <div className="absolute top-14 sm:top-20 inset-x-0 flex flex-col items-center text-center px-6">
-        <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44" />
+      <div className="absolute top-20 sm:top-28 inset-x-0 flex flex-col items-center text-center px-6">
+        <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44 mb-3" />
+        <p className="text-white text-sm font-bold leading-snug drop-shadow">
+          Préparez votre voyage sereinement.<br />
+          Visa, documents, activités... tout en un.
+        </p>
       </div>
 
       <div
         className="absolute bottom-0 inset-x-0 px-4"
         style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
       >
-        <p className="text-white text-sm font-bold leading-snug text-center px-2 mb-4 drop-shadow">
-          Préparez votre voyage sereinement.<br />
-          Visa, documents, activités... tout en un.
-        </p>
-
         <div
           className="w-full bg-white rounded-[2rem] px-5 py-5"
           style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)' }}

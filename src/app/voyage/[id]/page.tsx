@@ -146,7 +146,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         currentMembreId={currentMembre?.id ?? ''}
       />
 
-      <div className="relative z-10 bg-white rounded-t-3xl -mt-5 pb-28" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.08)' }}>
+      <div className="relative bg-white rounded-t-3xl -mt-6 pb-28 min-h-screen" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.08)' }}>
         <main className="max-w-2xl mx-auto px-5 pt-6 flex flex-col gap-4">
 
           {tousLesMembres.length > 0 && (

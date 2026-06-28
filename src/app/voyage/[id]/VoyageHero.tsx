@@ -7,8 +7,8 @@ import { Sun, Snowflake, Leaf } from 'lucide-react'
 import VoyageEditButton from './VoyageEditButton'
 import { quitterVoyage } from './quitter-actions'
 
-const MAX_RATIO = 0.55
-const MIN_H = 210
+const MAX_RATIO = 0.45
+const MIN_H = 140
 
 type Membre = {
   id: string
@@ -78,11 +78,11 @@ export default function VoyageHero({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className="relative overflow-hidden"
-      style={{ height: imageHeight, position: 'sticky', top: 0, zIndex: 0, willChange: 'height', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+      style={{ height: imageHeight, position: 'sticky', top: 0, zIndex: 10, willChange: 'height', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
     >
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+        <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
       )}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.05) 55%)' }} />
 

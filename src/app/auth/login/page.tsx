@@ -20,8 +20,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-800">
-      <h1 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">Bon retour !</h1>
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-gray-800">
+      <h1 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Bon retour !</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Connecte-toi pour accéder à tes voyages</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -69,7 +69,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ background: loading ? '#7FBFA0' : 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
         >
           {loading ? 'Connexion...' : 'Se connecter'}

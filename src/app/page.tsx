@@ -7,21 +7,21 @@ export default function HomePage() {
       <div className="max-w-xl">
         <h1 className="sr-only">Bon Vol</h1>
         <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="w-32 sm:w-36 mx-auto mb-6" />
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-sm text-gray-600 mb-6">
           Préparez votre voyage sereinement.<br />
           Visa, documents, activités... tout en un.
         </p>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5">
           <Link
             href="/auth/signup"
-            className="w-full px-8 py-3 rounded-full font-semibold text-white"
+            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold text-white"
             style={{ background: 'linear-gradient(135deg, #1D4ED8, #60A5FA)' }}
           >
             S&apos;inscrire gratuitement
           </Link>
           <Link
             href="/auth/login"
-            className="w-full px-8 py-3 rounded-full font-semibold border-2 border-[#1D4ED8] text-[#1D4ED8] hover:bg-blue-50 transition"
+            className="w-full px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-[#1D4ED8] text-[#1D4ED8] hover:bg-blue-50 transition"
           >
             Se connecter
           </Link>

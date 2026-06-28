@@ -32,10 +32,10 @@ export default function HomePage() {
         </p>
 
         <div
-          className="w-full bg-white rounded-[2rem] px-6 py-7"
+          className="w-full bg-white rounded-[2rem] px-5 py-5"
           style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)' }}
         >
-          <div className="flex flex-col gap-2.5 max-w-xs mx-auto">
+          <div className="flex flex-col gap-2 max-w-xs mx-auto">
             <Link
               href="/auth/signup"
               className="w-full px-6 py-3 rounded-full text-sm font-semibold text-white text-center"
@@ -45,7 +45,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/auth/login"
-              className="w-full px-6 py-[10px] rounded-full text-sm font-semibold border-2 border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition text-center"
+              className="w-full px-6 py-[11px] rounded-full text-sm font-semibold border border-[#36A6B2] text-[#36A6B2] bg-white hover:bg-blue-50 transition text-center"
               style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' }}
             >
               Se connecter

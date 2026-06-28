@@ -5,8 +5,8 @@ export default function HomePage() {
     <main className="min-h-screen flex flex-col items-center justify-center px-4 text-center"
       style={{ background: '#FFFFFF' }}>
       <div className="max-w-xl">
-        <div className="text-6xl mb-6">✈️</div>
-        <h1 className="text-4xl font-bold mb-3" style={{ color: '#1D4ED8' }}>Bon Vol</h1>
+        <h1 className="sr-only">Bon Vol</h1>
+        <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="w-72 sm:w-80 mx-auto mb-6" />
         <p className="text-lg text-gray-600 mb-8">
           Préparez votre voyage sereinement. Checklist, documents, rappels — tout en un, gratuit.
         </p>

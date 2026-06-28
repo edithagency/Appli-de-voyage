@@ -4,7 +4,7 @@ export default function HomePage() {
   return (
     <main className="h-full overflow-hidden flex flex-col items-center justify-center px-4 text-center"
       style={{ background: '#FFFFFF' }}>
-      <div className="max-w-xl">
+      <div className="max-w-xl -mt-12">
         <h1 className="sr-only">Bon Vol</h1>
         <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="w-32 sm:w-36 mx-auto mb-6" />
         <p className="text-sm text-gray-600 mb-6">

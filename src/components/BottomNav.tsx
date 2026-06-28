@@ -35,7 +35,7 @@ export default function BottomNav() {
       <nav
         className="pointer-events-auto inline-flex items-center gap-2 mx-4 px-5 py-2.5 rounded-full max-w-[360px]"
         style={{
-          background: 'rgba(243, 242, 238, 0.9)',
+          background: 'rgba(255, 254, 237, 0.9)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
@@ -52,8 +52,8 @@ export default function BottomNav() {
               <Icon
                 size={24}
                 strokeWidth={active ? 2 : 1.75}
-                color="#111827"
-                fill={active ? '#111827' : 'none'}
+                color="#36A6B2"
+                fill={active ? '#36A6B2' : 'none'}
               />
             </Link>
           )

@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { Sun, Snowflake, Leaf } from 'lucide-react'
 import VoyageEditButton from './VoyageEditButton'
@@ -42,11 +44,18 @@ export default function VoyageHero({
   currentMembreId: string
 }) {
   const SaisonIcon = saisonIcon(dateDepart)
+  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null)
 
-  return (
+  useEffect(() => {
+    setPortalEl(document.getElementById('hero-fixed-portal'))
+  }, [])
+
+  if (!portalEl) return null
+
+  return createPortal(
     <div
-      className="relative overflow-hidden w-full"
-      style={{ height: '45vh', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+      className="overflow-hidden"
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 0, height: '45vh', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
     >
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element
@@ -111,6 +120,7 @@ export default function VoyageHero({
           {destination} · {duree} jour{duree > 1 ? 's' : ''}
         </p>
       </div>
-    </div>
+    </div>,
+    portalEl
   )
 }

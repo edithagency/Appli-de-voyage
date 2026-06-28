@@ -146,7 +146,10 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         currentMembreId={currentMembre?.id ?? ''}
       />
 
-      <div className="relative bg-white rounded-t-3xl -mt-6 pb-28" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.08)', minHeight: '60vh' }}>
+      {/* Spacer : pousse le contenu blanc sous l'image fixe */}
+      <div style={{ height: 'calc(45vh - 24px)' }} />
+
+      <div className="relative bg-white rounded-t-3xl pb-28" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.08)', minHeight: '60vh', zIndex: 10 }}>
         <main className="max-w-2xl mx-auto px-5 pt-6 flex flex-col gap-4">
 
           {tousLesMembres.length > 0 && (

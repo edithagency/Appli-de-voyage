@@ -23,15 +23,18 @@ export default function HomePage() {
         <img src="/images/logo-bon-vol-white.png" alt="Bon Vol" className="w-40 sm:w-44" />
       </div>
 
-      <div className="absolute bottom-0 inset-x-0">
-        <p className="text-white text-base font-bold text-center px-6 mb-4 drop-shadow">
+      <div
+        className="absolute bottom-0 inset-x-0 px-4"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)' }}
+      >
+        <p className="text-white text-base font-bold text-center px-2 mb-4 drop-shadow">
           Préparez votre voyage sereinement.<br />
           Visa, documents, activités... tout en un.
         </p>
 
         <div
-          className="w-full bg-white rounded-t-[2rem] px-6 pt-7"
-          style={{ boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.15)', paddingBottom: 'calc(env(safe-area-inset-bottom) + 28px)' }}
+          className="w-full bg-white rounded-[2rem] px-6 py-7"
+          style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)' }}
         >
           <div className="flex flex-col gap-2.5 max-w-xs mx-auto">
             <Link

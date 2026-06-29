@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation'
 import { Plane, Wrench, Lock, User } from 'lucide-react'
 
 const TABS = [
-  { href: '/dashboard', icon: Plane },
-  { href: '/outils', icon: Wrench },
-  { href: '/coffre-fort', icon: Lock },
-  { href: '/compte', icon: User },
+  { href: '/dashboard', icon: Plane, label: 'Voyages' },
+  { href: '/outils', icon: Wrench, label: 'Outils' },
+  { href: '/coffre-fort', icon: Lock, label: 'Coffre-fort' },
+  { href: '/compte', icon: User, label: 'Compte' },
 ]
 
 const HIDDEN_PREFIXES = ['/', '/auth', '/join', '/voyage']
@@ -33,35 +33,35 @@ export default function BottomNav() {
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 36px)' }}
     >
       <nav
-        className="pointer-events-auto inline-flex items-center gap-1 mx-4 px-2.5 py-2.5 rounded-2xl max-w-[320px]"
+        className="pointer-events-auto flex items-center justify-between gap-1 px-3 py-2.5"
         style={{
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
+          borderRadius: 9999,
           boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(0,0,0,0.03)',
           border: '1px solid rgba(0,0,0,0.04)',
         }}
       >
-        {TABS.map(({ href, icon: Icon }) => {
+        {TABS.map(({ href, icon: Icon, label }) => {
           const active = isActive(href)
           return (
             <Link
               key={href}
               href={href}
-              className="relative flex items-center justify-center w-12 h-11 rounded-xl transition-all duration-200"
-              style={{ background: active ? 'rgba(54, 166, 178, 0.12)' : 'transparent' }}
+              className="flex items-center justify-center gap-1.5 transition-all overflow-hidden"
+              style={{
+                borderRadius: 9999,
+                padding: active ? '8px 14px' : '8px',
+                background: active ? 'rgba(54,166,178,0.12)' : 'transparent',
+                boxShadow: active ? '0 0 6px 1px rgba(54,166,178,0.3)' : 'none',
+              }}
             >
-              <Icon
-                size={22}
-                strokeWidth={active ? 2.25 : 1.75}
-                color={active ? '#36A6B2' : '#9CA3AF'}
-                fill="none"
-              />
+              <Icon size={20} strokeWidth={active ? 2.25 : 1.75} color={active ? '#36A6B2' : '#9CA3AF'} className="shrink-0" />
               {active && (
-                <span
-                  className="absolute -bottom-[3px] left-1/2 -translate-x-1/2 rounded-full"
-                  style={{ width: 4, height: 4, background: '#36A6B2' }}
-                />
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', color: '#36A6B2', whiteSpace: 'nowrap' }}>
+                  {label.toUpperCase()}
+                </span>
               )}
             </Link>
           )

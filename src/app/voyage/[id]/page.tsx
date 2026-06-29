@@ -179,15 +179,12 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
         {/* Badge J- haut droite */}
         <div className="absolute top-4 right-4">
-          {jours > 0 ? (
-            <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.9)', color: jours <= 7 ? '#92400E' : '#36A6B2' }}>
-              J-{jours}
-            </span>
-          ) : (
-            <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: '#D1FAE5', color: '#065F46' }}>
-              {jours === 0 ? "Aujourd'hui !" : 'En cours'}
-            </span>
-          )}
+          <span style={{
+            fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, color: 'white',
+            background: jours > 0 && jours <= 7 ? '#2563EB' : jours > 0 ? '#93C5FD' : '#60A5FA',
+          }}>
+            {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
+          </span>
           {!isOrganisateur && (
             <div className="mt-1.5">
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(59,130,246,0.9)', color: 'white' }}>

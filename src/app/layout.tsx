@@ -46,6 +46,7 @@ export default function RootLayout({
             <NewTripButton />
             <NewDocumentButton />
             <BottomNav />
+            <div id="modal-root" />
           </div>
         </div>
       </body>

@@ -91,8 +91,11 @@ export default async function DashboardPage() {
 
       {/* Header mobile */}
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-6 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
+        </div>
+        <div className="max-w-2xl mx-auto px-2 mt-4 mb-6">
+          <p className="text-2xl font-bold" style={{ color: '#004850' }}>Mes voyages</p>
         </div>
       </header>
 

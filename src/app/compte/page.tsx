@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import CompteForm from './CompteForm'
+import EditProfileButton from './EditProfileButton'
 import AvatarUploader from './AvatarUploader'
 import CompteSettings from './CompteSettings'
 import Link from 'next/link'
@@ -49,7 +49,7 @@ export default async function ComptePage() {
           </div>
         </div>
 
-        <CompteForm
+        <EditProfileButton
           initialPrenom={profile?.prenom ?? ''}
           initialNom={profile?.nom ?? ''}
         />

@@ -43,12 +43,10 @@ export default function BottomNav() {
       <nav
         className="pointer-events-auto flex items-center justify-between gap-1 px-3 py-2.5"
         style={{
-          background: 'rgba(255, 255, 255, 0.75)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          background: 'rgba(255, 255, 255, 0.95)',
           borderRadius: 9999,
           boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(0,0,0,0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.5)',
+          border: '1px solid rgba(0,0,0,0.04)',
         }}
       >
         {TABS.map(({ href, icon: Icon, label }) => {

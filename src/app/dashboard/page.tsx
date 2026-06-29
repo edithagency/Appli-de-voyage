@@ -16,6 +16,10 @@ function dureeVoyage(depart: string, retour: string) {
   return Math.ceil((new Date(retour).getTime() - new Date(depart).getTime()) / (1000 * 60 * 60 * 24))
 }
 
+function joursAvantDepart(dateDepart: string) {
+  return Math.ceil((new Date(dateDepart).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -115,6 +119,7 @@ export default async function DashboardPage() {
               const photo = code ? `/images/pays/${code}.png` : null
               const membres = membresParVoyage[voyage.id] ?? []
               const avatars = membres.slice(0, 3)
+              const jours = joursAvantDepart(voyage.date_depart)
 
               return (
                 <Link key={voyage.id} href={`/voyage/${voyage.id}`}
@@ -136,6 +141,17 @@ export default async function DashboardPage() {
 
                   {/* Supprimer */}
                   <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />
+
+                  {/* Badge J- */}
+                  <div className="absolute" style={{ top: 12, right: 12 }}>
+                    <span style={{
+                      fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
+                      background: jours > 0 && jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.92)',
+                      color: jours > 0 && jours <= 7 ? '#92400E' : jours > 0 ? '#36A6B2' : '#065F46',
+                    }}>
+                      {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
+                    </span>
+                  </div>
 
                   {/* Texte */}
                   <div className="absolute" style={{ bottom: 12, left: 14 }}>

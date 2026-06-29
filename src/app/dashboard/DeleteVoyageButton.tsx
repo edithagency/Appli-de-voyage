@@ -24,9 +24,9 @@ export default function DeleteVoyageButton({ voyageId, voyageNom }: { voyageId: 
       onClick={handleDelete}
       disabled={loading}
       className="absolute flex items-center justify-center transition disabled:opacity-50"
-      style={{ top: 12, left: 12, background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(4px)', borderRadius: '50%', padding: 8 }}
+      style={{ top: 12, left: 12, padding: 8 }}
       title="Supprimer le voyage">
-      <X size={16} color="white" />
+      <X size={14} color="white" />
     </button>
   )
 }

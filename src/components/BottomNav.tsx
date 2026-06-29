@@ -6,8 +6,8 @@ import { Plane, Wrench, Lock, User } from 'lucide-react'
 
 const TABS = [
   { href: '/dashboard', icon: Plane, label: 'Voyages' },
-  { href: '/outils', icon: Wrench, label: 'Outils' },
   { href: '/coffre-fort', icon: Lock, label: 'Documents' },
+  { href: '/outils', icon: Wrench, label: 'Outils' },
   { href: '/compte', icon: User, label: 'Compte' },
 ]
 

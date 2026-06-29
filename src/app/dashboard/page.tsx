@@ -146,7 +146,7 @@ export default async function DashboardPage() {
                   <div className="absolute" style={{ top: 12, right: 12 }}>
                     <span style={{
                       fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, color: 'white',
-                      background: jours > 0 && jours <= 7 ? '#1E3A8A' : jours > 0 ? '#60A5FA' : '#2563EB',
+                      background: jours > 0 && jours <= 7 ? '#2563EB' : jours > 0 ? '#93C5FD' : '#60A5FA',
                     }}>
                       {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
                     </span>

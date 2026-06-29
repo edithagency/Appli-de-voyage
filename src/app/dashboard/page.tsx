@@ -163,7 +163,7 @@ export default async function DashboardPage() {
                     {membres.map((m, i) => (
                       <div key={m.id} className="flex items-center justify-center text-white"
                         style={{
-                          width: 32, height: 32, borderRadius: '50%', border: '2px solid white',
+                          width: 32, height: 32, borderRadius: '50%',
                           marginLeft: i > 0 ? -8 : 0, background: AVATAR_COLORS[i % AVATAR_COLORS.length],
                           fontSize: 13, fontWeight: 600, zIndex: i,
                         }}>

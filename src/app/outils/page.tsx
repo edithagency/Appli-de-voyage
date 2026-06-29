@@ -112,7 +112,7 @@ export default function OutilsPage() {
   return (
     <div className="min-h-screen" style={{ background: '#FFFFFF', paddingBottom: 100 }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-9 pb-5 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-5 flex justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>

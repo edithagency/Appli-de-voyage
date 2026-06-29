@@ -32,26 +32,13 @@ export default function BottomNav() {
       className="absolute inset-x-0 bottom-0 flex justify-center pointer-events-none"
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 36px)' }}
     >
-      {/* Flou progressif derrière la nav : plusieurs couches masquées, le flou augmente
-          en se rapprochant de la barre, pour un vrai dégradé (pas une bande nette). */}
-      <div className="bottom-nav-blur absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden" style={{ height: 160 }}>
-        {[3, 6, 10, 16].map((blur, i) => {
-          const plateauEnd = 70 - i * 20
-          const fadeEnd = plateauEnd + 25
-          const mask = `linear-gradient(to top, black 0%, black ${plateauEnd}%, transparent ${fadeEnd}%)`
-          return (
-            <div key={blur} className="absolute inset-0" style={{
-              backdropFilter: `blur(${blur}px)`,
-              WebkitBackdropFilter: `blur(${blur}px)`,
-              maskImage: mask,
-              WebkitMaskImage: mask,
-            }} />
-          )
-        })}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to top, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 100%)',
-        }} />
-      </div>
+      {/* Dégradé blanc derrière la nav — pas de backdrop-filter ici : sur cette forme
+          pleine largeur, le flou débordait/noircissait au niveau des coins arrondis
+          du mockup téléphone. Un simple dégradé de couleur ne peut pas déborder. */}
+      <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{
+        height: 160,
+        background: 'linear-gradient(to top, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%)',
+      }} />
 
       <nav
         className="pointer-events-auto flex items-center justify-between gap-1 px-3 py-2.5"

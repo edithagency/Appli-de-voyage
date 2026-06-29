@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Poppins } from 'next/font/google'
 import DocumentCard from './DocumentCard'
 import DocumentUploadModal from '@/components/DocumentUploadModal'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
@@ -17,6 +18,8 @@ type Doc = {
 }
 type Membre = { id: string; prenom: string; type: string }
 type Voyage = { id: string; nom: string }
+
+const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
 
 const TYPE_LABELS: Record<string, string> = {
   passeport: 'Passeport', carte_identite: "Carte d'identité", visa: 'Visa',
@@ -62,7 +65,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Mes documents</h1>
+          <h1 className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.06em' }}>Mes documents</h1>
           <p className="text-sm text-gray-400 mt-0.5">
             {filteredDocs.length} document{filteredDocs.length > 1 ? 's' : ''}
             {filteredDocs.length !== docs.length ? ` · ${docs.length} au total` : ''}

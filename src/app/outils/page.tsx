@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Poppins } from 'next/font/google'
 import { X } from 'lucide-react'
 import DeviseGenerique from './DeviseGenerique'
 import TailleConverter from './TailleConverter'
@@ -13,6 +14,8 @@ import NumerosUrgence from './NumerosUrgence'
 import EtSiPartaisDemain from './EtSiPartaisDemain'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
+
+const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
 
 const GRADIENTS = [
   'linear-gradient(135deg, #36A6B2, #1D7480)',
@@ -116,6 +119,7 @@ export default function OutilsPage() {
       </header>
 
       <main className="max-w-2xl mx-auto" style={{ padding: 16 }}>
+        <p className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.06em', margin: '0 0 12px' }}>Outils</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           {OUTILS.map((outil, i) => (
             <div key={outil.id}

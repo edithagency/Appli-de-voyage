@@ -81,7 +81,7 @@ export default function SlideToggle({
         transition: 'color 0.2s',
         letterSpacing: '0.01em',
       }}>
-        {willComplete ? `✓ ${labelDone}` : labelIdle}
+        {willComplete ? labelDone : labelIdle}
       </span>
 
       <div style={{

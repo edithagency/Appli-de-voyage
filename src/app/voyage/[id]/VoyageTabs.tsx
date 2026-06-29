@@ -182,22 +182,24 @@ export default function VoyageTabs({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white flex gap-1 px-2 py-2 sticky top-0 z-30"
-        style={{ borderRadius: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #F0F0F0' }}>
-        {TABS.map(tab => {
-          const Icon = tab.icon
-          const isActive = active === tab.key
-          return (
-            <button key={tab.key} onClick={() => setActive(tab.key)}
-              className="flex-1 flex flex-col items-center gap-1 py-2.5 transition-all"
-              style={{ borderRadius: 14, background: isActive ? '#36A6B2' : 'transparent' }}>
-              <Icon size={18} color={isActive ? 'white' : '#9CA3AF'} />
-              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', color: isActive ? 'white' : '#9CA3AF' }}>
-                {tab.label.toUpperCase()}
-              </span>
-            </button>
-          )
-        })}
+      <div className="bg-white pt-4 pb-2 sticky top-0 z-30">
+        <div className="flex gap-1 px-2 py-2"
+          style={{ borderRadius: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #F0F0F0' }}>
+          {TABS.map(tab => {
+            const Icon = tab.icon
+            const isActive = active === tab.key
+            return (
+              <button key={tab.key} onClick={() => setActive(tab.key)}
+                className="flex-1 flex flex-col items-center gap-1 py-2.5 transition-all"
+                style={{ borderRadius: 14, background: isActive ? '#36A6B2' : 'transparent' }}>
+                <Icon size={18} color={isActive ? 'white' : '#9CA3AF'} />
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', color: isActive ? 'white' : '#9CA3AF' }}>
+                  {tab.label.toUpperCase()}
+                </span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* ─── INFOS ─── */}

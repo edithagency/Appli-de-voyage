@@ -23,10 +23,9 @@ export default async function ComptePage() {
   return (
     <div className="h-full flex flex-col overflow-hidden bg-white">
 
-      {/* IMAGE FIXE EN HAUT — hors de la zone qui scrolle, logo + avatar/nom/email dessus */}
+      {/* FOND ABSTRAIT FIXE EN HAUT — hors de la zone qui scrolle, logo + avatar/nom/email dessus */}
       <div className="relative shrink-0 overflow-hidden" style={{ height: '33vh' }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/compte/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #FFFFFF 0%, #DBEAFE 40%, #8BD4DC 75%, #36A6B2 100%)' }} />
 
         <div className="absolute inset-x-0 top-0 pt-5 sm:pt-11 flex justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}

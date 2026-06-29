@@ -26,14 +26,14 @@ export default async function ComptePage() {
       {/* IMAGE FIXE EN HAUT — hors de la zone qui scrolle, logo + avatar/nom/email dessus */}
       <div className="relative shrink-0 overflow-hidden" style={{ height: '38vh' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/compte/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover object-center" />
+        <img src="/images/compte/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
 
         <div className="absolute inset-x-0 top-0 pt-5 sm:pt-11 flex justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
 
-        <div className="absolute inset-x-0 flex flex-col items-center gap-3" style={{ bottom: 40 }}>
+        <div className="absolute inset-x-0 flex flex-col items-center gap-3" style={{ bottom: 64 }}>
           <AvatarUploader
             initialAvatarUrl={profile?.avatar_url ?? null}
             fallbackLetter={(profile?.emoji_avatar ?? profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()}

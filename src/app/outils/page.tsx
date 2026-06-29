@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import DeviseGenerique from './DeviseGenerique'
 import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
@@ -13,6 +13,15 @@ import NumerosUrgence from './NumerosUrgence'
 import EtSiPartaisDemain from './EtSiPartaisDemain'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
+
+const GRADIENTS = [
+  'linear-gradient(135deg, #36A6B2, #1D7480)',
+  'linear-gradient(135deg, #8B7FD9, #534AB7)',
+  'linear-gradient(135deg, #34C28E, #0F6B4F)',
+  'linear-gradient(135deg, #F0998A, #C2410C)',
+  'linear-gradient(135deg, #5BAEEF, #1D4ED8)',
+  'linear-gradient(135deg, #E08AD0, #A21CAF)',
+]
 
 const OUTILS = [
   {
@@ -106,95 +115,94 @@ export default function OutilsPage() {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto" style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {OUTILS.map(outil => {
-          const isOpen = openTool === outil.id
-          return (
+      <main className="max-w-2xl mx-auto" style={{ padding: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          {OUTILS.map((outil, i) => (
             <div key={outil.id}
               onClick={() => setOpenTool(outil.id)}
               style={{
-                background: 'white',
-                borderRadius: 20,
-                padding: '16px 20px',
+                position: 'relative',
+                aspectRatio: '0.85',
+                borderRadius: 24,
+                padding: 16,
                 display: 'flex',
-                alignItems: 'center',
-                gap: 16,
-                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-                border: '1px solid #F0F0F0',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                background: GRADIENTS[i % GRADIENTS.length],
+                boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
                 cursor: 'pointer',
+                overflow: 'hidden',
               }}>
-              <span style={{ fontSize: 36 }}>{outil.emoji}</span>
-
-              <div style={{ flex: 1 }}>
-                <p style={{ fontWeight: 700, fontSize: 16, color: '#1a1a1a', margin: 0 }}>
-                  {outil.titre}
-                </p>
-                <p style={{ fontSize: 13, color: '#9CA3AF', margin: '2px 0 0' }}>
-                  {outil.description}
-                </p>
+              <div style={{
+                width: 44, height: 44, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.22)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 22,
+              }}>
+                {outil.emoji}
               </div>
 
               {outil.premium && (
                 <span style={{
-                  background: '#FEF3C7',
-                  color: '#B45309',
-                  fontSize: 11,
-                  fontWeight: 600,
+                  position: 'absolute', top: 16, right: 16,
+                  background: 'rgba(255,255,255,0.22)',
+                  color: 'white',
+                  fontSize: 10,
+                  fontWeight: 700,
                   padding: '4px 10px',
                   borderRadius: 9999,
                   whiteSpace: 'nowrap',
                 }}>Premium</span>
               )}
 
-              {isOpen ? <ChevronUp size={18} color="#D1D5DB" /> : <ChevronDown size={18} color="#D1D5DB" />}
+              <div>
+                <p style={{ fontWeight: 700, fontSize: 15, color: 'white', margin: 0, lineHeight: 1.25 }}>
+                  {outil.titre}
+                </p>
+                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', margin: '3px 0 0' }}>
+                  {outil.description}
+                </p>
+              </div>
             </div>
-          )
-        })}
+          ))}
+        </div>
       </main>
 
-      {/* Bottom sheet */}
-      <div style={{
-        position: 'fixed',
-        bottom: openTool ? 0 : '-100%',
-        left: 0, right: 0,
-        zIndex: 50,
-        background: 'white',
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        padding: '24px 20px 100px',
-        maxHeight: '85vh',
-        overflowY: 'auto',
-        transition: 'bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-        boxShadow: '0 -4px 32px rgba(0,0,0,0.15)',
-      }}>
-        <div style={{
-          width: 40, height: 4,
-          background: '#E5E7EB',
-          borderRadius: 9999,
-          margin: '0 auto 20px',
-        }} />
-        <button onClick={() => setOpenTool(null)} style={{
-          position: 'absolute', top: 16, right: 16,
-          background: '#F3F4F6', borderRadius: '50%',
-          width: 32, height: 32,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          border: 'none', cursor: 'pointer',
-        }}>
-          <X size={16} color="#6B7280" />
-        </button>
+      {/* Modale centrée */}
+      {openTool && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+          onClick={() => setOpenTool(null)}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[85vh] overflow-y-auto relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <button onClick={() => setOpenTool(null)} style={{
+              position: 'absolute', top: 16, right: 16,
+              background: '#F3F4F6', borderRadius: '50%',
+              width: 32, height: 32,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: 'none', cursor: 'pointer',
+            }}>
+              <X size={16} color="#6B7280" />
+            </button>
 
-        {openTool === 'devises' && <DeviseGenerique />}
-        {openTool === 'tailles' && <TailleConverter />}
-        {openTool === 'horaire' && <DecalageHoraire />}
-        {openTool === 'bagages' && <ReglesBagages />}
-        {openTool === 'cartes' && <ComparateurCartes />}
-        {openTool === 'medical' && <TrousseMedicale />}
-        {openTool === 'phrases' && <PhrasesEssentielles />}
-        {openTool === 'urgences' && <NumerosUrgence />}
-        {openTool === 'demain' && <EtSiPartaisDemain />}
-        {openTool === 'permis' && <PermisGuide />}
-        {openTool === 'medicaments' && <MedicamentsTraducteur />}
-      </div>
+            {openTool === 'devises' && <DeviseGenerique />}
+            {openTool === 'tailles' && <TailleConverter />}
+            {openTool === 'horaire' && <DecalageHoraire />}
+            {openTool === 'bagages' && <ReglesBagages />}
+            {openTool === 'cartes' && <ComparateurCartes />}
+            {openTool === 'medical' && <TrousseMedicale />}
+            {openTool === 'phrases' && <PhrasesEssentielles />}
+            {openTool === 'urgences' && <NumerosUrgence />}
+            {openTool === 'demain' && <EtSiPartaisDemain />}
+            {openTool === 'permis' && <PermisGuide />}
+            {openTool === 'medicaments' && <MedicamentsTraducteur />}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

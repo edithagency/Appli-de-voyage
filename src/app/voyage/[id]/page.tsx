@@ -7,6 +7,8 @@ import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { quitterVoyage } from './quitter-actions'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
+const AVATAR_COLORS = ['#36A6B2', '#1D9E75', '#D97706', '#E11D48', '#2563EB', '#0D9488']
+
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
@@ -118,6 +120,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   const duree = dureeVoyage(voyage.date_depart, voyage.date_retour)
   const code = getPaysCode(voyage.pays_code, voyage.destination)
   const photo = code ? `/images/pays/${code}.png` : null
+  const avatars = tousLesMembres.slice(0, 3)
 
   const codeDevise = pays?.devise?.match(/\(([A-Z]{3})\)/)?.[1] ?? null
   let tauxLive: number | null = null
@@ -202,6 +205,20 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
           <p className="text-white" style={{ fontSize: 13, fontWeight: 400, opacity: 0.85, marginTop: 2 }}>
             {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
           </p>
+        </div>
+
+        {/* Avatars (3 max, le premier au-dessus) */}
+        <div className="absolute flex items-center" style={{ bottom: 12, right: 12 }}>
+          {avatars.map((m, i) => (
+            <div key={m.id} className="flex items-center justify-center text-white"
+              style={{
+                width: 32, height: 32, borderRadius: '50%',
+                marginLeft: i > 0 ? -8 : 0, background: AVATAR_COLORS[i % AVATAR_COLORS.length],
+                fontSize: 13, fontWeight: 600, zIndex: avatars.length - i,
+              }}>
+              {m.prenom[0].toUpperCase()}
+            </div>
+          ))}
         </div>
       </div>
 

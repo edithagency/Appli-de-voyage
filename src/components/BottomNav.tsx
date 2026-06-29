@@ -32,16 +32,26 @@ export default function BottomNav() {
       className="absolute inset-x-0 bottom-0 flex justify-center pointer-events-none"
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 36px)' }}
     >
-      {/* Flou blanc derrière toute la zone de la nav, pour fondre le contenu qui défile dessous */}
-      <div
-        className="absolute inset-x-0 bottom-0 pointer-events-none"
-        style={{
-          height: 140,
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          background: 'linear-gradient(to top, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 55%, rgba(255,255,255,0) 100%)',
-        }}
-      />
+      {/* Flou progressif derrière la nav : plusieurs couches masquées, le flou augmente
+          en se rapprochant de la barre, pour un vrai dégradé (pas une bande nette). */}
+      <div className="bottom-nav-blur absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden" style={{ height: 160 }}>
+        {[3, 6, 10, 16].map((blur, i) => {
+          const plateauEnd = 70 - i * 20
+          const fadeEnd = plateauEnd + 25
+          const mask = `linear-gradient(to top, black 0%, black ${plateauEnd}%, transparent ${fadeEnd}%)`
+          return (
+            <div key={blur} className="absolute inset-0" style={{
+              backdropFilter: `blur(${blur}px)`,
+              WebkitBackdropFilter: `blur(${blur}px)`,
+              maskImage: mask,
+              WebkitMaskImage: mask,
+            }} />
+          )
+        })}
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(to top, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 100%)',
+        }} />
+      </div>
 
       <nav
         className="pointer-events-auto flex items-center justify-between gap-1 px-3 py-2.5"

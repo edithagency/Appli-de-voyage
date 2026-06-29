@@ -126,4 +126,8 @@ body {
     -webkit-overflow-scrolling: touch;
     transform: translateZ(0);
   }
+
+  .bottom-nav-blur {
+    border-radius: 0 0 36px 36px;
+  }
 }

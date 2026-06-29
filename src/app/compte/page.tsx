@@ -24,7 +24,7 @@ export default async function ComptePage() {
     <div className="h-full flex flex-col overflow-hidden bg-white">
 
       {/* IMAGE FIXE EN HAUT — hors de la zone qui scrolle, logo + avatar/nom/email dessus */}
-      <div className="relative shrink-0 overflow-hidden" style={{ height: '38vh' }}>
+      <div className="relative shrink-0 overflow-hidden" style={{ height: '33vh' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/compte/hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
 

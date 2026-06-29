@@ -1,5 +1,4 @@
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import CoffreFortClient from './CoffreFortClient'
 
@@ -62,10 +61,6 @@ export default async function CoffreFortPage() {
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
       </header>
-
-      <div className="max-w-2xl mx-auto px-5 pt-4">
-        <Link href="/dashboard" className="text-gray-400 text-sm">← Retour</Link>
-      </div>
 
       <CoffreFortClient
         docs={allDocs}

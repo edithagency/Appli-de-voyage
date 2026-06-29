@@ -193,22 +193,21 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
             </div>
           )}
         </div>
+
+        {/* Titre + date, même format que les cartes du dashboard */}
+        <div className="absolute" style={{ bottom: 12, left: 14 }}>
+          <p className="text-white font-bold" style={{ fontSize: 22, lineHeight: 1.2, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>
+            {voyage.nom}
+          </p>
+          <p className="text-white" style={{ fontSize: 13, fontWeight: 400, opacity: 0.85, marginTop: 2 }}>
+            {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
+          </p>
+        </div>
       </div>
 
       {/* CONTENU — seule zone scrollable de la page */}
       <div className="voyage-scroll-area flex-1 overflow-y-auto bg-white" style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -24, boxShadow: '0 -4px 20px rgba(0,0,0,0.08)' }}>
         <main className="max-w-2xl mx-auto px-5 pt-6 pb-28 flex flex-col gap-4">
-
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              {pays?.emoji && <span className="text-2xl">{pays.emoji}</span>}
-              <h1 className="font-bold text-gray-900" style={{ fontSize: '22px', margin: 0 }}>{voyage.nom}</h1>
-            </div>
-            <p className="text-gray-500" style={{ fontSize: '13px', margin: 0 }}>{voyage.destination}</p>
-            <p className="text-gray-400" style={{ fontSize: '11px', margin: '3px 0 0' }}>
-              {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
-            </p>
-          </div>
 
           <VoyageTabs
             pays={pays}

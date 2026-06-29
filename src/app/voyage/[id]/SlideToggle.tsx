@@ -2,7 +2,8 @@
 
 import { useRef, useState } from 'react'
 
-const HANDLE_SIZE = 40
+const HANDLE_WIDTH = 60
+const HANDLE_HEIGHT = 36
 const PADDING = 4
 
 export default function SlideToggle({
@@ -26,7 +27,7 @@ export default function SlideToggle({
   function handlePointerDown(e: React.PointerEvent) {
     e.stopPropagation()
     const trackWidth = trackRef.current?.getBoundingClientRect().width ?? 0
-    const t = Math.max(0, trackWidth - HANDLE_SIZE - PADDING * 2)
+    const t = Math.max(0, trackWidth - HANDLE_WIDTH - PADDING * 2)
     setTravel(t)
     startXRef.current = e.clientX
     startOffsetRef.current = completed ? t : 0
@@ -50,7 +51,7 @@ export default function SlideToggle({
   const handleLeft = dragging
     ? `${dragOffset}px`
     : completed
-      ? `calc(100% - ${HANDLE_SIZE + PADDING}px)`
+      ? `calc(100% - ${HANDLE_WIDTH + PADDING}px)`
       : `${PADDING}px`
 
   return (
@@ -63,7 +64,7 @@ export default function SlideToggle({
       onPointerCancel={() => setDragging(false)}
       className="relative w-full select-none flex items-center justify-center"
       style={{
-        height: HANDLE_SIZE + PADDING * 2,
+        height: HANDLE_HEIGHT + PADDING * 2,
         borderRadius: 9999,
         background: willComplete ? color : `${color}0D`,
         border: willComplete ? 'none' : `1px solid ${color}26`,
@@ -87,9 +88,9 @@ export default function SlideToggle({
         position: 'absolute',
         top: PADDING,
         left: handleLeft,
-        width: HANDLE_SIZE,
-        height: HANDLE_SIZE,
-        borderRadius: '50%',
+        width: HANDLE_WIDTH,
+        height: HANDLE_HEIGHT,
+        borderRadius: 9999,
         background: 'white',
         boxShadow: willComplete
           ? `0 2px 8px rgba(0,0,0,0.18), 0 0 10px 2px ${color}66`

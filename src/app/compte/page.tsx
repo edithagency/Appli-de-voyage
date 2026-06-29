@@ -4,7 +4,6 @@ import EditProfileButton from './EditProfileButton'
 import AvatarUploader from './AvatarUploader'
 import InviteFriendsCard from './InviteFriendsCard'
 import CompteSettings from './CompteSettings'
-import pkg from '../../../package.json'
 
 function formatDateLong(date: string) {
   return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -55,12 +54,9 @@ export default async function ComptePage() {
         <CompteSettings userEmail={user.email ?? ''} />
 
         {/* Méta */}
-        <div className="flex flex-col items-center gap-0.5 pb-2">
-          {user.created_at && (
-            <p className="text-xs text-gray-300">Membre depuis le {formatDateLong(user.created_at)}</p>
-          )}
-          <p className="text-xs text-gray-300">Bon Vol · v{pkg.version}</p>
-        </div>
+        {user.created_at && (
+          <p className="text-center text-xs text-gray-300 pb-2">Membre depuis le {formatDateLong(user.created_at)}</p>
+        )}
       </main>
 
     </div>

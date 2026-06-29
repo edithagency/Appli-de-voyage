@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Camera } from 'lucide-react'
-import { uploadAvatar, supprimerAvatar } from './actions'
+import { uploadAvatar } from './actions'
 
 export default function AvatarUploader({
   initialAvatarUrl, fallbackLetter,
@@ -37,21 +37,6 @@ export default function AvatarUploader({
     }
   }
 
-  async function handleRemove() {
-    setError(null)
-    setUploading(true)
-    try {
-      const result = await supprimerAvatar()
-      if (result.error) { setError(result.error); return }
-      setAvatarUrl(null)
-      router.refresh()
-    } catch {
-      setError('La connexion a échoué pendant la suppression. Réessaie.')
-    } finally {
-      setUploading(false)
-    }
-  }
-
   return (
     <div className="flex flex-col items-center gap-2">
       <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
@@ -74,11 +59,6 @@ export default function AvatarUploader({
 
       {uploading && <p className="text-xs text-gray-400">Envoi...</p>}
       {error && <p className="text-xs text-red-500 text-center max-w-xs">{error}</p>}
-      {avatarUrl && !uploading && (
-        <button type="button" onClick={handleRemove} className="text-xs text-gray-400 hover:text-red-400 transition">
-          Retirer la photo
-        </button>
-      )}
     </div>
   )
 }

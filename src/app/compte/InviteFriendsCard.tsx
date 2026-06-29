@@ -23,14 +23,14 @@ export default function InviteFriendsCard() {
 
   return (
     <button type="button" onClick={handleInvite}
-      className="relative w-full overflow-hidden rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition active:scale-[0.99]"
-      style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-      <span className="flex items-center justify-center w-12 h-12 rounded-full shrink-0" style={{ background: 'rgba(255,255,255,0.25)' }}>
-        <UserPlus size={22} color="white" />
+      className="relative w-full overflow-hidden rounded-2xl border border-gray-100 px-5 py-5 flex items-center gap-4 text-left transition active:scale-[0.99]"
+      style={{ background: 'linear-gradient(to right, white 35%, #8BD4DC 100%)' }}>
+      <span className="flex items-center justify-center w-12 h-12 rounded-full shrink-0" style={{ background: 'rgba(54,166,178,0.12)' }}>
+        <UserPlus size={22} color="#36A6B2" />
       </span>
       <span className="flex-1">
-        <span className="block font-bold text-white text-base">Invite tes amis</span>
-        <span className="block text-white/80 text-xs mt-0.5">
+        <span className="block font-bold text-gray-900 text-base">Invite tes amis</span>
+        <span className="block text-gray-500 text-xs mt-0.5">
           {copied ? 'Lien copié !' : 'Partage Bon Vol avec ton entourage'}
         </span>
       </span>

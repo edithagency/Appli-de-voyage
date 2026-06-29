@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Poppins } from 'next/font/google'
 import DocumentCard from './DocumentCard'
 import DocumentUploadModal from '@/components/DocumentUploadModal'
-import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 
 type Doc = {
   id: string
@@ -160,8 +159,6 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
           ))}
         </div>
       )}
-
-      <DerniereMiseAJour />
     </main>
   )
 }

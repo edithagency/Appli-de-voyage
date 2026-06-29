@@ -4,7 +4,6 @@ import { ArrowLeft, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import VoyageEditButton from './VoyageEditButton'
 import VoyageTabs from './VoyageTabs'
-import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { quitterVoyage } from './quitter-actions'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
@@ -251,8 +250,6 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
             isOrganisateur={isOrganisateur}
             currentMembreId={currentMembreId}
           />
-
-          <DerniereMiseAJour />
         </main>
       </div>
     </div>

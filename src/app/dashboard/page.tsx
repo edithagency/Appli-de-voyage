@@ -4,7 +4,6 @@ import { Poppins } from 'next/font/google'
 import { createClient } from '@/lib/supabase/server'
 import VoyagesPasses from './VoyagesPasses'
 import DeleteVoyageButton from './DeleteVoyageButton'
-import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
@@ -191,8 +190,6 @@ export default async function DashboardPage() {
         )}
 
         <VoyagesPasses voyages={voyagesPasses} />
-
-        <DerniereMiseAJour />
       </main>
 
     </div>

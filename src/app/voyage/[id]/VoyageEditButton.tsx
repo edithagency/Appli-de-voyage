@@ -102,7 +102,7 @@ export default function VoyageEditButton({
   return (
     <>
       {/* Boutons sur l'image */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div style={{ display: 'flex', gap: 2 }}>
         {/* Modifier */}
         <button
           onClick={() => setShowEdit(true)}

@@ -151,7 +151,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 55%)' }} />
 
         {/* Boutons haut gauche : retour + édition/quitter */}
-        <div className="absolute top-4 left-4 flex items-center gap-2">
+        <div className="absolute top-4 left-4 flex items-center gap-0.5">
           <Link href="/dashboard" className="flex items-center justify-center" style={{ padding: 8 }}>
             <ArrowLeft size={16} color="white" />
           </Link>

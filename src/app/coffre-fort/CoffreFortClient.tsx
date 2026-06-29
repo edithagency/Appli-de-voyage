@@ -53,7 +53,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
   ]
 
   const PILL_TONES = {
-    blue: { active: '#36A6B2', activeText: 'white', inactiveBg: 'rgba(54,166,178,0.08)', inactiveText: '#36A6B2', glow: '54,166,178' },
+    blue: { active: '#36A6B2', activeText: 'white', inactiveBg: '#EFF6FF', inactiveText: '#36A6B2', glow: '54,166,178' },
     amber: { active: '#EAB308', activeText: 'white', inactiveBg: '#FFFBEB', inactiveText: '#B45309', glow: '234,179,8' },
   }
 
@@ -101,9 +101,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
                 style={{
                   background: active ? tone.active : tone.inactiveBg,
                   color: active ? tone.activeText : tone.inactiveText,
-                  boxShadow: active
-                    ? `0 4px 14px rgba(0,0,0,0.08), 0 0 16px 3px rgba(${tone.glow},0.35)`
-                    : `0 4px 14px rgba(0,0,0,0.06), 0 0 14px 2px rgba(${tone.glow},0.18)`,
+                  boxShadow: `0 4px 14px rgba(0,0,0,0.06), 0 0 14px 2px rgba(${tone.glow},0.18)`,
                 }}
               >
                 {Icon && <Icon size={12} color={active ? tone.activeText : tone.inactiveText} />}

@@ -101,7 +101,7 @@ export default async function DashboardPage() {
 
       <main className="max-w-2xl mx-auto px-5 py-6">
 
-        <p className={`font-bold uppercase mb-6 ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em' }}>Mes voyages</p>
+        <p className={`font-bold uppercase mb-6 ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.06em'}}>Mes voyages</p>
 
         {/* Voyages */}
         {tousLesVoyages.length === 0 ? (

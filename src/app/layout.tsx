@@ -3,6 +3,7 @@ import { Geist, MuseoModerno } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import NewTripButton from "@/components/NewTripButton";
+import NewDocumentButton from "@/components/NewDocumentButton";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
               {children}
             </div>
             <NewTripButton />
+            <NewDocumentButton />
             <BottomNav />
           </div>
         </div>

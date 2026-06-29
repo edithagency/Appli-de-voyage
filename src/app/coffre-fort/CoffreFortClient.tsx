@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Poppins } from 'next/font/google'
 import DocumentCard from './DocumentCard'
 import DocumentUploadModal from '@/components/DocumentUploadModal'
@@ -35,6 +35,12 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
 }) {
   const [filtre, setFiltre] = useState('tous')
   const [modalOpen, setModalOpen] = useState(false)
+
+  useEffect(() => {
+    const handler = () => setModalOpen(true)
+    window.addEventListener('open-upload-modal', handler)
+    return () => window.removeEventListener('open-upload-modal', handler)
+  }, [])
 
   const voyageMap = Object.fromEntries(voyages.map(v => [v.id, v.nom]))
   const voyagesAvecDocs = voyages.filter(v => docs.some(d => d.voyage_id === v.id))
@@ -71,13 +77,6 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
             {filteredDocs.length !== docs.length ? ` · ${docs.length} au total` : ''}
           </p>
         </div>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl font-semibold text-white text-sm shadow-sm"
-          style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
-        >
-          + Ajouter
-        </button>
         <DocumentUploadModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}

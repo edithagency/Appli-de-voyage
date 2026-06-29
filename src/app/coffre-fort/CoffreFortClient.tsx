@@ -53,8 +53,8 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
   ]
 
   const PILL_TONES = {
-    blue: { active: '#3B82F6', activeText: 'white', inactiveBg: '#EFF6FF', inactiveText: '#3B82F6', glow: '59,130,246' },
-    amber: { active: '#F59E0B', activeText: 'white', inactiveBg: '#FFFBEB', inactiveText: '#B45309', glow: '245,158,11' },
+    blue: { active: '#36A6B2', activeText: 'white', inactiveBg: 'rgba(54,166,178,0.08)', inactiveText: '#36A6B2', glow: '54,166,178' },
+    amber: { active: '#EAB308', activeText: 'white', inactiveBg: '#FFFBEB', inactiveText: '#B45309', glow: '234,179,8' },
   }
 
   const filteredDocs = filtre === 'tous' ? docs

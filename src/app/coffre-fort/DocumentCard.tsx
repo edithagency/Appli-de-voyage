@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Eye, X } from 'lucide-react'
 import { supprimerDocument, getSignedUrl } from './actions'
 
 type Doc = {
@@ -42,6 +43,7 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
   const [opening, setOpening] = useState(false)
   const meta = TYPE_LABELS[doc.type] ?? { label: doc.type, emoji: '📎' }
   const expStatus = expirationStatus(doc.date_expiration)
+  const isPermanent = !doc.voyage_id
 
   async function handleOpen() {
     setOpening(true)
@@ -57,34 +59,43 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
+    <div className="relative rounded-2xl pl-3 pr-10 py-2.5 flex items-center gap-3" style={{
+      background: isPermanent ? '#EFF6FF' : '#FFFBEB',
+      boxShadow: isPermanent
+        ? '0 4px 14px rgba(0,0,0,0.06), 0 0 14px 2px rgba(59,130,246,0.18)'
+        : '0 4px 14px rgba(0,0,0,0.06), 0 0 14px 2px rgba(245,158,11,0.18)',
+    }}>
+      {/* Supprimer */}
+      {!shared && (
+        <button onClick={handleDelete} disabled={deleting}
+          className="absolute top-1.5 left-1.5 flex items-center justify-center rounded-full disabled:opacity-50"
+          style={{ width: 20, height: 20, background: 'rgba(0,0,0,0.06)' }}>
+          <X size={11} color="#6B7280" />
+        </button>
+      )}
+
       {/* Icône */}
-      <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0"
-        style={{ background: expStatus ? expStatus.bg : '#F3F4F6' }}>
+      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 mt-2"
+        style={{ background: 'white' }}>
         {meta.emoji}
       </div>
 
       {/* Infos */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 mt-2">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-gray-900 text-sm">{meta.label}</span>
           {doc.membre && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-white text-blue-600">
               {doc.membre.prenom}
             </span>
           )}
           {voyageNom && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-white text-amber-700">
               ✈️ {voyageNom}
             </span>
           )}
-          {!voyageNom && !doc.voyage_id && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">
-              📌 Permanent
-            </span>
-          )}
           {shared && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-500">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-white text-purple-500">
               Partagé
             </span>
           )}
@@ -98,20 +109,12 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
         )}
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col gap-2 shrink-0">
-        <button onClick={handleOpen} disabled={opening}
-          className="text-xs px-3 py-1.5 rounded-xl font-semibold text-white disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-          {opening ? '...' : '👁️'}
-        </button>
-        {!shared && (
-          <button onClick={handleDelete} disabled={deleting}
-            className="text-xs px-3 py-1.5 rounded-xl font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50">
-            {deleting ? '...' : '🗑️'}
-          </button>
-        )}
-      </div>
+      {/* Voir */}
+      <button onClick={handleOpen} disabled={opening}
+        className="absolute right-3 flex items-center justify-center rounded-full disabled:opacity-50"
+        style={{ top: '50%', transform: 'translateY(-50%)', width: 28, height: 28, background: 'white' }}>
+        <Eye size={14} color="#374151" />
+      </button>
     </div>
   )
 }

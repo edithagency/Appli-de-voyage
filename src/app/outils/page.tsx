@@ -118,7 +118,7 @@ export default function OutilsPage() {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto" style={{ padding: 16 }}>
+      <main className="max-w-2xl mx-auto px-5 py-6">
         <p className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.06em', margin: '0 0 12px' }}>Mes outils</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           {OUTILS.map((outil, i) => (

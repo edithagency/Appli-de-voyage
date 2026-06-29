@@ -30,12 +30,6 @@ export default function InfoCard({
       data-info-id={id}
       className={`relative rounded-xl cursor-pointer bg-white border transition-colors ${photo ? 'overflow-hidden' : ''} ${expanded ? 'col-span-3 border-[#36A6B2]' : 'border-gray-200 hover:border-gray-300'}`}>
 
-      {onToggleDone && (
-        <div className="absolute top-1.5 right-1.5 z-10" onClick={e => e.stopPropagation()}>
-          <SlideToggle completed={completed} onToggle={() => onToggleDone(id)} color="#1D9E75" trackWidth={40} handleSize={16} />
-        </div>
-      )}
-
       {photo ? (
         <>
           <div className="relative" style={{ aspectRatio: expanded ? '16/9' : '1/1' }}>
@@ -73,6 +67,11 @@ export default function InfoCard({
           )}
           {extraHeader}
           {children}
+          {onToggleDone && (
+            <div className="px-2">
+              <SlideToggle completed={completed} onToggle={() => onToggleDone(id)} color="#1D9E75" />
+            </div>
+          )}
         </div>
       )}
     </div>

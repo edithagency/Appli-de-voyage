@@ -2,30 +2,34 @@
 
 import { useRef, useState } from 'react'
 
-const PADDING = 3
+const HANDLE_SIZE = 40
+const PADDING = 4
 
 export default function SlideToggle({
-  completed, onToggle, color, trackWidth = 56, handleSize = 22,
+  completed, onToggle, color, labelIdle = 'Glisser pour marquer comme géré', labelDone = 'Géré',
 }: {
   completed: boolean
   onToggle: () => void
   color: string
-  trackWidth?: number
-  handleSize?: number
+  labelIdle?: string
+  labelDone?: string
 }) {
-  const travel = trackWidth - handleSize - PADDING * 2
+  const trackRef = useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
+  const [travel, setTravel] = useState(0)
   const startXRef = useRef(0)
   const startOffsetRef = useRef(0)
 
-  const offset = dragging ? dragOffset : (completed ? travel : 0)
   const willComplete = dragging ? dragOffset > travel / 2 : completed
 
   function handlePointerDown(e: React.PointerEvent) {
     e.stopPropagation()
+    const trackWidth = trackRef.current?.getBoundingClientRect().width ?? 0
+    const t = Math.max(0, trackWidth - HANDLE_SIZE - PADDING * 2)
+    setTravel(t)
     startXRef.current = e.clientX
-    startOffsetRef.current = completed ? travel : 0
+    startOffsetRef.current = completed ? t : 0
     setDragOffset(startOffsetRef.current)
     setDragging(true)
     ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
@@ -43,42 +47,61 @@ export default function SlideToggle({
     if (willComplete !== completed) onToggle()
   }
 
+  const handleLeft = dragging
+    ? `${dragOffset}px`
+    : completed
+      ? `calc(100% - ${HANDLE_SIZE + PADDING}px)`
+      : `${PADDING}px`
+
   return (
     <div
+      ref={trackRef}
       onClick={e => e.stopPropagation()}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerCancel={() => setDragging(false)}
-      className="relative shrink-0 select-none"
+      className="relative w-full select-none flex items-center justify-center overflow-hidden"
       style={{
-        width: trackWidth,
-        height: handleSize + PADDING * 2,
+        height: HANDLE_SIZE + PADDING * 2,
         borderRadius: 9999,
-        background: willComplete ? color : '#E5E7EB',
+        background: willComplete ? color : '#F3F4F6',
         transition: dragging ? 'none' : 'background 0.2s',
         cursor: 'grab',
         touchAction: 'none',
       }}
     >
+      <span style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: willComplete ? 'white' : '#6B7280',
+        transition: 'color 0.2s',
+        letterSpacing: '0.01em',
+      }}>
+        {willComplete ? `✓ ${labelDone}` : labelIdle}
+      </span>
+
       <div style={{
         position: 'absolute',
         top: PADDING,
-        left: PADDING,
-        width: handleSize,
-        height: handleSize,
+        left: handleLeft,
+        width: HANDLE_SIZE,
+        height: HANDLE_SIZE,
         borderRadius: '50%',
         background: 'white',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
-        transform: `translateX(${offset}px)`,
-        transition: dragging ? 'none' : 'transform 0.2s',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+        transition: dragging ? 'none' : 'left 0.2s',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        {willComplete && (
-          <svg width={handleSize * 0.4} height={handleSize * 0.32} viewBox="0 0 10 8" fill="none">
+        {willComplete ? (
+          <svg width="14" height="11" viewBox="0 0 10 8" fill="none">
             <path d="M1 4L3.5 6.5L9 1" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
       </div>

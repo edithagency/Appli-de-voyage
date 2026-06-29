@@ -68,9 +68,8 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
       {/* Supprimer */}
       {!shared && (
         <button onClick={handleDelete} disabled={deleting}
-          className="absolute top-1.5 left-1.5 flex items-center justify-center rounded-full disabled:opacity-50"
-          style={{ width: 20, height: 20, background: 'rgba(0,0,0,0.06)' }}>
-          <X size={11} color="#6B7280" />
+          className="absolute top-2 left-2 flex items-center justify-center disabled:opacity-50">
+          <X size={13} color="#6B7280" />
         </button>
       )}
 
@@ -111,9 +110,9 @@ export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voy
 
       {/* Voir */}
       <button onClick={handleOpen} disabled={opening}
-        className="absolute right-3 flex items-center justify-center rounded-full disabled:opacity-50"
-        style={{ top: '50%', transform: 'translateY(-50%)', width: 28, height: 28, background: 'white' }}>
-        <Eye size={14} color="#374151" />
+        className="absolute right-3 flex items-center justify-center disabled:opacity-50"
+        style={{ top: '50%', transform: 'translateY(-50%)' }}>
+        <Eye size={16} color="#374151" />
       </button>
     </div>
   )

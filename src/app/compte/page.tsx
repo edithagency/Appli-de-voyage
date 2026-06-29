@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import EditProfileButton from './EditProfileButton'
 import AvatarUploader from './AvatarUploader'
 import CompteSettings from './CompteSettings'
-import Link from 'next/link'
 import pkg from '../../../package.json'
 
 function formatDateLong(date: string) {
@@ -23,15 +22,13 @@ export default async function ComptePage() {
 
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
-      <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
+      <header className="bg-white px-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-6 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-5">
-
-        <Link href="/dashboard" className="text-gray-400 text-sm -mb-2">← Retour</Link>
 
         {/* Avatar */}
         <div className="flex flex-col items-center pt-2 pb-4 gap-3">

@@ -220,7 +220,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
       {/* CONTENU — seule zone scrollable de la page */}
       <div className="voyage-scroll-area relative flex-1 overflow-y-auto bg-white" style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -24, boxShadow: '0 -4px 20px rgba(0,0,0,0.08)' }}>
-        <main className="max-w-2xl mx-auto px-5 pt-6 pb-28 flex flex-col gap-4">
+        <main className="max-w-2xl mx-auto px-5 pb-28 flex flex-col gap-4">
 
           <VoyageTabs
             pays={pays}

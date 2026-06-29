@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { X } from 'lucide-react'
 import { supprimerVoyage } from '@/app/voyage/supprimerVoyage-action'
 
 export default function DeleteVoyageButton({ voyageId, voyageNom }: { voyageId: string; voyageNom: string }) {
@@ -22,10 +23,10 @@ export default function DeleteVoyageButton({ voyageId, voyageNom }: { voyageId: 
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center transition hover:bg-red-100 disabled:opacity-50"
-      style={{ background: '#FEE2E2', color: '#F87171' }}
+      className="absolute flex items-center justify-center transition disabled:opacity-50"
+      style={{ top: 12, left: 12, background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(4px)', borderRadius: '50%', padding: 8 }}
       title="Supprimer le voyage">
-      {loading ? '...' : '×'}
+      <X size={16} color="white" />
     </button>
   )
 }

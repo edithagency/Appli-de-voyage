@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Sun, Snowflake, Leaf, Cloud } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import VoyagesPasses from './VoyagesPasses'
+import DeleteVoyageButton from './DeleteVoyageButton'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
@@ -14,14 +14,6 @@ function formatDateLong(date: string) {
 
 function dureeVoyage(depart: string, retour: string) {
   return Math.ceil((new Date(retour).getTime() - new Date(depart).getTime()) / (1000 * 60 * 60 * 24))
-}
-
-function getSaisonIcon(dateDepart: string) {
-  const mois = new Date(dateDepart).getMonth() + 1
-  if (mois >= 3 && mois <= 5) return Cloud
-  if (mois >= 6 && mois <= 8) return Sun
-  if (mois >= 9 && mois <= 11) return Leaf
-  return Snowflake
 }
 
 export default async function DashboardPage() {
@@ -122,7 +114,7 @@ export default async function DashboardPage() {
               const code = getPaysCode(voyage.pays_code, voyage.destination)
               const photo = code ? `/images/pays/${code}.png` : null
               const membres = membresParVoyage[voyage.id] ?? []
-              const SaisonIcon = getSaisonIcon(voyage.date_depart)
+              const avatars = membres.slice(0, 3)
 
               return (
                 <Link key={voyage.id} href={`/voyage/${voyage.id}`}
@@ -142,11 +134,8 @@ export default async function DashboardPage() {
                     background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)',
                   }} />
 
-                  {/* Icône saison */}
-                  <div className="absolute flex items-center justify-center"
-                    style={{ top: 12, left: 12, background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(4px)', borderRadius: '50%', padding: 8 }}>
-                    <SaisonIcon size={16} color="white" />
-                  </div>
+                  {/* Supprimer */}
+                  <DeleteVoyageButton voyageId={voyage.id} voyageNom={voyage.nom} />
 
                   {/* Texte */}
                   <div className="absolute" style={{ bottom: 12, left: 14 }}>
@@ -158,14 +147,14 @@ export default async function DashboardPage() {
                     </p>
                   </div>
 
-                  {/* Avatars */}
+                  {/* Avatars (3 max, le premier au-dessus) */}
                   <div className="absolute flex items-center" style={{ bottom: 12, right: 12 }}>
-                    {membres.map((m, i) => (
+                    {avatars.map((m, i) => (
                       <div key={m.id} className="flex items-center justify-center text-white"
                         style={{
                           width: 32, height: 32, borderRadius: '50%',
                           marginLeft: i > 0 ? -8 : 0, background: AVATAR_COLORS[i % AVATAR_COLORS.length],
-                          fontSize: 13, fontWeight: 600, zIndex: i,
+                          fontSize: 13, fontWeight: 600, zIndex: avatars.length - i,
                         }}>
                         {m.prenom[0].toUpperCase()}
                       </div>

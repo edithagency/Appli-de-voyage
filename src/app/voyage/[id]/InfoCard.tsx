@@ -1,24 +1,6 @@
 'use client'
 
-function CheckButton({ checked, onClick }: { checked: boolean; onClick: (e: React.MouseEvent) => void }) {
-  return (
-    <button
-      onClick={onClick}
-      title={checked ? 'Marquer à faire' : 'Marquer comme géré'}
-      className="absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0"
-      style={{
-        background: checked ? '#1D9E75' : 'rgba(255,255,255,0.9)',
-        border: checked ? 'none' : '1.5px solid #E5E7EB',
-        backdropFilter: 'blur(4px)',
-      }}>
-      {checked && (
-        <svg width="11" height="9" viewBox="0 0 10 8" fill="none">
-          <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      )}
-    </button>
-  )
-}
+import SlideToggle from './SlideToggle'
 
 export default function InfoCard({
   id, title, gradient, photo, expandedId, onToggle, completed = false, onToggleDone, docType, onAjouterDocument, extraHeader, children,
@@ -49,7 +31,9 @@ export default function InfoCard({
       className={`relative rounded-xl cursor-pointer bg-white border transition-colors ${photo ? 'overflow-hidden' : ''} ${expanded ? 'col-span-3 border-[#36A6B2]' : 'border-gray-200 hover:border-gray-300'}`}>
 
       {onToggleDone && (
-        <CheckButton checked={completed} onClick={e => { e.stopPropagation(); onToggleDone(id) }} />
+        <div className="absolute top-1.5 right-1.5 z-10" onClick={e => e.stopPropagation()}>
+          <SlideToggle completed={completed} onToggle={() => onToggleDone(id)} color="#1D9E75" trackWidth={40} handleSize={16} />
+        </div>
       )}
 
       {photo ? (

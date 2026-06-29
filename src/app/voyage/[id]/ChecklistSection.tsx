@@ -7,7 +7,6 @@ import {
   supprimerItem, supprimerCategorie, modifierItem, deplacerItem,
 } from './checklist-actions'
 import { QuestionnaireValise } from '@/lib/utils/generateValise'
-import SlideToggle from './SlideToggle'
 
 type Item = {
   id: string
@@ -465,11 +464,12 @@ export default function ChecklistSection({
                           </div>
                         </div>
                       ) : (
-                        <div key={item.id}
-                          className="flex items-start gap-4 px-5 py-3.5 select-none"
+                        <div key={item.id} onClick={() => handleToggle(item.id, item.completed)}
+                          className="flex items-start gap-4 px-5 py-3.5 cursor-pointer select-none"
                           style={{ borderBottom: idx < cat.items.length - 1 ? '1px solid #F3F4F6' : 'none', background: item.completed ? '#FAFAFA' : 'white' }}>
-                          <div className="mt-0.5">
-                            <SlideToggle completed={item.completed} onToggle={() => handleToggle(item.id, item.completed)} color={cat.color} />
+                          <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                            style={{ borderColor: item.completed ? cat.color : '#D1D5DB', background: item.completed ? cat.color : 'white' }}>
+                            {item.completed && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -538,10 +538,12 @@ export default function ChecklistSection({
                           </div>
                         </div>
                       ) : (
-                        <div key={item.id}
-                          className="flex items-center gap-3 px-5 py-3.5 select-none"
+                        <div key={item.id} onClick={() => handleToggle(item.id, item.completed)}
+                          className="flex items-center gap-3 px-5 py-3.5 cursor-pointer select-none"
                           style={{ borderBottom: idx < sc.items.length - 1 ? '1px solid #F3F4F6' : 'none', background: item.completed ? '#FAFAFA' : 'white' }}>
-                          <SlideToggle completed={item.completed} onToggle={() => handleToggle(item.id, item.completed)} color={sc.color} />
+                          <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0" style={{ borderColor: item.completed ? sc.color : '#D1D5DB', background: item.completed ? sc.color : 'white' }}>
+                            {item.completed && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                          </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center flex-wrap gap-1">
                               <span className="text-sm font-medium text-gray-800" style={item.completed ? { textDecoration: 'line-through', textDecorationColor: sc.color, textDecorationThickness: '2px' } : {}}>{item.label}</span>

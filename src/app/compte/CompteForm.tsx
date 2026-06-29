@@ -4,9 +4,8 @@ import { useState, useTransition } from 'react'
 import { sauvegarderProfil } from './actions'
 
 export default function CompteForm({
-  userId, initialPrenom, initialNom,
+  initialPrenom, initialNom,
 }: {
-  userId: string
   initialPrenom: string
   initialNom: string
 }) {

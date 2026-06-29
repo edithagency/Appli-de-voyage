@@ -78,3 +78,48 @@ export async function supprimerAvatar() {
     return { error: e instanceof Error ? e.message : 'Erreur inattendue lors de la suppression.' }
   }
 }
+
+export async function changerMotDePasse(nouveauMotDePasse: string) {
+  try {
+    if (nouveauMotDePasse.length < 8) {
+      return { error: 'Le mot de passe doit contenir au moins 8 caractères.' }
+    }
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Non connecté.' }
+
+    const { error } = await supabase.auth.updateUser({ password: nouveauMotDePasse })
+    if (error) return { error: error.message }
+
+    return { success: true }
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erreur inattendue.' }
+  }
+}
+
+export async function exporterDonnees() {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Non connecté.' }
+
+    const [{ data: profil }, { data: voyagesOrganises }, { data: participations }] = await Promise.all([
+      supabase.from('users').select('*').eq('id', user.id).single(),
+      supabase.from('voyages').select('*').eq('user_id', user.id),
+      supabase.from('voyage_membres').select('*').eq('user_id', user.id),
+    ])
+
+    return {
+      success: true,
+      data: {
+        exporte_le: new Date().toISOString(),
+        compte: { id: user.id, email: user.email, cree_le: user.created_at },
+        profil,
+        voyages_organises: voyagesOrganises ?? [],
+        participations: participations ?? [],
+      },
+    }
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erreur inattendue.' }
+  }
+}

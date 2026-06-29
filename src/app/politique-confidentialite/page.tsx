@@ -21,9 +21,7 @@ export default function PolitiqueConfidentialitePage() {
           <div>
             <h2 className="font-bold text-gray-900 mb-2">📋 Données collectées</h2>
             <ul className="list-disc pl-5 flex flex-col gap-1.5">
-              <li>Informations de compte : email, prénom, nom, mot de passe (chiffré).</li>
-              <li>Profil voyageur : type de voyageur, préférences de voyage.</li>
-              <li>Informations sur ton foyer : prénoms, dates de naissance, groupe sanguin, allergies, médicaments (pour les checklists santé).</li>
+              <li>Informations de compte : email, prénom, nom, photo de profil, mot de passe (chiffré).</li>
               <li>Informations sur tes voyages : destinations, dates, budget, dépenses, checklist et valise.</li>
               <li>Documents que tu choisis d&apos;ajouter dans ton coffre-fort (passeport, billets, assurance...).</li>
             </ul>
@@ -52,8 +50,8 @@ export default function PolitiqueConfidentialitePage() {
             <h2 className="font-bold text-gray-900 mb-2">👥 Partage avec d&apos;autres utilisateurs</h2>
             <p>
               Si tu organises un voyage en groupe, les informations nécessaires (checklist, valise, dépenses
-              partagées) sont visibles par les participants que tu invites. Tes documents personnels et les
-              informations de ton foyer restent privés et ne sont jamais partagés.
+              partagées) sont visibles par les participants que tu invites. Tes documents personnels restent
+              privés et ne sont jamais partagés.
             </p>
           </div>
 

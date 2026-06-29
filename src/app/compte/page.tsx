@@ -1,11 +1,16 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { signout } from '@/app/auth/actions'
 import CompteForm from './CompteForm'
 import AvatarUploader from './AvatarUploader'
+import CompteSettings from './CompteSettings'
 import Link from 'next/link'
-import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import PageHeader from '@/components/PageHeader'
+import pkg from '../../../package.json'
+
+function formatDateLong(date: string) {
+  return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
 export default async function ComptePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -45,22 +50,19 @@ export default async function ComptePage() {
         </div>
 
         <CompteForm
-          userId={user.id}
           initialPrenom={profile?.prenom ?? ''}
           initialNom={profile?.nom ?? ''}
         />
 
-        {/* Déconnexion */}
-        <form action={signout}>
-          <button type="submit"
-            className="w-full py-4 rounded-2xl font-semibold border border-red-200 text-red-400 hover:bg-red-50 transition">
-            Se déconnecter
-          </button>
-        </form>
+        <CompteSettings userEmail={user.email ?? ''} />
 
-        {/* Version */}
-        <p className="text-center text-xs text-gray-300 pb-2">Bon Vol · v1.0</p>
-        <DerniereMiseAJour />
+        {/* Méta */}
+        <div className="flex flex-col items-center gap-0.5 pb-2">
+          {user.created_at && (
+            <p className="text-xs text-gray-300">Membre depuis le {formatDateLong(user.created_at)}</p>
+          )}
+          <p className="text-xs text-gray-300">Bon Vol · v{pkg.version}</p>
+        </div>
       </main>
 
     </div>

@@ -94,14 +94,14 @@ export default async function DashboardPage() {
 
       {/* Header mobile */}
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-6 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-4 sm:pt-8 pb-4 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-5 py-6">
+      <main className="max-w-2xl mx-auto px-5 pt-4 pb-6">
 
-        <p className={`font-bold uppercase mb-3 ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.06em'}}>Mes voyages</p>
+        <p className={`font-bold uppercase mb-3 ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em'}}>Mes voyages</p>
 
         {/* Voyages */}
         {tousLesVoyages.length === 0 ? (

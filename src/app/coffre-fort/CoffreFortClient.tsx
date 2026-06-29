@@ -66,12 +66,12 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
   const presetPermanent = filtre === 'permanents'
 
   return (
-    <main className="max-w-2xl mx-auto px-5 py-6 flex flex-col gap-5">
+    <main className="max-w-2xl mx-auto px-5 pt-4 pb-6 flex flex-col gap-5">
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.06em' }}>Mes documents</h1>
+          <h1 className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em' }}>Mes documents</h1>
           <p className="text-sm text-gray-400 mt-0.5">
             {filteredDocs.length} document{filteredDocs.length > 1 ? 's' : ''}
             {filteredDocs.length !== docs.length ? ` · ${docs.length} au total` : ''}

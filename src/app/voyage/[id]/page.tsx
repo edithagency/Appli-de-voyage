@@ -141,7 +141,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
     <div className="h-full flex flex-col overflow-hidden bg-white">
 
       {/* IMAGE FIXE EN HAUT — hors de la zone qui scrolle, < 1/3 de l'écran */}
-      <div className="relative shrink-0 overflow-hidden" style={{ height: '25vh' }}>
+      <div className="relative shrink-0 overflow-hidden" style={{ height: '30vh' }}>
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photo} alt="" className="w-full h-full object-cover object-center" />

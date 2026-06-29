@@ -69,7 +69,7 @@ export default function InfoCard({
           {children}
           {onToggleDone && (
             <div className="px-2">
-              <SlideToggle completed={completed} onToggle={() => onToggleDone(id)} color="#1D9E75" />
+              <SlideToggle completed={completed} onToggle={() => onToggleDone(id)} color="#36A6B2" />
             </div>
           )}
         </div>

@@ -61,12 +61,14 @@ export default function SlideToggle({
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerCancel={() => setDragging(false)}
-      className="relative w-full select-none flex items-center justify-center overflow-hidden"
+      className="relative w-full select-none flex items-center justify-center"
       style={{
         height: HANDLE_SIZE + PADDING * 2,
         borderRadius: 9999,
-        background: willComplete ? color : '#F3F4F6',
-        transition: dragging ? 'none' : 'background 0.2s',
+        background: willComplete ? color : `${color}0D`,
+        border: willComplete ? 'none' : `1px solid ${color}26`,
+        boxShadow: willComplete ? `0 0 24px 6px ${color}59, 0 4px 14px ${color}40` : 'none',
+        transition: dragging ? 'none' : 'background 0.2s, box-shadow 0.3s, border 0.2s',
         cursor: 'grab',
         touchAction: 'none',
       }}
@@ -74,7 +76,7 @@ export default function SlideToggle({
       <span style={{
         fontSize: 13,
         fontWeight: 600,
-        color: willComplete ? 'white' : '#6B7280',
+        color: willComplete ? 'white' : color,
         transition: 'color 0.2s',
         letterSpacing: '0.01em',
       }}>
@@ -89,8 +91,10 @@ export default function SlideToggle({
         height: HANDLE_SIZE,
         borderRadius: '50%',
         background: 'white',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-        transition: dragging ? 'none' : 'left 0.2s',
+        boxShadow: willComplete
+          ? `0 2px 8px rgba(0,0,0,0.18), 0 0 10px 2px ${color}66`
+          : '0 1px 4px rgba(0,0,0,0.15)',
+        transition: dragging ? 'none' : 'left 0.2s, box-shadow 0.3s',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -101,7 +105,7 @@ export default function SlideToggle({
           </svg>
         ) : (
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M9 6l6 6-6 6" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M9 6l6 6-6 6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
       </div>

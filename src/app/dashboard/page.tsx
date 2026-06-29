@@ -145,9 +145,8 @@ export default async function DashboardPage() {
                   {/* Badge J- */}
                   <div className="absolute" style={{ top: 12, right: 12 }}>
                     <span style={{
-                      fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
-                      background: jours > 0 && jours <= 7 ? '#FFE4E6' : jours > 0 ? 'rgba(255,255,255,0.92)' : '#D1FAE5',
-                      color: jours > 0 && jours <= 7 ? '#9F1239' : jours > 0 ? '#36A6B2' : '#065F46',
+                      fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, color: 'white',
+                      background: jours > 0 && jours <= 7 ? '#1E3A8A' : jours > 0 ? '#60A5FA' : '#2563EB',
                     }}>
                       {jours > 0 ? `J-${jours}` : jours === 0 ? "Aujourd'hui !" : 'En cours'}
                     </span>

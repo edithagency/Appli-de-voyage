@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { signout } from '@/app/auth/actions'
 import CompteForm from './CompteForm'
+import AvatarUploader from './AvatarUploader'
 import Link from 'next/link'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import PageHeader from '@/components/PageHeader'
@@ -30,28 +31,23 @@ export default async function ComptePage() {
         <Link href="/dashboard" className="text-gray-400 text-sm -mb-2">← Retour</Link>
 
         {/* Avatar */}
-        <div className="flex flex-col items-center pt-2 pb-4">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-3 overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            {profile?.avatar_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-            ) : (
-              profile?.emoji_avatar ?? (profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()
-            )}
+        <div className="flex flex-col items-center pt-2 pb-4 gap-3">
+          <AvatarUploader
+            initialAvatarUrl={profile?.avatar_url ?? null}
+            fallbackLetter={(profile?.emoji_avatar ?? profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()}
+          />
+          <div className="flex flex-col items-center -mt-1">
+            <p className="font-bold text-gray-900 text-lg">
+              {profile?.prenom ? `${profile.prenom}${profile.nom ? ' ' + profile.nom : ''}` : user.email}
+            </p>
+            <p className="text-sm text-gray-400">{user.email}</p>
           </div>
-          <p className="font-bold text-gray-900 text-lg">
-            {profile?.prenom ? `${profile.prenom}${profile.nom ? ' ' + profile.nom : ''}` : user.email}
-          </p>
-          <p className="text-sm text-gray-400">{user.email}</p>
         </div>
 
         <CompteForm
           userId={user.id}
           initialPrenom={profile?.prenom ?? ''}
           initialNom={profile?.nom ?? ''}
-          initialEmoji={profile?.emoji_avatar ?? ''}
-          initialAvatarUrl={profile?.avatar_url ?? null}
         />
 
         {/* Déconnexion */}

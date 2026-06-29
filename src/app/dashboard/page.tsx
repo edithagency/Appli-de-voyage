@@ -1,10 +1,13 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Poppins } from 'next/font/google'
 import { createClient } from '@/lib/supabase/server'
 import VoyagesPasses from './VoyagesPasses'
 import DeleteVoyageButton from './DeleteVoyageButton'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
 import { getPaysCode } from '@/lib/utils/paysCode'
+
+const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
 
 const AVATAR_COLORS = ['#36A6B2', '#1D9E75', '#D97706', '#E11D48', '#2563EB', '#0D9488']
 
@@ -98,7 +101,7 @@ export default async function DashboardPage() {
 
       <main className="max-w-2xl mx-auto px-5 py-6">
 
-        <p className="text-2xl font-bold uppercase mb-6" style={{ color: '#004850' }}>Mes voyages</p>
+        <p className={`text-2xl font-bold uppercase mb-6 ${poppins.className}`} style={{ color: '#004850' }}>Mes voyages</p>
 
         {/* Voyages */}
         {tousLesVoyages.length === 0 ? (

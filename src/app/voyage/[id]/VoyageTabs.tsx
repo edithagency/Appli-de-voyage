@@ -47,7 +47,7 @@ type Activite = {
 type Doc = { id: string; type: string; nom_fichier: string; storage_path: string; date_expiration: string | null; voyage_id: string | null; membre: { prenom: string } | null }
 type ChecklistItem = { id: string; valise_id: string; categorie: string; sous_categorie: string | null; label: string; description: string | null; quantite: string | null; obligatoire: boolean; completed: boolean }
 type Valise = { id: string; membre: { id: string; prenom: string; type: string }; items: ChecklistItem[]; bagagesTypes: string[] }
-type Membre = { id: string; prenom: string; type: 'adulte' | 'enfant' }
+type Membre = { id: string; prenom: string; type: 'adulte' | 'enfant'; avatarUrl?: string | null; emoji?: string | null }
 
 export default function VoyageTabs({
   pays, documents, tousLesMembres, membresGeres, valises,

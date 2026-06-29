@@ -36,11 +36,14 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   // Tous les membres du voyage (organisateur compris — il a toujours sa propre ligne)
   const { data: tousLesMembresRaw } = await supabase
     .from('voyage_membres')
-    .select('id, prenom, type, role, statut_invitation, token_invitation, token_expire_at, user_id, compagnie_aerienne')
+    .select('id, prenom, type, role, statut_invitation, token_invitation, token_expire_at, user_id, compagnie_aerienne, utilisateur:users(avatar_url, emoji_avatar)')
     .eq('voyage_id', id)
     .order('created_at')
 
-  const tousLesMembres = tousLesMembresRaw ?? []
+  const tousLesMembres = (tousLesMembresRaw ?? []).map(m => {
+    const utilisateur = Array.isArray(m.utilisateur) ? m.utilisateur[0] : m.utilisateur
+    return { ...m, avatarUrl: utilisateur?.avatar_url ?? null, emoji: utilisateur?.emoji_avatar ?? null }
+  })
   const currentMembre = tousLesMembres.find(m => m.user_id === user.id) ?? null
 
   if (!isOrganisateur && !currentMembre) notFound()
@@ -206,13 +209,16 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         {/* Avatars (3 max, le premier au-dessus) */}
         <div className="absolute flex items-center" style={{ bottom: 36, right: 12 }}>
           {avatars.map((m, i) => (
-            <div key={m.id} className="flex items-center justify-center text-white"
+            <div key={m.id} className="flex items-center justify-center text-white overflow-hidden"
               style={{
                 width: 32, height: 32, borderRadius: '50%',
                 marginLeft: i > 0 ? -8 : 0, background: AVATAR_COLORS[i % AVATAR_COLORS.length],
                 fontSize: 13, fontWeight: 600, zIndex: avatars.length - i,
               }}>
-              {m.prenom[0].toUpperCase()}
+              {m.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={m.avatarUrl} alt="" className="w-full h-full object-cover" />
+              ) : m.emoji ?? m.prenom[0].toUpperCase()}
             </div>
           ))}
         </div>
@@ -225,8 +231,8 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
           <VoyageTabs
             pays={pays}
             documents={documents ?? []}
-            tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
-            membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
+            tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant', avatarUrl: m.avatarUrl, emoji: m.emoji }))}
+            membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant', avatarUrl: m.avatarUrl, emoji: m.emoji }))}
             valises={valises}
             voyageId={id}
             voyageNom={voyage.nom}

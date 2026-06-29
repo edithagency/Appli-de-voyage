@@ -13,7 +13,7 @@ type Depense = {
   created_at: string
 }
 
-type Membre = { id: string; prenom: string; type: string }
+type Membre = { id: string; prenom: string; type: string; avatarUrl?: string | null; emoji?: string | null }
 
 const CATEGORIES: { key: string; emoji: string; label: string }[] = [
   { key: 'hebergement', emoji: '🏨', label: 'Hôtel' },
@@ -117,6 +117,7 @@ export default function EntreAmisTab({
 
   const COLORS = ['#36A6B2', '#1D9E75', '#D97706', '#E11D48', '#2563EB', '#0D9488']
   const colorFor = (prenom: string) => COLORS[membres.findIndex(m => m.prenom === prenom) % COLORS.length] ?? '#36A6B2'
+  const membreByPrenom = (prenom: string) => membres.find(m => m.prenom === prenom)
 
   function toggleParticipant(prenom: string) {
     setForm(f => ({
@@ -205,9 +206,12 @@ export default function EntreAmisTab({
               return (
                 <div key={m.id} className="flex items-center gap-3 px-4 py-2.5 rounded-2xl"
                   style={{ background: 'rgba(255,255,255,0.12)' }}>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 overflow-hidden"
                     style={{ background: colorFor(m.prenom) }}>
-                    {m.prenom[0].toUpperCase()}
+                    {m.avatarUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={m.avatarUrl} alt="" className="w-full h-full object-cover" />
+                    ) : m.emoji ?? m.prenom[0].toUpperCase()}
                   </div>
                   <span className="text-white font-semibold text-sm flex-1">{m.prenom}</span>
                   <span className={`text-sm font-bold px-2 py-0.5 rounded-full`}
@@ -232,9 +236,12 @@ export default function EntreAmisTab({
             {transactions.map((t, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-2xl"
                 style={{ background: '#DBEAFE' }}>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 overflow-hidden"
                   style={{ background: colorFor(t.de) }}>
-                  {t.de[0]}
+                  {membreByPrenom(t.de)?.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={membreByPrenom(t.de)!.avatarUrl!} alt="" className="w-full h-full object-cover" />
+                  ) : membreByPrenom(t.de)?.emoji ?? t.de[0]}
                 </div>
                 <p className="text-sm text-gray-700 flex-1">
                   <span className="font-semibold">{t.de}</span>
@@ -243,9 +250,12 @@ export default function EntreAmisTab({
                   {' à '}
                   <span className="font-semibold">{t.a}</span>
                 </p>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 overflow-hidden"
                   style={{ background: colorFor(t.a) }}>
-                  {t.a[0]}
+                  {membreByPrenom(t.a)?.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={membreByPrenom(t.a)!.avatarUrl!} alt="" className="w-full h-full object-cover" />
+                  ) : membreByPrenom(t.a)?.emoji ?? t.a[0]}
                 </div>
               </div>
             ))}

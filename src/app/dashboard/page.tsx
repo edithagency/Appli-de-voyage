@@ -68,16 +68,21 @@ export default async function DashboardPage() {
     .sort((a, b) => new Date(b.date_depart).getTime() - new Date(a.date_depart).getTime())
 
   // Membres de chaque voyage à venir, pour les avatars de la carte
-  const membresParVoyage: Record<string, { id: string; prenom: string }[]> = {}
+  const membresParVoyage: Record<string, { id: string; prenom: string; avatarUrl: string | null; emoji: string | null }[]> = {}
   if (tousLesVoyages.length > 0) {
     const { data: tousLesMembres } = await supabase
       .from('voyage_membres')
-      .select('id, voyage_id, prenom')
+      .select('id, voyage_id, prenom, utilisateur:users(avatar_url, emoji_avatar)')
       .in('voyage_id', tousLesVoyages.map(v => v.id))
       .order('created_at', { ascending: true })
 
     for (const m of tousLesMembres ?? []) {
-      (membresParVoyage[m.voyage_id] ??= []).push({ id: m.id, prenom: m.prenom })
+      const utilisateur = Array.isArray(m.utilisateur) ? m.utilisateur[0] : m.utilisateur
+      ;(membresParVoyage[m.voyage_id] ??= []).push({
+        id: m.id, prenom: m.prenom,
+        avatarUrl: utilisateur?.avatar_url ?? null,
+        emoji: utilisateur?.emoji_avatar ?? null,
+      })
     }
   }
 
@@ -165,13 +170,16 @@ export default async function DashboardPage() {
                   {/* Avatars (3 max, le premier au-dessus) */}
                   <div className="absolute flex items-center" style={{ bottom: 12, right: 12 }}>
                     {avatars.map((m, i) => (
-                      <div key={m.id} className="flex items-center justify-center text-white"
+                      <div key={m.id} className="flex items-center justify-center text-white overflow-hidden"
                         style={{
                           width: 32, height: 32, borderRadius: '50%',
                           marginLeft: i > 0 ? -8 : 0, background: AVATAR_COLORS[i % AVATAR_COLORS.length],
                           fontSize: 13, fontWeight: 600, zIndex: avatars.length - i,
                         }}>
-                        {m.prenom[0].toUpperCase()}
+                        {m.avatarUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={m.avatarUrl} alt="" className="w-full h-full object-cover" />
+                        ) : m.emoji ?? m.prenom[0].toUpperCase()}
                       </div>
                     ))}
                   </div>

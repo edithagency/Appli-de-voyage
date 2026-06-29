@@ -75,7 +75,7 @@ export default async function CoffreFortPage() {
 
       <CoffreFortClient
         docs={allDocs}
-        membres={(membres ?? []).map(m => ({ id: m.id, prenom: m.prenom, type: m.type }))}
+        membres={(membres ?? []).map(m => ({ id: m.id, prenom: m.prenom, type: m.type, voyage_id: m.voyage_id }))}
         voyages={allVoyages}
       />
     </div>

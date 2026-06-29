@@ -16,7 +16,7 @@ type Doc = {
   membre: { prenom: string } | null
   _shared?: boolean
 }
-type Membre = { id: string; prenom: string; type: string }
+type Membre = { id: string; prenom: string; type: string; voyage_id: string | null }
 type Voyage = { id: string; nom: string; emoji: string }
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })

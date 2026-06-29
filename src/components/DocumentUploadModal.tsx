@@ -20,7 +20,7 @@ const TYPES_AVEC_EXPIRATION = ['passeport', 'carte_identite', 'visa', 'assurance
 // Ces types sont personnels par défaut (permanent) sauf si on est dans le contexte d'un voyage
 const TYPES_PERMANENTS = ['passeport', 'carte_identite', 'carnet_vaccins']
 
-type Membre = { id: string; prenom: string; type: string }
+type Membre = { id: string; prenom: string; type: string; voyage_id?: string | null }
 type Voyage = { id: string; nom: string }
 
 type Props = {
@@ -90,6 +90,11 @@ export default function DocumentUploadModal({
 
   const needsExpiration = TYPES_AVEC_EXPIRATION.includes(type)
   const singleVoyage = voyages.length === 1
+  // Pour un document lié à un voyage, ne propose que les participants de CE voyage.
+  // (les membres sans voyage_id viennent d'un contexte déjà scopé à un seul voyage : pas de filtrage à faire)
+  const membresDisponibles = permanent
+    ? membres
+    : membres.filter(m => m.voyage_id == null || m.voyage_id === voyageId)
 
   return (
     <div
@@ -159,31 +164,12 @@ export default function DocumentUploadModal({
               className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
           </div>
 
-          {/* Pour qui — pills (même UX partout) */}
-          {membres.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Pour qui ?</p>
-              <div className="flex flex-wrap gap-2">
-                {[{ id: 'tous', prenom: 'Tout le monde' }, ...membres].map(m => (
-                  <button key={m.id} type="button" onClick={() => setMembreId(m.id)}
-                    className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
-                    style={{
-                      background: membreId === m.id ? '#36A6B2' : '#DBEAFE',
-                      color: membreId === m.id ? 'white' : '#36A6B2',
-                    }}>
-                    {m.prenom}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Associer à : Personnel vs Voyage */}
+          {/* Associer à : Personnel vs Voyage — d'abord, pour pouvoir filtrer "Pour qui ?" ensuite */}
           {voyages.length > 0 && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Associer à</p>
               <div className="flex gap-2">
-                <button type="button" onClick={() => setPermanent(true)}
+                <button type="button" onClick={() => { setPermanent(true); setMembreId('tous') }}
                   className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition"
                   style={{
                     borderColor: permanent ? '#36A6B2' : '#E5E7EB',
@@ -192,7 +178,7 @@ export default function DocumentUploadModal({
                   }}>
                   📌 Personnel
                 </button>
-                <button type="button" onClick={() => setPermanent(false)}
+                <button type="button" onClick={() => { setPermanent(false); setMembreId('tous') }}
                   className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition"
                   style={{
                     borderColor: !permanent ? '#36A6B2' : '#E5E7EB',
@@ -206,7 +192,7 @@ export default function DocumentUploadModal({
               {!permanent && !singleVoyage && (
                 <select
                   value={voyageId}
-                  onChange={e => setVoyageId(e.target.value)}
+                  onChange={e => { setVoyageId(e.target.value); setMembreId('tous') }}
                   className="w-full mt-2 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#36A6B2]"
                 >
                   {voyages.map(v => (
@@ -214,6 +200,25 @@ export default function DocumentUploadModal({
                   ))}
                 </select>
               )}
+            </div>
+          )}
+
+          {/* Pour qui — filtré aux participants du voyage choisi ci-dessus (ou tout le monde si Personnel) */}
+          {membresDisponibles.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Pour qui ?</p>
+              <div className="flex flex-wrap gap-2">
+                {[{ id: 'tous', prenom: 'Tout le monde' }, ...membresDisponibles].map(m => (
+                  <button key={m.id} type="button" onClick={() => setMembreId(m.id)}
+                    className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                    style={{
+                      background: membreId === m.id ? '#36A6B2' : '#DBEAFE',
+                      color: membreId === m.id ? 'white' : '#36A6B2',
+                    }}>
+                    {m.prenom}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 

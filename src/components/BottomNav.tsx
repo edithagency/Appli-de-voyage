@@ -32,6 +32,17 @@ export default function BottomNav() {
       className="absolute inset-x-0 bottom-0 flex justify-center pointer-events-none"
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 36px)' }}
     >
+      {/* Flou blanc derrière toute la zone de la nav, pour fondre le contenu qui défile dessous */}
+      <div
+        className="absolute inset-x-0 bottom-0 pointer-events-none"
+        style={{
+          height: 140,
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          background: 'linear-gradient(to top, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 55%, rgba(255,255,255,0) 100%)',
+        }}
+      />
+
       <nav
         className="pointer-events-auto flex items-center justify-between gap-1 px-3 py-2.5"
         style={{

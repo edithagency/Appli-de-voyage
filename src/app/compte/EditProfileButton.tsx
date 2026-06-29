@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Pencil } from 'lucide-react'
+import { Pencil, ChevronRight } from 'lucide-react'
 import { sauvegarderProfil, changerMotDePasse } from './actions'
 
 export default function EditProfileButton({
@@ -58,12 +58,17 @@ export default function EditProfileButton({
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold transition"
-        style={{ background: 'rgba(54,166,178,0.12)', color: '#36A6B2' }}>
-        <Pencil size={16} />
-        Éditer mon profil
-      </button>
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <button type="button" onClick={() => setOpen(true)}
+          className="w-full flex items-center gap-3 px-4 py-3.5 transition hover:bg-gray-50">
+          <span className="flex items-center justify-center w-9 h-9 rounded-full shrink-0"
+            style={{ background: 'rgba(54,166,178,0.12)' }}>
+            <Pencil size={17} color="#36A6B2" />
+          </span>
+          <span className="flex-1 text-left text-sm font-medium text-gray-800">Éditer mon profil</span>
+          <ChevronRight size={16} color="#D1D5DB" />
+        </button>
+      </div>
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"

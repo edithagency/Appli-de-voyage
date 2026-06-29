@@ -1,5 +1,6 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import VoyageEditButton from './VoyageEditButton'
 import VoyageTabs from './VoyageTabs'
@@ -151,19 +152,17 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
         {/* Boutons haut gauche : retour + édition/quitter */}
         <div className="absolute top-4 left-4 flex items-center gap-2">
-          <Link href="/dashboard"
-            className="flex items-center justify-center"
-            style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', color: '#111827', backdropFilter: 'blur(4px)' }}>
-            ←
+          <Link href="/dashboard" className="flex items-center justify-center" style={{ padding: 8 }}>
+            <ArrowLeft size={16} color="white" />
           </Link>
 
           {!isOrganisateur && voyage.mode_gestion === 'partage' && currentMembre && (
             <form action={quitterVoyage.bind(null, currentMembre.id)}>
               <button type="submit"
-                className="text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{ background: 'rgba(0,0,0,0.5)', color: 'white' }}
+                className="flex items-center justify-center"
+                style={{ padding: 8 }}
                 onClick={e => { if (!confirm('Quitter ce voyage ?')) e.preventDefault() }}>
-                ← Quitter
+                <LogOut size={16} color="white" />
               </button>
             </form>
           )}

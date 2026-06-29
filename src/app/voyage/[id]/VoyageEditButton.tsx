@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Pencil, Share2 } from 'lucide-react'
 import { modifierVoyage } from './voyage-edit-actions'
 import { supprimerVoyage } from '../supprimerVoyage-action'
 import { creerInvitation, retirerParticipant } from './participants-actions'
@@ -105,16 +106,16 @@ export default function VoyageEditButton({
         {/* Modifier */}
         <button
           onClick={() => setShowEdit(true)}
-          style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, backdropFilter: 'blur(4px)' }}
+          style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8 }}
           title="Modifier le voyage">
-          ✏️
+          <Pencil size={16} color="white" />
         </button>
         {/* Partager */}
         <button
           onClick={() => setShowShare(true)}
-          style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, backdropFilter: 'blur(4px)' }}
+          style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8 }}
           title="Partager">
-          🔗
+          <Share2 size={16} color="white" />
         </button>
       </div>
 

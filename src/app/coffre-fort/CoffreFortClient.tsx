@@ -16,7 +16,7 @@ type Doc = {
   _shared?: boolean
 }
 type Membre = { id: string; prenom: string; type: string }
-type Voyage = { id: string; nom: string }
+type Voyage = { id: string; nom: string; emoji: string }
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
 
@@ -48,7 +48,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
   const pills = [
     { key: 'tous', label: 'Tous' },
     ...(hasPermanents ? [{ key: 'permanents', label: '📌 Permanents' }] : []),
-    ...voyagesAvecDocs.map(v => ({ key: v.id, label: `✈️ ${v.nom}` })),
+    ...voyagesAvecDocs.map(v => ({ key: v.id, label: `${v.emoji} ${v.nom}` })),
   ]
 
   const filteredDocs = filtre === 'tous' ? docs

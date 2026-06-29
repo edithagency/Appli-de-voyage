@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import CoffreFortClient from './CoffreFortClient'
+import { getPaysCode } from '@/lib/utils/paysCode'
 
 export default async function CoffreFortPage() {
   const supabase = await createClient()
@@ -8,17 +9,22 @@ export default async function CoffreFortPage() {
   if (!user) redirect('/auth/login')
 
   // Voyages propres + participations en parallèle
-  const [{ data: ownDocs }, { data: ownVoyages }, { data: participations }] = await Promise.all([
+  const [{ data: ownDocs }, { data: ownVoyages }, { data: participations }, { data: paysList }] = await Promise.all([
     supabase.from('documents')
       .select('*, membre:belongs_to(prenom)')
       .eq('uploaded_by', user.id)
       .order('created_at', { ascending: false }),
-    supabase.from('voyages').select('id, nom').eq('user_id', user.id).order('date_depart', { ascending: false }),
+    supabase.from('voyages').select('id, nom, pays_code, destination').eq('user_id', user.id).order('date_depart', { ascending: false }),
     supabase.from('voyage_membres')
-      .select('voyage_id, voyage:voyage_id(id, nom)')
+      .select('voyage_id, voyage:voyage_id(id, nom, pays_code, destination)')
       .eq('user_id', user.id)
       .eq('statut_invitation', 'joined'),
+    supabase.from('pays').select('code, emoji'),
   ])
+
+  const CODE_TO_EMOJI: Record<string, string> = Object.fromEntries(
+    (paysList ?? []).map(p => [p.code, p.emoji ?? ''])
+  )
 
   // Membres des voyages dont l'utilisateur est l'organisateur (pour le "Pour qui ?")
   const { data: membres } = await supabase
@@ -27,7 +33,7 @@ export default async function CoffreFortPage() {
     .eq('voyages.user_id', user.id)
 
   // Voyages rejoints en tant que membre
-  type VoyageRef = { id: string; nom: string }
+  type VoyageRef = { id: string; nom: string; pays_code: string | null; destination: string }
   const participatedVoyages = (participations ?? [])
     .map(p => (p.voyage && !Array.isArray(p.voyage) ? p.voyage as unknown as VoyageRef : null))
     .filter((v): v is VoyageRef => v !== null)
@@ -47,10 +53,15 @@ export default async function CoffreFortPage() {
   }
 
   // Liste complète des voyages pour les pills (propres + rejoints, sans doublon)
-  const allVoyages = [
+  const allVoyagesBruts = [
     ...(ownVoyages ?? []),
     ...participatedVoyages.filter(v => !(ownVoyages ?? []).find(ov => ov.id === v.id)),
   ]
+
+  const allVoyages = allVoyagesBruts.map(v => {
+    const code = getPaysCode(v.pays_code, v.destination)
+    return { id: v.id, nom: v.nom, emoji: (code && CODE_TO_EMOJI[code]) || '✈️' }
+  })
 
   const allDocs = [...(ownDocs ?? []), ...sharedDocs]
 

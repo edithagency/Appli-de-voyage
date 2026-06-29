@@ -94,7 +94,7 @@ export default function EntreAmisTab({
 
   useEffect(() => {
     if (!showModal) return
-    const scrollEl = document.querySelector('.phone-screen') as HTMLElement | null
+    const scrollEl = document.querySelector('.voyage-scroll-area') as HTMLElement | null
     if (!scrollEl) return
     const original = scrollEl.style.overflow
     scrollEl.style.overflow = 'hidden'

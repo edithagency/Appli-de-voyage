@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import VoyageEditButton from './VoyageEditButton'
 import VoyageTabs from './VoyageTabs'
 import DerniereMiseAJour from '@/components/DerniereMiseAJour'
-import PageHeader from '@/components/PageHeader'
 import { quitterVoyage } from './quitter-actions'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
@@ -135,26 +134,17 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="h-full flex flex-col overflow-hidden bg-white">
 
-      {/* IMAGE EN HAUT — bloc normal dans le flux, défile avec la page */}
-      <div className="relative w-full" style={{ height: '50vh' }}>
+      {/* IMAGE FIXE EN HAUT — hors de la zone qui scrolle, < 1/3 de l'écran */}
+      <div className="relative shrink-0 overflow-hidden" style={{ height: '30vh' }}>
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photo} alt="" className="w-full h-full object-cover object-center" />
         ) : (
           <div className="w-full h-full" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }} />
         )}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%)' }} />
-
-        {/* Logo + titre */}
-        <div className="absolute inset-x-0 top-0">
-          <div className="flex justify-center pt-5 sm:pt-11">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
-          </div>
-          <PageHeader title={voyage.nom} />
-        </div>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 55%)' }} />
 
         {/* Boutons haut gauche : retour + édition/quitter */}
         <div className="absolute top-4 left-4 flex items-center gap-2">
@@ -203,23 +193,22 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
             </div>
           )}
         </div>
-
-        {/* Titre bas gauche */}
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="flex items-center gap-2 mb-1">
-            {pays?.emoji && <span className="text-2xl">{pays.emoji}</span>}
-            <h1 style={{ fontWeight: 800, color: 'white', fontSize: '22px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>{voyage.nom}</h1>
-          </div>
-          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0 }}>{voyage.destination}</p>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', margin: '3px 0 0' }}>
-            {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
-          </p>
-        </div>
       </div>
 
-      {/* CONTENU BLANC — directement sous l'image, touche les bords gauche et droit */}
-      <div className="w-full bg-white pb-28" style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -24 }}>
-        <main className="max-w-2xl mx-auto px-5 pt-6 flex flex-col gap-4">
+      {/* CONTENU — seule zone scrollable de la page */}
+      <div className="voyage-scroll-area flex-1 overflow-y-auto bg-white" style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -24, boxShadow: '0 -4px 20px rgba(0,0,0,0.08)' }}>
+        <main className="max-w-2xl mx-auto px-5 pt-6 pb-28 flex flex-col gap-4">
+
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              {pays?.emoji && <span className="text-2xl">{pays.emoji}</span>}
+              <h1 className="font-bold text-gray-900" style={{ fontSize: '22px', margin: 0 }}>{voyage.nom}</h1>
+            </div>
+            <p className="text-gray-500" style={{ fontSize: '13px', margin: 0 }}>{voyage.destination}</p>
+            <p className="text-gray-400" style={{ fontSize: '11px', margin: '3px 0 0' }}>
+              {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
+            </p>
+          </div>
 
           <VoyageTabs
             pays={pays}

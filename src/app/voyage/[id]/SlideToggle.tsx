@@ -93,8 +93,8 @@ export default function SlideToggle({
         borderRadius: 9999,
         background: 'white',
         boxShadow: willComplete
-          ? `0 2px 8px rgba(0,0,0,0.18), 0 0 10px 2px ${color}66`
-          : '0 1px 4px rgba(0,0,0,0.15)',
+          ? `0 6px 16px rgba(0,0,0,0.16), 0 0 22px 6px ${color}80`
+          : `0 4px 12px rgba(0,0,0,0.12), 0 0 16px 3px ${color}4D`,
         transition: dragging ? 'none' : 'left 0.2s, box-shadow 0.3s',
         display: 'flex',
         alignItems: 'center',

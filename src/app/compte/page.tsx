@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import EditProfileButton from './EditProfileButton'
 import AvatarUploader from './AvatarUploader'
+import InviteFriendsCard from './InviteFriendsCard'
 import CompteSettings from './CompteSettings'
 import pkg from '../../../package.json'
 
@@ -43,6 +44,8 @@ export default async function ComptePage() {
             <p className="text-sm text-gray-400">{user.email}</p>
           </div>
         </div>
+
+        <InviteFriendsCard />
 
         <EditProfileButton
           initialPrenom={profile?.prenom ?? ''}

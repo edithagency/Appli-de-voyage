@@ -22,24 +22,34 @@ export default function AvatarUploader({
     if (!file) return
     setError(null)
     setUploading(true)
-    const formData = new FormData()
-    formData.append('file', file)
-    const result = await uploadAvatar(formData)
-    setUploading(false)
-    if (fileInputRef.current) fileInputRef.current.value = ''
-    if (result.error) { setError(result.error); return }
-    if (result.avatarUrl) setAvatarUrl(result.avatarUrl)
-    router.refresh()
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const result = await uploadAvatar(formData)
+      if (result.error) { setError(result.error); return }
+      if (result.avatarUrl) setAvatarUrl(result.avatarUrl)
+      router.refresh()
+    } catch {
+      setError("La connexion a échoué pendant l'envoi (photo trop lourde ou réseau coupé). Réessaie avec une image plus légère.")
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
   }
 
   async function handleRemove() {
     setError(null)
     setUploading(true)
-    const result = await supprimerAvatar()
-    setUploading(false)
-    if (result.error) { setError(result.error); return }
-    setAvatarUrl(null)
-    router.refresh()
+    try {
+      const result = await supprimerAvatar()
+      if (result.error) { setError(result.error); return }
+      setAvatarUrl(null)
+      router.refresh()
+    } catch {
+      setError('La connexion a échoué pendant la suppression. Réessaie.')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (

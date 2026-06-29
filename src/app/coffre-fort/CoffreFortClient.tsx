@@ -69,13 +69,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em' }}>Mes documents</h1>
-          <p className="text-sm text-gray-400 mt-0.5">
-            {filteredDocs.length} document{filteredDocs.length > 1 ? 's' : ''}
-            {filteredDocs.length !== docs.length ? ` · ${docs.length} au total` : ''}
-          </p>
-        </div>
+        <h1 className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em' }}>Mes documents</h1>
         <DocumentUploadModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}

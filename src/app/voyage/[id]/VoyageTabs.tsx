@@ -195,7 +195,7 @@ export default function VoyageTabs({
                   borderRadius: 9999,
                   padding: isActive ? '8px 14px' : '8px',
                   background: isActive ? 'rgba(54,166,178,0.12)' : 'transparent',
-                  boxShadow: isActive ? '0 0 16px 4px rgba(54,166,178,0.25)' : 'none',
+                  boxShadow: isActive ? '0 0 6px 1px rgba(54,166,178,0.3)' : 'none',
                 }}>
                 <Icon size={18} color={isActive ? '#36A6B2' : '#9CA3AF'} className="shrink-0" />
                 {isActive && (

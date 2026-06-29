@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useTransition } from 'react'
+import { Info, CheckSquare, FolderLock, CreditCard, Map } from 'lucide-react'
 import ChecklistSection from './ChecklistSection'
 import VoyageDocuments from './VoyageDocuments'
 import BagagesSection from './BagagesSection'
@@ -77,11 +78,11 @@ export default function VoyageTabs({
   currentMembreId: string
 }) {
   const TABS = [
-    { key: 'infos',      label: 'Infos',     emoji: '🌍', show: true },
-    { key: 'checklist',  label: 'Checklist', emoji: '✅', show: true },
-    { key: 'documents',  label: 'Documents', emoji: '🔒', show: true },
-    { key: 'activites',  label: 'Activités', emoji: '🗺️', show: activites.length > 0 },
-    { key: 'amis',       label: 'Budget',    emoji: '💳', show: true },
+    { key: 'infos',      label: 'Infos',     icon: Info,        show: true },
+    { key: 'checklist',  label: 'Checklist', icon: CheckSquare, show: true },
+    { key: 'documents',  label: 'Documents', icon: FolderLock,  show: true },
+    { key: 'activites',  label: 'Activités', icon: Map,         show: activites.length > 0 },
+    { key: 'amis',       label: 'Budget',    icon: CreditCard,  show: true },
   ].filter(t => t.show)
 
   const [active, setActive] = useState('infos')
@@ -181,15 +182,22 @@ export default function VoyageTabs({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white rounded-xl border border-gray-200 p-1 flex gap-1">
-        {TABS.map(tab => (
-          <button key={tab.key} onClick={() => setActive(tab.key)}
-            className="flex-1 flex flex-col items-center gap-0.5 py-2.5 rounded-xl text-xs font-semibold transition-all"
-            style={{ background: active === tab.key ? '#36A6B2' : 'transparent', color: active === tab.key ? 'white' : '#6B7280' }}>
-            <span className="text-base">{tab.emoji}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
+      <div className="bg-white flex gap-1 px-2 py-2 sticky top-0 z-30"
+        style={{ borderRadius: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #F0F0F0' }}>
+        {TABS.map(tab => {
+          const Icon = tab.icon
+          const isActive = active === tab.key
+          return (
+            <button key={tab.key} onClick={() => setActive(tab.key)}
+              className="flex-1 flex flex-col items-center gap-1 py-2.5 transition-all"
+              style={{ borderRadius: 14, background: isActive ? '#36A6B2' : 'transparent' }}>
+              <Icon size={18} color={isActive ? 'white' : '#9CA3AF'} />
+              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', color: isActive ? 'white' : '#9CA3AF' }}>
+                {tab.label.toUpperCase()}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* ─── INFOS ─── */}

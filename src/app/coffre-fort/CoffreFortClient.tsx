@@ -88,7 +88,7 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
 
       {/* Pills filtre */}
       {pills.length > 1 && (
-        <div className="flex gap-4 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
           {pills.map(pill => {
             const active = filtre === pill.key
             const Icon = pill.icon
@@ -101,7 +101,6 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
                 style={{
                   background: active ? tone.active : tone.inactiveBg,
                   color: active ? tone.activeText : tone.inactiveText,
-                  boxShadow: `0 3px 8px rgba(0,0,0,0.06), 0 0 8px 1px rgba(${tone.glow},0.18)`,
                 }}
               >
                 {Icon && <Icon size={12} color={active ? tone.activeText : tone.inactiveText} />}

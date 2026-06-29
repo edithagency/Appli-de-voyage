@@ -7,7 +7,7 @@ const HANDLE_HEIGHT = 36
 const PADDING = 4
 
 export default function SlideToggle({
-  completed, onToggle, color, labelIdle = 'Glisser pour marquer comme géré', labelDone = 'Géré',
+  completed, onToggle, color, labelIdle = 'À FAIRE', labelDone = 'FAIT',
 }: {
   completed: boolean
   onToggle: () => void

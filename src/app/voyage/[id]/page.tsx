@@ -135,43 +135,44 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
-      <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
-          <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
+    <div className="min-h-screen bg-white">
+
+      {/* IMAGE EN HAUT — bloc normal dans le flux, défile avec la page */}
+      <div className="relative w-full" style={{ height: '50vh' }}>
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photo} alt="" className="w-full h-full object-cover object-center" />
+        ) : (
+          <div className="w-full h-full" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }} />
+        )}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%)' }} />
+
+        {/* Logo + titre */}
+        <div className="absolute inset-x-0 top-0">
+          <div className="flex justify-center pt-5 sm:pt-11">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
+          </div>
+          <PageHeader title={voyage.nom} />
         </div>
-        <PageHeader title={voyage.nom} />
-      </header>
 
-      <main className="max-w-2xl mx-auto px-5 py-4 flex flex-col gap-4">
-
-        <div className="flex items-center gap-3 -mt-2">
-          <Link href="/dashboard" className="text-gray-400 text-sm">← Retour</Link>
-          {!isOrganisateur && (
-            <span className="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600">
-              Invité
-            </span>
-          )}
-        </div>
-
-        <div className="rounded-2xl overflow-hidden border border-gray-200" style={{ aspectRatio: '16/9', position: 'relative', background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-          {photo && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          )}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%)' }} />
+        {/* Boutons haut gauche : retour + édition/quitter */}
+        <div className="absolute top-4 left-4 flex items-center gap-2">
+          <Link href="/dashboard"
+            className="flex items-center justify-center"
+            style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', color: '#111827', backdropFilter: 'blur(4px)' }}>
+            ←
+          </Link>
 
           {!isOrganisateur && voyage.mode_gestion === 'partage' && currentMembre && (
-            <div style={{ position: 'absolute', top: 14, left: 14 }}>
-              <form action={quitterVoyage.bind(null, currentMembre.id)}>
-                <button type="submit"
-                  className="text-xs font-semibold px-3 py-1.5 rounded-full"
-                  style={{ background: 'rgba(0,0,0,0.5)', color: 'white' }}
-                  onClick={e => { if (!confirm('Quitter ce voyage ?')) e.preventDefault() }}>
-                  ← Quitter
-                </button>
-              </form>
-            </div>
+            <form action={quitterVoyage.bind(null, currentMembre.id)}>
+              <button type="submit"
+                className="text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{ background: 'rgba(0,0,0,0.5)', color: 'white' }}
+                onClick={e => { if (!confirm('Quitter ce voyage ?')) e.preventDefault() }}>
+                ← Quitter
+              </button>
+            </form>
           )}
 
           {isOrganisateur && (
@@ -181,57 +182,72 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
               modeGestion={voyage.mode_gestion}
             />
           )}
-
-          <div style={{ position: 'absolute', top: 14, right: 14 }}>
-            {jours > 0 ? (
-              <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.9)', color: jours <= 7 ? '#92400E' : '#36A6B2' }}>
-                J-{jours}
-              </span>
-            ) : (
-              <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: '#D1FAE5', color: '#065F46' }}>
-                {jours === 0 ? "Aujourd'hui !" : 'En cours'}
-              </span>
-            )}
-          </div>
-
-          <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
-            <div className="flex items-center gap-2 mb-1">
-              {pays?.emoji && <span className="text-2xl">{pays.emoji}</span>}
-              <h1 style={{ fontWeight: 800, color: 'white', fontSize: '22px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>{voyage.nom}</h1>
-            </div>
-            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0 }}>{voyage.destination}</p>
-            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', margin: '3px 0 0' }}>
-              {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
-            </p>
-          </div>
         </div>
 
-        <VoyageTabs
-          pays={pays}
-          documents={documents ?? []}
-          tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
-          membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
-          valises={valises}
-          voyageId={id}
-          voyageNom={voyage.nom}
-          dateDepart={voyage.date_depart}
-          dateRetour={voyage.date_retour}
-          compagnie={currentMembre?.compagnie_aerienne ?? voyage.compagnie_aerienne ?? null}
-          paysCode={voyage.pays_code ?? null}
-          depenses={depenses}
-          budgetTotal={voyage.budget_total ?? 0}
-          activites={activites ?? []}
-          wishlistActiviteIds={(wishlist ?? []).map(w => w.activite_id)}
-          tauxLive={tauxLive}
-          infoStatusParPersonne={infoStatusParPersonne}
-          jours={duree}
-          modeGestion={voyage.mode_gestion}
-          isOrganisateur={isOrganisateur}
-          currentMembreId={currentMembreId}
-        />
+        {/* Badge J- haut droite */}
+        <div className="absolute top-4 right-4">
+          {jours > 0 ? (
+            <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: jours <= 7 ? '#FEF3C7EE' : 'rgba(255,255,255,0.9)', color: jours <= 7 ? '#92400E' : '#36A6B2' }}>
+              J-{jours}
+            </span>
+          ) : (
+            <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: '#D1FAE5', color: '#065F46' }}>
+              {jours === 0 ? "Aujourd'hui !" : 'En cours'}
+            </span>
+          )}
+          {!isOrganisateur && (
+            <div className="mt-1.5">
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(59,130,246,0.9)', color: 'white' }}>
+                Invité
+              </span>
+            </div>
+          )}
+        </div>
 
-        <DerniereMiseAJour />
-      </main>
+        {/* Titre bas gauche */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="flex items-center gap-2 mb-1">
+            {pays?.emoji && <span className="text-2xl">{pays.emoji}</span>}
+            <h1 style={{ fontWeight: 800, color: 'white', fontSize: '22px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textShadow: '0 2px 6px rgba(0,0,0,0.6)', margin: 0 }}>{voyage.nom}</h1>
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0 }}>{voyage.destination}</p>
+          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '11px', margin: '3px 0 0' }}>
+            {formatDate(voyage.date_depart)} · {duree} jour{duree > 1 ? 's' : ''}
+          </p>
+        </div>
+      </div>
+
+      {/* CONTENU BLANC — directement sous l'image, touche les bords gauche et droit */}
+      <div className="w-full bg-white pb-28" style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, marginTop: -24 }}>
+        <main className="max-w-2xl mx-auto px-5 pt-6 flex flex-col gap-4">
+
+          <VoyageTabs
+            pays={pays}
+            documents={documents ?? []}
+            tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
+            membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant' }))}
+            valises={valises}
+            voyageId={id}
+            voyageNom={voyage.nom}
+            dateDepart={voyage.date_depart}
+            dateRetour={voyage.date_retour}
+            compagnie={currentMembre?.compagnie_aerienne ?? voyage.compagnie_aerienne ?? null}
+            paysCode={voyage.pays_code ?? null}
+            depenses={depenses}
+            budgetTotal={voyage.budget_total ?? 0}
+            activites={activites ?? []}
+            wishlistActiviteIds={(wishlist ?? []).map(w => w.activite_id)}
+            tauxLive={tauxLive}
+            infoStatusParPersonne={infoStatusParPersonne}
+            jours={duree}
+            modeGestion={voyage.mode_gestion}
+            isOrganisateur={isOrganisateur}
+            currentMembreId={currentMembreId}
+          />
+
+          <DerniereMiseAJour />
+        </main>
+      </div>
     </div>
   )
 }

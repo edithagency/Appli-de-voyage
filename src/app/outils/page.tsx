@@ -6,7 +6,6 @@ import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
-import PageHeader from '@/components/PageHeader'
 
 const OUTILS = [
   {
@@ -57,10 +56,9 @@ export default function OutilsPage() {
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-6 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
-        <PageHeader title="Outils" />
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-5 flex flex-col gap-3">

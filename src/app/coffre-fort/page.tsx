@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import CoffreFortClient from './CoffreFortClient'
-import PageHeader from '@/components/PageHeader'
 
 export default async function CoffreFortPage() {
   const supabase = await createClient()
@@ -59,10 +58,9 @@ export default async function CoffreFortPage() {
   return (
     <div className="min-h-screen pb-28" style={{ background: '#FFFFFF' }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 flex justify-center">
+        <div className="max-w-2xl mx-auto pt-5 sm:pt-11 pb-6 flex justify-center">
           <img src="/images/logo-bon-vol.png" alt="Bon Vol" className="h-7" />
         </div>
-        <PageHeader title="Documents" />
       </header>
 
       <div className="max-w-2xl mx-auto px-5 pt-4">

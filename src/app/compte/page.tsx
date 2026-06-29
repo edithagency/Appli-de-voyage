@@ -12,7 +12,7 @@ export default async function ComptePage() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('prenom, nom, emoji_avatar')
+    .select('prenom, nom, emoji_avatar, avatar_url')
     .eq('id', user.id)
     .single()
 
@@ -31,9 +31,14 @@ export default async function ComptePage() {
 
         {/* Avatar */}
         <div className="flex flex-col items-center pt-2 pb-4">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-3"
+          <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-3 overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            {profile?.emoji_avatar ?? (profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()}
+            {profile?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : (
+              profile?.emoji_avatar ?? (profile?.prenom?.[0] ?? user.email?.[0] ?? '?').toUpperCase()
+            )}
           </div>
           <p className="font-bold text-gray-900 text-lg">
             {profile?.prenom ? `${profile.prenom}${profile.nom ? ' ' + profile.nom : ''}` : user.email}
@@ -46,6 +51,7 @@ export default async function ComptePage() {
           initialPrenom={profile?.prenom ?? ''}
           initialNom={profile?.nom ?? ''}
           initialEmoji={profile?.emoji_avatar ?? ''}
+          initialAvatarUrl={profile?.avatar_url ?? null}
         />
 
         {/* Déconnexion */}

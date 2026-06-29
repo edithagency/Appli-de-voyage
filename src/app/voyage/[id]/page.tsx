@@ -194,7 +194,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Titre + date, même format que les cartes du dashboard */}
-        <div className="absolute" style={{ bottom: 12, left: 14 }}>
+        <div className="absolute" style={{ bottom: 36, left: 14 }}>
           <p className="text-white font-bold" style={{ fontSize: 22, lineHeight: 1.2, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>
             {voyage.nom}
           </p>
@@ -204,7 +204,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Avatars (3 max, le premier au-dessus) */}
-        <div className="absolute flex items-center" style={{ bottom: 12, right: 12 }}>
+        <div className="absolute flex items-center" style={{ bottom: 36, right: 12 }}>
           {avatars.map((m, i) => (
             <div key={m.id} className="flex items-center justify-center text-white"
               style={{

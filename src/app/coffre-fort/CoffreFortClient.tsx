@@ -47,10 +47,15 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
   const hasPermanents = docs.some(d => !d.voyage_id)
 
   const pills = [
-    { key: 'tous', label: 'Tous', icon: null },
-    ...(hasPermanents ? [{ key: 'permanents', label: 'Permanents', icon: Pin }] : []),
-    ...voyagesAvecDocs.map(v => ({ key: v.id, label: `${v.emoji} ${v.nom}`, icon: null })),
+    { key: 'tous', label: 'Tous', icon: null, tone: 'blue' as const },
+    ...(hasPermanents ? [{ key: 'permanents', label: 'Permanents', icon: Pin, tone: 'blue' as const }] : []),
+    ...voyagesAvecDocs.map(v => ({ key: v.id, label: `${v.emoji} ${v.nom}`, icon: null, tone: 'amber' as const })),
   ]
+
+  const PILL_TONES = {
+    blue: { active: '#3B82F6', activeText: 'white', inactiveBg: '#EFF6FF', inactiveText: '#3B82F6', glow: '59,130,246' },
+    amber: { active: '#F59E0B', activeText: 'white', inactiveBg: '#FFFBEB', inactiveText: '#B45309', glow: '245,158,11' },
+  }
 
   const filteredDocs = filtre === 'tous' ? docs
     : filtre === 'permanents' ? docs.filter(d => !d.voyage_id)
@@ -87,20 +92,21 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
           {pills.map(pill => {
             const active = filtre === pill.key
             const Icon = pill.icon
+            const tone = PILL_TONES[pill.tone]
             return (
               <button
                 key={pill.key}
                 onClick={() => setFiltre(pill.key)}
                 className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={{
-                  background: active ? '#36A6B2' : 'white',
-                  color: active ? 'white' : '#6B7280',
+                  background: active ? tone.active : tone.inactiveBg,
+                  color: active ? tone.activeText : tone.inactiveText,
                   boxShadow: active
-                    ? '0 4px 14px rgba(54,166,178,0.4), 0 0 16px 3px rgba(54,166,178,0.35)'
-                    : '0 2px 8px rgba(0,0,0,0.06)',
+                    ? `0 4px 14px rgba(0,0,0,0.08), 0 0 16px 3px rgba(${tone.glow},0.35)`
+                    : `0 4px 14px rgba(0,0,0,0.06), 0 0 14px 2px rgba(${tone.glow},0.18)`,
                 }}
               >
-                {Icon && <Icon size={12} color={active ? 'white' : '#6B7280'} />}
+                {Icon && <Icon size={12} color={active ? tone.activeText : tone.inactiveText} />}
                 {pill.label}
               </button>
             )

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Poppins } from 'next/font/google'
+import { Pin } from 'lucide-react'
 import DocumentCard from './DocumentCard'
 import DocumentUploadModal from '@/components/DocumentUploadModal'
 
@@ -46,9 +47,9 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
   const hasPermanents = docs.some(d => !d.voyage_id)
 
   const pills = [
-    { key: 'tous', label: 'Tous' },
-    ...(hasPermanents ? [{ key: 'permanents', label: '📌 Permanents' }] : []),
-    ...voyagesAvecDocs.map(v => ({ key: v.id, label: `${v.emoji} ${v.nom}` })),
+    { key: 'tous', label: 'Tous', icon: null },
+    ...(hasPermanents ? [{ key: 'permanents', label: 'Permanents', icon: Pin }] : []),
+    ...voyagesAvecDocs.map(v => ({ key: v.id, label: `${v.emoji} ${v.nom}`, icon: null })),
   ]
 
   const filteredDocs = filtre === 'tous' ? docs
@@ -82,21 +83,28 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
 
       {/* Pills filtre */}
       {pills.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
-          {pills.map(pill => (
-            <button
-              key={pill.key}
-              onClick={() => setFiltre(pill.key)}
-              className="shrink-0 px-4 py-2 rounded-2xl text-sm font-semibold border transition"
-              style={{
-                background: filtre === pill.key ? '#36A6B2' : 'white',
-                color: filtre === pill.key ? 'white' : '#374151',
-                borderColor: filtre === pill.key ? '#36A6B2' : '#E5E7EB',
-              }}
-            >
-              {pill.label}
-            </button>
-          ))}
+        <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
+          {pills.map(pill => {
+            const active = filtre === pill.key
+            const Icon = pill.icon
+            return (
+              <button
+                key={pill.key}
+                onClick={() => setFiltre(pill.key)}
+                className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                style={{
+                  background: active ? '#36A6B2' : 'white',
+                  color: active ? 'white' : '#6B7280',
+                  boxShadow: active
+                    ? '0 4px 14px rgba(54,166,178,0.4), 0 0 16px 3px rgba(54,166,178,0.35)'
+                    : '0 2px 8px rgba(0,0,0,0.06)',
+                }}
+              >
+                {Icon && <Icon size={12} color={active ? 'white' : '#6B7280'} />}
+                {pill.label}
+              </button>
+            )
+          })}
         </div>
       )}
 

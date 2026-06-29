@@ -193,12 +193,6 @@ export default async function DashboardPage() {
         <DerniereMiseAJour />
       </main>
 
-      <Link href="/voyage/nouveau"
-        className="fixed right-5 bottom-24 w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-light shadow-lg z-10"
-        style={{ background: '#004850' }}>
-        +
-      </Link>
-
     </div>
   )
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, MuseoModerno } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
+import NewTripButton from "@/components/NewTripButton";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
             <div className="phone-screen">
               {children}
             </div>
+            <NewTripButton />
             <BottomNav />
           </div>
         </div>

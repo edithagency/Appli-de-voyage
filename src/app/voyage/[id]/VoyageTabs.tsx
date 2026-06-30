@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo, useTransition } from 'react'
+import Link from 'next/link'
 import { Info, CheckSquare, FolderLock, CreditCard, Map } from 'lucide-react'
 import ChecklistSection from './ChecklistSection'
 import VoyageDocuments from './VoyageDocuments'
-import BagagesSection from './BagagesSection'
 import EntreAmisTab from './EntreAmisTab'
 import ActivitesSection from './ActivitesSection'
 import InfoCard from './InfoCard'
@@ -51,7 +51,7 @@ type Membre = { id: string; prenom: string; type: 'adulte' | 'enfant'; avatarUrl
 
 export default function VoyageTabs({
   pays, documents, tousLesMembres, membresGeres, valises,
-  voyageId, voyageNom, dateDepart, dateRetour, compagnie, paysCode,
+  voyageId, voyageNom, dateDepart, dateRetour, paysCode,
   depenses, budgetTotal, activites, wishlistActiviteIds, tauxLive, infoStatusParPersonne, jours,
   modeGestion, isOrganisateur, currentMembreId,
 }: {
@@ -64,7 +64,6 @@ export default function VoyageTabs({
   voyageNom: string
   dateDepart: string
   dateRetour: string
-  compagnie: string | null
   paysCode: string | null
   depenses: any[]
   budgetTotal: number
@@ -125,7 +124,7 @@ export default function VoyageTabs({
   }
 
   const infoCardIds = useMemo(() => {
-    const ids = ['visa', 'vaccins', 'urgences', 'devise', 'prise', 'bagages']
+    const ids = ['visa', 'vaccins', 'urgences', 'devise', 'prise']
     if (securite) ids.push('securite')
     if (Array.isArray(pays?.zones_deconseillees) && pays.zones_deconseillees.length > 0) ids.push('zones')
     if (pays?.reseau_mobile_info) ids.push('reseau')
@@ -133,7 +132,6 @@ export default function VoyageTabs({
     if (pays?.transport_info) ids.push('transport')
     if (pays?.assurance_info) ids.push('assurance')
     if (Array.isArray(pays?.sante_details?.trousse_medicale) && pays.sante_details.trousse_medicale.length > 0) ids.push('trousse')
-    if (Array.isArray(pays?.phrases_essentielles) && pays.phrases_essentielles.length > 0) ids.push('phrases')
     if (Array.isArray(pays?.liens_officiels) && pays.liens_officiels.length > 0) ids.push('liens')
     return ids
   }, [pays, securite])
@@ -386,6 +384,13 @@ export default function VoyageTabs({
                   {pays.ambassade_info.tel_urgence && <p className="text-xs text-gray-500 leading-relaxed mt-1">Urgence consulaire : {pays.ambassade_info.tel_urgence}</p>}
                 </div>
               )}
+              {paysCode && (
+                <Link href={`/outils?pays=${paysCode}&open=urgences`}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl border bg-blue-50 border-blue-100 text-xs font-medium text-blue-700">
+                  <span>Voir dans Outils (n&apos;importe quel pays)</span>
+                  <span className="opacity-60">↗</span>
+                </Link>
+              )}
             </div>
           </InfoCard>
 
@@ -456,26 +461,21 @@ export default function VoyageTabs({
 
           {Array.isArray(pays.sante_details?.trousse_medicale) && pays.sante_details.trousse_medicale.length > 0 && (
             <InfoCard id="trousse" title="💊 Trousse médicale" gradient={INFO_GRADIENTS[3]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('trousse')}>
-              <ul className="flex flex-col gap-1.5">
-                {(pays.sante_details.trousse_medicale as string[]).map((item, i) => (
-                  <li key={i} className="text-xs text-gray-600 leading-relaxed flex gap-2">
-                    <span className="text-gray-400">•</span><span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </InfoCard>
-          )}
-
-          {Array.isArray(pays.phrases_essentielles) && pays.phrases_essentielles.length > 0 && (
-            <InfoCard id="phrases" title="💬 Phrases essentielles" gradient={INFO_GRADIENTS[4]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('phrases')}>
-              <div className="flex flex-col">
-                {(pays.phrases_essentielles as { fr: string; langue_locale: string; phonetique: string }[]).map((p, i) => (
-                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
-                    <span className="text-xs text-gray-400 w-20 shrink-0">{p.fr}</span>
-                    <span className="text-sm font-semibold text-gray-800 flex-1 text-center">{p.langue_locale}</span>
-                    <span className="text-xs text-gray-400 italic w-20 text-right shrink-0">{p.phonetique}</span>
-                  </div>
-                ))}
+              <div className="flex flex-col gap-3">
+                <ul className="flex flex-col gap-1.5">
+                  {(pays.sante_details.trousse_medicale as string[]).map((item, i) => (
+                    <li key={i} className="text-xs text-gray-600 leading-relaxed flex gap-2">
+                      <span className="text-gray-400">•</span><span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                {paysCode && (
+                  <Link href={`/outils?pays=${paysCode}&open=medical`}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl border bg-blue-50 border-blue-100 text-xs font-medium text-blue-700">
+                    <span>Voir dans Outils (n&apos;importe quel pays)</span>
+                    <span className="opacity-60">↗</span>
+                  </Link>
+                )}
               </div>
             </InfoCard>
           )}
@@ -492,10 +492,6 @@ export default function VoyageTabs({
               </div>
             </InfoCard>
           )}
-
-          <InfoCard id="bagages" title="🧳 Bagages" gradient={INFO_GRADIENTS[8]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('bagages')}>
-            <BagagesSection voyageId={voyageId} compagnieInitiale={compagnie} participantId={!isOrganisateur ? currentMembreId : null} />
-          </InfoCard>
           </div>
         </div>
       )}

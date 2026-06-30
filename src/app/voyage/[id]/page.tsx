@@ -237,7 +237,6 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
             voyageNom={voyage.nom}
             dateDepart={voyage.date_depart}
             dateRetour={voyage.date_retour}
-            compagnie={currentMembre?.compagnie_aerienne ?? voyage.compagnie_aerienne ?? null}
             paysCode={voyage.pays_code ?? null}
             depenses={depenses}
             budgetTotal={voyage.budget_total ?? 0}

@@ -31,6 +31,11 @@ const DOC_TYPE_BY_INFO: Record<string, string> = {
   transport: 'billet_avion',
 }
 
+// Items quasi-obligatoires : tant qu'ils ne sont pas tous cochés, le score de
+// préparation plafonne à 70% (voir le calcul du pourcentage plus bas).
+const IMPORTANT_IDS = ['visa', 'vaccins', 'securite', 'zones', 'assurance', 'douane']
+const PRATIQUE_IDS = ['urgences', 'devise', 'prise', 'reseau', 'transport', 'trousse', 'liens']
+
 type Pays = Record<string, any>
 type Activite = {
   id: string
@@ -212,23 +217,32 @@ export default function VoyageTabs({
         <div className="flex flex-col gap-3">
           {infoCardIds.length > 0 && (() => {
             const selfStatus = infoStatusLocal[currentMembreId] ?? {}
-            const total = infoCardIds.length
-            const done = infoCardIds.filter(cid => selfStatus[cid]).length
-            const pct = Math.round((done / total) * 100)
+
+            // Plafond à 70% tant que tout "Important" n'est pas coché : les 70%
+            // ne se répartissent qu'entre les items importants présents pour ce
+            // voyage ; une fois tous cochés, les 30% restants viennent du "Pratique".
+            const importantIds = infoCardIds.filter(id => IMPORTANT_IDS.includes(id))
+            const pratiqueIds = infoCardIds.filter(id => PRATIQUE_IDS.includes(id))
+            const doneImportants = importantIds.filter(id => selfStatus[id]).length
+            const donePratiques = pratiqueIds.filter(id => selfStatus[id]).length
+            const tousImportantsCoches = importantIds.length === 0 || doneImportants === importantIds.length
+            const pct = tousImportantsCoches
+              ? Math.round(70 + (pratiqueIds.length > 0 ? (donePratiques / pratiqueIds.length) * 30 : 30))
+              : Math.round((importantIds.length > 0 ? doneImportants / importantIds.length : 1) * 70)
+
             return (
-              <div className="rounded-2xl px-4 py-3.5" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-white">✅ Préparation</span>
-                  <span className="text-sm font-bold text-white">{done}/{total}</span>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 rounded-full overflow-hidden bg-gray-100">
+                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: '#2563EB' }} />
                 </div>
-                <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.25)' }}>
-                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: 'white' }} />
-                </div>
+                <span className="text-xs font-bold text-gray-700 shrink-0">{pct}%</span>
               </div>
             )
           })()}
 
-          <h2 className="font-bold text-gray-800 text-xs px-1 uppercase tracking-wider">Important</h2>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#004850', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '20px 0 8px 4px' }}>
+            Important
+          </p>
 
           <div className="grid grid-cols-3 gap-3">
           {securite && (
@@ -352,6 +366,24 @@ export default function VoyageTabs({
             </InfoCard>
           )}
 
+          {pays.assurance_info && (
+            <InfoCard id="assurance" title="🏥 Assurance voyage" gradient={INFO_GRADIENTS[2]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('assurance')}>
+              <p className="text-xs text-gray-600 leading-relaxed">{pays.assurance_info}</p>
+            </InfoCard>
+          )}
+
+          {pays.douane_infos && (
+            <InfoCard id="douane" title="🧳 Douane" gradient={INFO_GRADIENTS[0]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('douane')}>
+              <p className="text-xs text-gray-600 leading-relaxed">{pays.douane_infos}</p>
+            </InfoCard>
+          )}
+          </div>
+
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#004850', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '24px 0 8px 4px' }}>
+            Pratique
+          </p>
+
+          <div className="grid grid-cols-3 gap-3">
           <InfoCard id="urgences" title="🆘 Numéros d'urgence" gradient={INFO_GRADIENTS[4]} photo="/images/infos/urgences.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('urgences')}>
             <div className="flex flex-col gap-3">
               <div className="grid grid-cols-3 gap-2">
@@ -397,11 +429,7 @@ export default function VoyageTabs({
           <InfoCard id="devise" title="💰 Devise" gradient={INFO_GRADIENTS[5]} photo="/images/infos/devise.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('devise')}>
             <DeviseConverter devise={pays.devise ?? null} symbole={pays.symbole_devise ?? null} tauxLive={tauxLive} tauxApprox={pays.taux_change_approx ?? null} />
           </InfoCard>
-          </div>
 
-          <h2 className="font-bold text-gray-800 text-xs px-1 mt-2 uppercase tracking-wider">Pratique</h2>
-
-          <div className="grid grid-cols-3 gap-3">
           <InfoCard id="prise" title="🔌 Prise électrique" gradient={INFO_GRADIENTS[6]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('prise')}>
             <p className="text-sm font-semibold text-gray-800">{pays.type_prise_electrique ?? '–'}</p>
           </InfoCard>
@@ -409,12 +437,6 @@ export default function VoyageTabs({
           {pays.reseau_mobile_info && (
             <InfoCard id="reseau" title="📶 Réseau & SIM" gradient={INFO_GRADIENTS[7]} photo="/images/infos/reseau.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('reseau')}>
               <p className="text-xs text-gray-600 leading-relaxed">{pays.reseau_mobile_info}</p>
-            </InfoCard>
-          )}
-
-          {pays.douane_infos && (
-            <InfoCard id="douane" title="🧳 Douane" gradient={INFO_GRADIENTS[0]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('douane')}>
-              <p className="text-xs text-gray-600 leading-relaxed">{pays.douane_infos}</p>
             </InfoCard>
           )}
 
@@ -450,12 +472,6 @@ export default function VoyageTabs({
                   </div>
                 )}
               </div>
-            </InfoCard>
-          )}
-
-          {pays.assurance_info && (
-            <InfoCard id="assurance" title="🏥 Assurance voyage" gradient={INFO_GRADIENTS[2]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('assurance')}>
-              <p className="text-xs text-gray-600 leading-relaxed">{pays.assurance_info}</p>
             </InfoCard>
           )}
 

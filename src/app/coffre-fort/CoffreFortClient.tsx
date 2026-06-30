@@ -67,8 +67,9 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
     return diff < 180
   })
 
+  // Pas de présélection automatique d'après le filtre actif : seul le voyage proposé par
+  // défaut dans le sélecteur en tient compte, pas le toggle Permanent/Voyage lui-même.
   const presetVoyageId = filtre !== 'tous' && filtre !== 'permanents' ? filtre : undefined
-  const presetPermanent = filtre === 'permanents'
 
   return (
     <main className="max-w-2xl mx-auto px-5 pt-4 pb-6 flex flex-col gap-5">
@@ -82,7 +83,6 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
           membres={membres}
           voyages={voyages}
           presetVoyageId={presetVoyageId}
-          presetPermanent={presetPermanent}
         />
       </div>
 

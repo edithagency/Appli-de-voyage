@@ -43,11 +43,11 @@ export default function DocumentUploadModal({
   open, onClose, membres, voyages,
   presetVoyageId, presetPermanent, presetType, onSuccess,
 }: Props) {
-  const defaultPermanent = presetPermanent ?? (!presetVoyageId && !voyages.length === false ? true : !presetVoyageId)
-
   const [type, setType] = useState(presetType ?? '')
   const [membreId, setMembreId] = useState('tous')
-  const [permanent, setPermanent] = useState(defaultPermanent)
+  // null = rien choisi : on ne présélectionne jamais "Permanent" ni "Un voyage",
+  // même si presetVoyageId/presetPermanent donnent un indice de contexte.
+  const [permanent, setPermanent] = useState<boolean | null>(presetPermanent ?? null)
   const [voyageId, setVoyageId] = useState(presetVoyageId ?? voyages[0]?.id ?? '')
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
@@ -93,13 +93,19 @@ export default function DocumentUploadModal({
       setError('Sélectionne un fichier ou prends une photo.')
       return
     }
+    // S'il n'y a aucun voyage à proposer, le document est forcément permanent (rien à choisir).
+    const isPermanent = voyages.length === 0 ? true : permanent
+    if (isPermanent === null) {
+      setError('Choisis Permanent ou un voyage.')
+      return
+    }
     setError(null)
     setLoading(true)
     const fd = new FormData(e.currentTarget)
     fd.set('file', file)
 
     // Gérer voyage_id via état (pas via le formulaire HTML)
-    if (permanent || !voyageId) {
+    if (isPermanent || !voyageId) {
       fd.delete('voyage_id')
     } else {
       fd.set('voyage_id', voyageId)
@@ -233,24 +239,24 @@ export default function DocumentUploadModal({
                   <button type="button" onClick={() => { setPermanent(true); setMembreId('tous') }}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-semibold border transition"
                     style={{
-                      borderColor: permanent ? '#36A6B2' : '#E5E7EB',
-                      background: permanent ? '#DBEAFE' : 'white',
-                      color: permanent ? '#36A6B2' : '#9CA3AF',
+                      borderColor: permanent === true ? '#36A6B2' : '#E5E7EB',
+                      background: permanent === true ? '#DBEAFE' : 'white',
+                      color: permanent === true ? '#36A6B2' : '#9CA3AF',
                     }}>
                     <Pin size={14} /> Permanent
                   </button>
                   <button type="button" onClick={() => { setPermanent(false); setMembreId('tous') }}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-semibold border transition"
                     style={{
-                      borderColor: !permanent ? '#36A6B2' : '#E5E7EB',
-                      background: !permanent ? '#DBEAFE' : 'white',
-                      color: !permanent ? '#36A6B2' : '#9CA3AF',
+                      borderColor: permanent === false ? '#36A6B2' : '#E5E7EB',
+                      background: permanent === false ? '#DBEAFE' : 'white',
+                      color: permanent === false ? '#36A6B2' : '#9CA3AF',
                     }}>
                     <Plane size={14} /> {singleVoyage ? voyages[0].nom : 'Un voyage'}
                   </button>
                 </div>
                 {/* Dropdown voyage uniquement si plusieurs choix */}
-                {!permanent && !singleVoyage && (
+                {permanent === false && !singleVoyage && (
                   <select
                     value={voyageId}
                     onChange={e => { setVoyageId(e.target.value); setMembreId('tous') }}
@@ -265,7 +271,7 @@ export default function DocumentUploadModal({
             )}
 
             {/* Pour qui — uniquement pour un document de voyage : un permanent est forcément pour toi */}
-            {!permanent && membresDisponibles.length > 0 && (
+            {permanent === false && membresDisponibles.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Pour qui ?</p>
                 <div className="flex flex-wrap gap-2">

@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { Poppins } from 'next/font/google'
-import { X } from 'lucide-react'
+import { X, Star } from 'lucide-react'
 import DeviseGenerique from './DeviseGenerique'
 import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
@@ -14,6 +14,9 @@ import NumerosUrgence, { type PaysOutil } from './NumerosUrgence'
 import EtSiPartaisDemain from './EtSiPartaisDemain'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
+import { toggleFavoriOutil } from './favoris-actions'
+
+const FAVORIS_STORAGE_KEY = 'bonvol_outils_favoris'
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
 
@@ -104,21 +107,123 @@ const OUTILS = [
     description: 'Nom générique + équivalents locaux par pays',
     premium: true,
   },
-]
+].map((o, i) => ({ ...o, gradient: GRADIENTS[i % GRADIENTS.length] }))
 
 export default function OutilsClient({
-  pays, defaultPaysCode, autoOpenTool,
+  pays, defaultPaysCode, autoOpenTool, isLoggedIn, favorisInitiaux,
 }: {
   pays: PaysOutil[]
   defaultPaysCode: string | null
   autoOpenTool: string | null
+  isLoggedIn: boolean
+  favorisInitiaux: string[]
 }) {
   const [openTool, setOpenTool] = useState<string | null>(null)
+  // Ordre = ordre d'ajout, le plus récent en premier (favorisInitiaux vient déjà
+  // trié ainsi côté serveur via created_at desc).
+  const [favoris, setFavoris] = useState<string[]>(favorisInitiaux)
+  const [, startTransition] = useTransition()
 
   // Deep-link depuis une page voyage (?pays=XX&open=urgences) : ouvre l'outil directement.
   useEffect(() => {
     if (autoOpenTool) setOpenTool(autoOpenTool)
   }, [autoOpenTool])
+
+  // Visiteur non connecté : les favoris ne viennent pas du serveur, on les
+  // relit depuis le localStorage (pas de synchronisation entre appareils).
+  useEffect(() => {
+    if (isLoggedIn) return
+    const stored = localStorage.getItem(FAVORIS_STORAGE_KEY)
+    if (stored) {
+      try { setFavoris(JSON.parse(stored)) } catch { /* ignore une valeur corrompue */ }
+    }
+  }, [isLoggedIn])
+
+  function toggleFavori(id: string) {
+    setFavoris(prev => {
+      const next = prev.includes(id) ? prev.filter(f => f !== id) : [id, ...prev]
+      if (!isLoggedIn) localStorage.setItem(FAVORIS_STORAGE_KEY, JSON.stringify(next))
+      return next
+    })
+    if (isLoggedIn) startTransition(() => { toggleFavoriOutil(id) })
+  }
+
+  const favorisOutils = favoris.map(id => OUTILS.find(o => o.id === id)).filter((o): o is typeof OUTILS[number] => !!o)
+  const nonFavorisOutils = OUTILS.filter(o => !favoris.includes(o.id))
+
+  function renderCard(outil: typeof OUTILS[number]) {
+    const isFavori = favoris.includes(outil.id)
+    return (
+      <div key={outil.id}
+        onClick={() => setOpenTool(outil.id)}
+        style={{
+          position: 'relative',
+          aspectRatio: '0.85',
+          borderRadius: 24,
+          padding: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          background: outil.gradient,
+          boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+          cursor: 'pointer',
+          overflow: 'hidden',
+        }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.22)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 22,
+        }}>
+          {outil.emoji}
+        </div>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleFavori(outil.id)
+          }}
+          style={{
+            position: 'absolute', top: 10, right: 10,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 4,
+            transition: 'fill 0.2s ease, color 0.2s ease',
+          }}
+        >
+          <Star
+            size={20}
+            fill={isFavori ? '#FDE68A' : 'none'}
+            color={isFavori ? '#FDE68A' : '#D1D5DB'}
+            strokeWidth={1.5}
+          />
+        </button>
+
+        {outil.premium && (
+          <span style={{
+            position: 'absolute', top: 42, right: 12,
+            background: 'rgba(255,255,255,0.22)',
+            color: 'white',
+            fontSize: 10,
+            fontWeight: 700,
+            padding: '4px 10px',
+            borderRadius: 9999,
+            whiteSpace: 'nowrap',
+          }}>Premium</span>
+        )}
+
+        <div>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'white', margin: 0, lineHeight: 1.25 }}>
+            {outil.titre}
+          </p>
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', margin: '3px 0 0' }}>
+            {outil.description}
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen" style={{ background: '#FFFFFF', paddingBottom: 100 }}>
@@ -131,55 +236,27 @@ export default function OutilsClient({
 
       <main className="max-w-2xl mx-auto px-5 pt-4 pb-6">
         <p className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em', margin: '0 0 12px' }}>Mes outils</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          {OUTILS.map((outil, i) => (
-            <div key={outil.id}
-              onClick={() => setOpenTool(outil.id)}
-              style={{
-                position: 'relative',
-                aspectRatio: '0.85',
-                borderRadius: 24,
-                padding: 16,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                background: GRADIENTS[i % GRADIENTS.length],
-                boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
-                cursor: 'pointer',
-                overflow: 'hidden',
-              }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.22)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 22,
-              }}>
-                {outil.emoji}
-              </div>
 
-              {outil.premium && (
-                <span style={{
-                  position: 'absolute', top: 16, right: 16,
-                  background: 'rgba(255,255,255,0.22)',
-                  color: 'white',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  padding: '4px 10px',
-                  borderRadius: 9999,
-                  whiteSpace: 'nowrap',
-                }}>Premium</span>
-              )}
-
-              <div>
-                <p style={{ fontWeight: 700, fontSize: 15, color: 'white', margin: 0, lineHeight: 1.25 }}>
-                  {outil.titre}
-                </p>
-                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', margin: '3px 0 0' }}>
-                  {outil.description}
-                </p>
-              </div>
+        {favorisOutils.length > 0 && (
+          <>
+            <p style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: '#9CA3AF',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              margin: '0 0 8px 4px',
+            }}>
+              Favoris
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+              {favorisOutils.map(renderCard)}
             </div>
-          ))}
+          </>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          {nonFavorisOutils.map(renderCard)}
         </div>
       </main>
 

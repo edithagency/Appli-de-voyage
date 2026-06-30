@@ -54,10 +54,19 @@ export default function DocumentUploadModal({
   const [error, setError] = useState<string | null>(null)
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
 
-  // Quand presetType change (ex: depuis la checklist) → mettre à jour le type
+  // Réinitialise tout à chaque ouverture : sans ça, React garde le state du composant
+  // (il n'est jamais démonté, juste rendu en null) et une fermeture/réouverture rouvrait
+  // sur la dernière sélection au lieu d'un formulaire vierge.
   useEffect(() => {
-    if (open && presetType) setType(presetType)
-  }, [open, presetType])
+    if (!open) return
+    setType(presetType ?? '')
+    setMembreId('tous')
+    setPermanent(presetPermanent ?? null)
+    setVoyageId(presetVoyageId ?? voyages[0]?.id ?? '')
+    setFile(null)
+    setError(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   // document.getElementById doit attendre le commit (effet), pas le render :
   // au tout premier rendu de l'app, #modal-root n'existe pas encore dans le DOM réel.

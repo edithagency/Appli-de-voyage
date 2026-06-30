@@ -217,7 +217,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
         <div className="flex flex-col gap-5">
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Qui part avec toi ?</p>
-            <p className="text-sm text-gray-400 mb-4">Si tu pars seul(e), laisse la case vide. Sinon, ajoute chaque participant.</p>
+            <p className="text-sm text-gray-400 mb-4">Si tu pars seul(e), laisse la case vide.<br />Sinon, ajoute chaque participant.</p>
 
             {/* Liste des participants ajoutés */}
             {participants.length > 0 && (

@@ -4,6 +4,7 @@ import { Poppins } from 'next/font/google'
 import { createClient } from '@/lib/supabase/server'
 import VoyagesPasses from './VoyagesPasses'
 import DeleteVoyageButton from './DeleteVoyageButton'
+import NouveauVoyageModal from './NouveauVoyageModal'
 import { getPaysCode } from '@/lib/utils/paysCode'
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [{ data: voyagesPropres }, { data: participations }] = await Promise.all([
+  const [{ data: voyagesPropres }, { data: participations }, { data: pays }] = await Promise.all([
     supabase.from('voyages')
       .select('id, nom, destination, pays_code, date_depart, date_retour, statut')
       .eq('user_id', user.id)
@@ -38,6 +39,7 @@ export default async function DashboardPage() {
       .eq('user_id', user.id)
       .eq('role', 'membre')
       .eq('statut_invitation', 'joined'),
+    supabase.from('pays').select('code, nom_fr, emoji').order('nom_fr'),
   ])
 
   // Récupérer les voyages partagés (dont l'user est participant)
@@ -192,6 +194,7 @@ export default async function DashboardPage() {
         <VoyagesPasses voyages={voyagesPasses} />
       </main>
 
+      <NouveauVoyageModal pays={pays ?? []} />
     </div>
   )
 }

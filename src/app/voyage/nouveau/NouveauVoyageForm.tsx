@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { Target, Link2, User, Baby, Check, X } from 'lucide-react'
 import { creerVoyage } from '../actions'
 
 type Pays = { code: string; nom_fr: string; emoji: string | null }
@@ -15,19 +16,20 @@ const MODE_GESTION = [
   {
     value: 'organisateur',
     label: 'Je gère tout',
-    emoji: '🎯',
+    icon: Target,
     desc: "Je m'occupe des valises, documents et dépenses pour tout le groupe.",
   },
   {
     value: 'partage',
     label: 'On gère ensemble',
-    emoji: '🔗',
+    icon: Link2,
     desc: 'Chacun gère sa valise. Je partage un lien à chaque participant.',
   },
 ]
 
-export default function NouveauVoyageForm({ pays }: {
+export default function NouveauVoyageForm({ pays, onClose }: {
   pays: Pays[]
+  onClose?: () => void
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -112,6 +114,7 @@ export default function NouveauVoyageForm({ pays }: {
       if (result?.error) {
         setError(result.error)
       } else if (result?.voyageId) {
+        onClose?.()
         router.push(`/voyage/${result.voyageId}`)
       }
     })
@@ -156,7 +159,7 @@ export default function NouveauVoyageForm({ pays }: {
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Ex : Vacances au Japon 2025"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
             />
           </div>
 
@@ -169,10 +172,10 @@ export default function NouveauVoyageForm({ pays }: {
               onFocus={() => setShowDropdown(true)}
               onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
               placeholder="Rechercher un pays..."
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
             />
             {showDropdown && search.length > 0 && paysFiltered.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
                 {paysFiltered.map(p => (
                   <button
                     key={p.code}
@@ -197,7 +200,7 @@ export default function NouveauVoyageForm({ pays }: {
                 value={dateDepart}
                 min={today}
                 onChange={e => setDateDepart(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
               />
             </div>
             <div>
@@ -207,7 +210,7 @@ export default function NouveauVoyageForm({ pays }: {
                 value={dateRetour}
                 min={dateDepart || today}
                 onChange={e => setDateRetour(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
               />
             </div>
           </div>
@@ -217,7 +220,7 @@ export default function NouveauVoyageForm({ pays }: {
           <button
             type="button"
             onClick={validerStep1}
-            className="w-full py-4 rounded-xl font-semibold text-white text-lg"
+            className="w-full py-4 rounded-2xl font-semibold text-white text-lg"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
           >
             Continuer →
@@ -236,16 +239,16 @@ export default function NouveauVoyageForm({ pays }: {
             {participants.length > 0 && (
               <div className="flex flex-col gap-2 mb-4">
                 {participants.map((p, i) => (
-                  <div key={i} className="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-xl border border-blue-100">
-                    <span className="text-lg">{p.type === 'enfant' ? '👶' : '🧑'}</span>
+                  <div key={i} className="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-2xl border border-blue-100">
+                    {p.type === 'enfant' ? <Baby size={18} color="#36A6B2" /> : <User size={18} color="#36A6B2" />}
                     <span className="font-medium text-gray-800 flex-1">{p.prenom}</span>
                     <span className="text-xs text-gray-400 capitalize">{p.type}</span>
                     <button
                       type="button"
                       onClick={() => supprimerParticipant(i)}
-                      className="text-gray-300 hover:text-red-400 transition text-sm ml-2"
+                      className="text-gray-300 hover:text-red-400 transition ml-2"
                     >
-                      ✕
+                      <X size={14} />
                     </button>
                   </div>
                 ))}
@@ -253,27 +256,29 @@ export default function NouveauVoyageForm({ pays }: {
             )}
 
             {/* Formulaire ajout participant — adulte/enfant toujours disponible */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newPrenom}
-                onChange={e => setNewPrenom(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
-                placeholder="Prénom"
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
-              />
-              <select
-                value={newType}
-                onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                className="px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
-              >
-                <option value="adulte">Adulte</option>
-                <option value="enfant">Enfant</option>
-              </select>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newPrenom}
+                  onChange={e => setNewPrenom(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
+                  placeholder="Prénom"
+                  className="flex-1 min-w-0 px-4 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+                />
+                <select
+                  value={newType}
+                  onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
+                  className="shrink-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+                >
+                  <option value="adulte">Adulte</option>
+                  <option value="enfant">Enfant</option>
+                </select>
+              </div>
               <button
                 type="button"
                 onClick={ajouterParticipant}
-                className="px-4 py-2.5 rounded-xl font-semibold text-white text-sm"
+                className="w-full px-4 py-2.5 rounded-2xl font-semibold text-white text-sm"
                 style={{ background: '#36A6B2' }}
               >
                 + Ajouter
@@ -287,7 +292,7 @@ export default function NouveauVoyageForm({ pays }: {
             <button
               type="button"
               onClick={() => { setStep(1); setError(null) }}
-              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
+              className="flex-1 py-3 rounded-2xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
             >
               ← Retour
             </button>
@@ -295,7 +300,7 @@ export default function NouveauVoyageForm({ pays }: {
               type="button"
               onClick={validerStep2}
               disabled={isPending}
-              className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
+              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-60"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
             >
               {isPending ? 'Création...' : aDesParticipants ? 'Continuer →' : '✈️ Créer le voyage'}
@@ -311,21 +316,25 @@ export default function NouveauVoyageForm({ pays }: {
             <h2 className="font-semibold text-gray-800 mb-1">Comment vous organisez-vous ?</h2>
             <p className="text-sm text-gray-400 mb-4">Tu pourras changer d&apos;avis plus tard.</p>
             <div className="flex flex-col gap-3">
-              {MODE_GESTION.map(m => (
-                <button
-                  key={m.value}
-                  type="button"
-                  onClick={() => setModeGestion(m.value as 'organisateur' | 'partage')}
-                  className={`flex items-start gap-4 p-4 rounded-xl border text-left transition ${modeGestion === m.value ? 'border-[#36A6B2] bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
-                >
-                  <span className="text-2xl mt-0.5">{m.emoji}</span>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-800">{m.label}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
-                  </div>
-                  {modeGestion === m.value && <span className="text-[#36A6B2] font-bold mt-0.5">✓</span>}
-                </button>
-              ))}
+              {MODE_GESTION.map(m => {
+                const Icon = m.icon
+                const active = modeGestion === m.value
+                return (
+                  <button
+                    key={m.value}
+                    type="button"
+                    onClick={() => setModeGestion(m.value as 'organisateur' | 'partage')}
+                    className={`flex items-start gap-4 p-4 rounded-2xl border text-left transition ${active ? 'border-[#36A6B2] bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
+                  >
+                    <Icon size={22} color="#36A6B2" className="mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-800">{m.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
+                    </div>
+                    {active && <Check size={16} color="#36A6B2" className="mt-0.5 shrink-0" />}
+                  </button>
+                )
+              })}
             </div>
 
             {/* Récap participants */}
@@ -333,8 +342,8 @@ export default function NouveauVoyageForm({ pays }: {
               <p className="text-xs text-gray-400 mb-2">Participants :</p>
               <div className="flex flex-wrap gap-2">
                 {participants.map((p, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-[#36A6B2] text-sm font-medium">
-                    {p.type === 'enfant' ? '👶' : '🧑'} {p.prenom}
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#36A6B2] text-sm font-medium">
+                    {p.type === 'enfant' ? <Baby size={14} /> : <User size={14} />} {p.prenom}
                   </span>
                 ))}
               </div>
@@ -347,7 +356,7 @@ export default function NouveauVoyageForm({ pays }: {
             <button
               type="button"
               onClick={() => { setStep(2); setError(null) }}
-              className="flex-1 py-3 rounded-xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
+              className="flex-1 py-3 rounded-2xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
             >
               ← Retour
             </button>
@@ -355,7 +364,7 @@ export default function NouveauVoyageForm({ pays }: {
               type="button"
               onClick={() => handleSubmit()}
               disabled={isPending}
-              className="flex-1 py-3 rounded-xl font-semibold text-white disabled:opacity-60"
+              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-60"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
             >
               {isPending ? 'Création...' : '✈️ Créer le voyage'}

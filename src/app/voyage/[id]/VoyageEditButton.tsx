@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Pencil, Share2, Baby, User, X } from 'lucide-react'
+import { Pencil, Share2, Baby, User, X, Check, Link2 } from 'lucide-react'
 import { modifierVoyage } from './voyage-edit-actions'
 import { creerInvitation, retirerParticipant } from './participants-actions'
 import ParticipantsPanel from './ParticipantsPanel'
@@ -220,49 +220,37 @@ export default function VoyageEditButton({
       </ModalShell>
 
       {/* Modal partage */}
-      {showShare && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={() => setShowShare(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-gray-900 text-lg">Partager ce voyage</h3>
-              <button onClick={() => setShowShare(false)} className="text-gray-300 text-2xl">×</button>
+      <ModalShell open={showShare} onClose={() => setShowShare(false)} title="Partager ce voyage">
+        {membres.length > 0 ? (
+          <>
+            <p className="text-sm text-gray-500 mb-4">
+              {modeEffectif === 'partage'
+                ? "Partage le lien à chaque participant pour qu'il rejoigne le voyage."
+                : 'Membres du groupe — tu gères tout pour eux.'}
+            </p>
+            <ParticipantsPanel
+              participants={membres}
+              modeGestion={modeEffectif}
+              voyageId={voyage.id}
+              showHeader={false}
+            />
+          </>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-gray-500">Ajoute d&apos;abord des participants depuis &quot;Modifier le voyage&quot;, puis partage-leur un lien d&apos;invitation ici.</p>
+
+            <div className="flex items-center gap-2 p-3 rounded-2xl bg-gray-50 border border-gray-200">
+              <p className="text-xs text-gray-500 flex-1 truncate">{typeof window !== 'undefined' ? window.location.href : ''}</p>
             </div>
 
-            {membres.length > 0 ? (
-              <>
-                <p className="text-sm text-gray-500 mb-4">
-                  {modeEffectif === 'partage'
-                    ? "Partage le lien à chaque participant pour qu'il rejoigne le voyage."
-                    : 'Membres du groupe — tu gères tout pour eux.'}
-                </p>
-                <ParticipantsPanel
-                  participants={membres}
-                  modeGestion={modeEffectif}
-                  voyageId={voyage.id}
-                  showHeader={false}
-                />
-              </>
-            ) : (
-              <div className="flex flex-col gap-4">
-                <p className="text-sm text-gray-500">Ajoute d&apos;abord des participants depuis &quot;✏️ Modifier le voyage&quot;, puis partage-leur un lien d&apos;invitation ici.</p>
-
-                <div className="flex items-center gap-2 p-3 rounded-2xl bg-gray-50 border border-gray-200">
-                  <p className="text-xs text-gray-500 flex-1 truncate">{typeof window !== 'undefined' ? window.location.href : ''}</p>
-                </div>
-
-                <button onClick={handleCopy}
-                  className="w-full py-3 rounded-2xl font-semibold text-white transition"
-                  style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-                  {copied ? '✓ Lien copié !' : '🔗 Copier le lien'}
-                </button>
-              </div>
-            )}
+            <button onClick={handleCopy}
+              className="w-full py-3 rounded-2xl font-semibold text-white transition flex items-center justify-center gap-1.5"
+              style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+              {copied ? <><Check size={16} /> LIEN COPIÉ</> : <><Link2 size={16} /> COPIER LE LIEN</>}
+            </button>
           </div>
-        </div>
-      )}
+        )}
+      </ModalShell>
     </>
   )
 }

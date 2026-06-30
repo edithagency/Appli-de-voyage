@@ -194,8 +194,8 @@ export default function OutilsClient({
         >
           <Star
             size={20}
-            fill={isFavori ? '#FDE68A' : 'none'}
-            color={isFavori ? '#FDE68A' : '#D1D5DB'}
+            fill={isFavori ? '#FFFDD8' : 'none'}
+            color={isFavori ? '#FFFDD8' : '#D1D5DB'}
             strokeWidth={1.5}
           />
         </button>

@@ -122,38 +122,22 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Indicateur d'étapes */}
-      <div className="flex items-center gap-2">
-        {[1, 2, ...(aDesParticipants ? [3] : [])].map((s) => (
-          <div key={s} className="flex items-center gap-2">
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-              style={{
-                background: step >= s ? '#36A6B2' : '#E5E7EB',
-                color: step >= s ? 'white' : '#9CA3AF',
-              }}
-            >
-              {s}
-            </div>
-            {s < (aDesParticipants ? 3 : 2) && (
-              <div className="h-0.5 w-8 rounded" style={{ background: step > s ? '#36A6B2' : '#E5E7EB' }} />
-            )}
-          </div>
-        ))}
-        <span className="text-xs text-gray-400 ml-2">
-          {step === 1 && 'Infos du voyage'}
-          {step === 2 && 'Qui voyage ?'}
-          {step === 3 && 'Mode de gestion'}
-        </span>
+      {/* Barre de progression */}
+      <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: '#E5E7EB' }}>
+        <div
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${(step / (aDesParticipants ? 3 : 2)) * 100}%`,
+            background: '#36A6B2',
+          }}
+        />
       </div>
 
       {/* ───── STEP 1 — Infos générales ───── */}
       {step === 1 && (
         <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-gray-800">Informations générales</h2>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nom du voyage</label>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nom du voyage</p>
             <input
               type="text"
               value={nom}
@@ -164,7 +148,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
             <input
               type="text"
               value={search}
@@ -194,7 +178,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Départ</label>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Départ</p>
               <input
                 type="date"
                 value={dateDepart}
@@ -204,7 +188,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Retour</label>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Retour</p>
               <input
                 type="date"
                 value={dateRetour}
@@ -232,7 +216,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
       {step === 2 && (
         <div className="flex flex-col gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <h2 className="font-semibold text-gray-800 mb-1">Qui part avec toi ?</h2>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Qui part avec toi ?</p>
             <p className="text-sm text-gray-400 mb-4">Laisse vide si tu pars seul(e). Sinon, ajoute chaque participant.</p>
 
             {/* Liste des participants ajoutés */}
@@ -313,7 +297,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
       {step === 3 && (
         <div className="flex flex-col gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
-            <h2 className="font-semibold text-gray-800 mb-1">Comment vous organisez-vous ?</h2>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Comment vous organisez-vous ?</p>
             <p className="text-sm text-gray-400 mb-4">Tu pourras changer d&apos;avis plus tard.</p>
             <div className="flex flex-col gap-3">
               {MODE_GESTION.map(m => {
@@ -338,8 +322,8 @@ export default function NouveauVoyageForm({ pays, onClose }: {
             </div>
 
             {/* Récap participants */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <p className="text-xs text-gray-400 mb-2">Participants :</p>
+            <div className="mt-4">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Participants</p>
               <div className="flex flex-wrap gap-2">
                 {participants.map((p, i) => (
                   <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#36A6B2] text-sm font-medium">

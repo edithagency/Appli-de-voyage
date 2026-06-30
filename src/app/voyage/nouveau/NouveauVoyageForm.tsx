@@ -262,8 +262,8 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               <button
                 type="button"
                 onClick={ajouterParticipant}
-                className="w-full px-4 py-2.5 rounded-2xl font-semibold text-white text-sm"
-                style={{ background: '#36A6B2' }}
+                className="w-full px-4 py-2.5 rounded-2xl font-semibold text-sm border"
+                style={{ background: 'white', color: '#36A6B2', borderColor: '#36A6B2' }}
               >
                 + Ajouter
               </button>

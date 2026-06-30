@@ -272,24 +272,36 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
           {error && <p className="text-red-500 text-sm px-1">{error}</p>}
 
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => { setStep(1); setError(null) }}
-              className="flex-1 py-3 rounded-2xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
-            >
-              ← Retour
-            </button>
+          {aDesParticipants ? (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { setStep(1); setError(null) }}
+                className="flex-1 py-3 rounded-2xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
+              >
+                ← Retour
+              </button>
+              <button
+                type="button"
+                onClick={validerStep2}
+                disabled={isPending}
+                className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+              >
+                CONTINUER
+              </button>
+            </div>
+          ) : (
             <button
               type="button"
               onClick={validerStep2}
               disabled={isPending}
-              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
+              className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
             >
-              {isPending ? 'Création...' : aDesParticipants ? 'CONTINUER' : '✈️ Créer le voyage'}
+              {isPending ? 'Création...' : 'CRÉER'}
             </button>
-          </div>
+          )}
         </div>
       )}
 
@@ -340,24 +352,15 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
           {error && <p className="text-red-500 text-sm px-1">{error}</p>}
 
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => { setStep(2); setError(null) }}
-              className="flex-1 py-3 rounded-2xl font-semibold text-gray-600 border border-gray-200 hover:border-gray-300 transition"
-            >
-              ← Retour
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSubmit()}
-              disabled={isPending}
-              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
-            >
-              {isPending ? 'Création...' : '✈️ Créer le voyage'}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleSubmit()}
+            disabled={isPending}
+            className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
+          >
+            {isPending ? 'Création...' : 'CRÉER'}
+          </button>
         </div>
       )}
     </div>

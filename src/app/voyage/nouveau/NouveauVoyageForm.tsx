@@ -135,7 +135,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
       {/* ───── STEP 1 — Infos générales ───── */}
       {step === 1 && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nom du voyage</p>
             <input
@@ -214,8 +214,8 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
       {/* ───── STEP 2 — Qui voyage ? ───── */}
       {step === 2 && (
-        <div className="flex flex-col gap-4">
-          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="flex flex-col gap-5">
+          <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Qui part avec toi ?</p>
             <p className="text-sm text-gray-400 mb-4">Laisse vide si tu pars seul(e). Sinon, ajoute chaque participant.</p>
 
@@ -295,8 +295,8 @@ export default function NouveauVoyageForm({ pays, onClose }: {
 
       {/* ───── STEP 3 — Mode de gestion ───── */}
       {step === 3 && (
-        <div className="flex flex-col gap-4">
-          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="flex flex-col gap-5">
+          <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Comment vous organisez-vous ?</p>
             <p className="text-sm text-gray-400 mb-4">Tu pourras changer d&apos;avis plus tard.</p>
             <div className="flex flex-col gap-3">
@@ -308,7 +308,11 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                     key={m.value}
                     type="button"
                     onClick={() => setModeGestion(m.value as 'organisateur' | 'partage')}
-                    className={`flex items-start gap-4 p-4 rounded-2xl border text-left transition ${active ? 'border-[#36A6B2] bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
+                    className="flex items-start gap-4 p-4 rounded-2xl text-left transition"
+                    style={{
+                      border: `2px solid ${active ? '#36A6B2' : 'transparent'}`,
+                      background: active ? '#DBEAFE' : '#F9FAFB',
+                    }}
                   >
                     <Icon size={22} color="#36A6B2" className="mt-0.5 shrink-0" />
                     <div className="flex-1">

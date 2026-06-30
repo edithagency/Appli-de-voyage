@@ -102,11 +102,10 @@ export default function DocumentUploadModal({
 
   const needsExpiration = TYPES_AVEC_EXPIRATION.includes(type)
   const singleVoyage = voyages.length === 1
-  // Pour un document lié à un voyage, ne propose que les participants de CE voyage.
+  // "Pour qui ?" ne s'affiche que pour un document de voyage (un permanent est forcément pour toi) ;
+  // dans ce cas, ne propose que les participants de CE voyage.
   // (les membres sans voyage_id viennent d'un contexte déjà scopé à un seul voyage : pas de filtrage à faire)
-  const membresDisponibles = permanent
-    ? membres
-    : membres.filter(m => m.voyage_id == null || m.voyage_id === voyageId)
+  const membresDisponibles = membres.filter(m => m.voyage_id == null || m.voyage_id === voyageId)
 
   // Portail vers #modal-root (sibling de .phone-screen dans layout.tsx) : .phone-screen passe en
   // transform dès 640px, ce qui en fait son propre contexte d'empilement, donc un z-index posé ici
@@ -206,7 +205,7 @@ export default function DocumentUploadModal({
                       background: permanent ? '#DBEAFE' : 'white',
                       color: permanent ? '#36A6B2' : '#9CA3AF',
                     }}>
-                    <Pin size={14} /> Personnel
+                    <Pin size={14} /> Permanent
                   </button>
                   <button type="button" onClick={() => { setPermanent(false); setMembreId('tous') }}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-semibold border transition"
@@ -233,8 +232,8 @@ export default function DocumentUploadModal({
               </div>
             )}
 
-            {/* Pour qui — filtré aux participants du voyage choisi ci-dessus (ou tout le monde si Personnel) */}
-            {membresDisponibles.length > 0 && (
+            {/* Pour qui — uniquement pour un document de voyage : un permanent est forcément pour toi */}
+            {!permanent && membresDisponibles.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Pour qui ?</p>
                 <div className="flex flex-wrap gap-2">

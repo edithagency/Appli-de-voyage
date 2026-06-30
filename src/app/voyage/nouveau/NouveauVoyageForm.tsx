@@ -207,7 +207,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
             className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
           >
-            Continuer →
+            CONTINUER
           </button>
         </div>
       )}
@@ -287,7 +287,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
             >
-              {isPending ? 'Création...' : aDesParticipants ? 'Continuer →' : '✈️ Créer le voyage'}
+              {isPending ? 'Création...' : aDesParticipants ? 'CONTINUER' : '✈️ Créer le voyage'}
             </button>
           </div>
         </div>

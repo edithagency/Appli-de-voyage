@@ -280,7 +280,7 @@ export default function DocumentUploadModal({
         <button type="submit" disabled={loading}
           className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
           style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-          {loading ? 'Enregistrement…' : 'Enregistrer le document'}
+          {loading ? 'Enregistrement…' : 'ENREGISTRER'}
         </button>
       </form>
     </ModalShell>

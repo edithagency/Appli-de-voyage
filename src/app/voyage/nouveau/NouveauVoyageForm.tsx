@@ -17,24 +17,32 @@ const MODE_GESTION = [
     value: 'organisateur',
     label: 'Je gère tout',
     icon: Target,
-    desc: "Je m'occupe des valises, documents et dépenses pour tout le groupe.",
+    desc: "Je m'occupe de tout pour le groupe.",
+    exemple: 'Famille, couple...',
   },
   {
     value: 'partage',
     label: 'On gère ensemble',
     icon: Link2,
-    desc: 'Chacun gère sa valise. Je partage un lien à chaque participant.',
+    desc: 'Chacun garde la main sur ses propres affaires.',
+    exemple: 'Amis, couple...',
   },
 ]
 
-export default function NouveauVoyageForm({ pays, onClose }: {
+export default function NouveauVoyageForm({ pays, onClose, step: controlledStep, setStep: setControlledStep }: {
   pays: Pays[]
   onClose?: () => void
+  // Contrôlés par le parent quand le formulaire vit dans une modale (flèche retour de l'en-tête).
+  // Sans ces props (page complète /voyage/nouveau), le composant gère son step lui-même.
+  step?: number
+  setStep?: (step: number) => void
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const [step, setStep] = useState(1)
+  const [internalStep, setInternalStep] = useState(1)
+  const step = controlledStep ?? internalStep
+  const setStep = setControlledStep ?? setInternalStep
 
   // Step 1 — infos de base
   const [search, setSearch] = useState('')
@@ -300,8 +308,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
       {step === 3 && (
         <div className="flex flex-col gap-5">
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Comment vous organisez-vous ?</p>
-            <p className="text-sm text-gray-400 mb-4">Tu pourras changer d&apos;avis plus tard.</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Comment vous organisez-vous ?</p>
             <div className="flex flex-col gap-3">
               {MODE_GESTION.map(m => {
                 const Icon = m.icon
@@ -319,8 +326,9 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                   >
                     <Icon size={22} color="#36A6B2" className="mt-0.5 shrink-0" />
                     <div className="flex-1">
-                      <p className="font-medium text-xs text-gray-800">{m.label}</p>
+                      <p className="font-medium text-xs text-gray-800 uppercase">{m.label}</p>
                       <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
+                      {m.exemple && <p className="text-xs text-gray-400 italic">{m.exemple}</p>}
                     </div>
                     {active && <Check size={16} color="#36A6B2" className="mt-0.5 shrink-0" />}
                   </button>

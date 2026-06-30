@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { X } from 'lucide-react'
+import { X, ArrowLeft } from 'lucide-react'
 
 export default function ModalShell({
-  open, onClose, title, children,
+  open, onClose, onBack, title, children,
 }: {
   open: boolean
   onClose: () => void
+  onBack?: () => void
   title: string
   children: React.ReactNode
 }) {
@@ -42,9 +43,16 @@ export default function ModalShell({
           <h3 className="font-bold uppercase" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
             {title}
           </h3>
-          <button onClick={onClose} className="text-gray-300 hover:text-gray-500">
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-3">
+            {onBack && (
+              <button onClick={onBack} className="text-gray-300 hover:text-gray-500">
+                <ArrowLeft size={20} />
+              </button>
+            )}
+            <button onClick={onClose} className="text-gray-300 hover:text-gray-500">
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Contenu — seule zone scrollable */}

@@ -81,7 +81,7 @@ export default function VoyageTabs({
     { key: 'infos',      label: 'Infos',     icon: Info,        show: true },
     { key: 'checklist',  label: 'Checklist', icon: CheckSquare, show: true },
     { key: 'documents',  label: 'Documents', icon: FolderLock,  show: true },
-    { key: 'activites',  label: 'Activités', icon: Map,         show: activites.length > 0 },
+    { key: 'activites',  label: 'Activités', icon: Map,         show: true },
     { key: 'amis',       label: 'Budget',    icon: CreditCard,  show: true },
   ].filter(t => t.show)
 

@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getPaysCode } from '@/lib/utils/paysCode'
 import RejoindreForm from './RejoindreForm'
 
 export default async function JoinVoyagePage({ params }: { params: Promise<{ token: string }> }) {
@@ -45,6 +46,9 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
   const membres = tousLesMembres ?? []
   const membresDisponibles = membres.filter(m => m.statut_invitation !== 'joined')
 
+  const code = getPaysCode(voyage.pays_code, voyage.destination)
+  const photo = code ? `/images/pays/${code}.png` : null
+
   // Vérifier si l'utilisateur est déjà connecté — et déjà membre de ce voyage
   const { data: { user } } = await supabase.auth.getUser()
   if (user) {
@@ -53,13 +57,12 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
+    <div className="h-full overflow-hidden flex flex-col items-center justify-center px-4 py-8"
       style={{ background: '#FFFFFF' }}>
 
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="text-4xl mb-3">✈️</div>
           <h1 className="text-2xl font-bold" style={{ color: '#36A6B2' }}>Tu es invité(e) !</h1>
           <p className="text-gray-500 mt-1 text-sm">
             Rejoins le voyage <span className="font-semibold text-gray-700">{voyage.nom}</span>
@@ -69,9 +72,12 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
         {/* Carte voyage */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+            <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-              🌍
+              {photo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photo} alt="" className="w-full h-full object-cover" />
+              )}
             </div>
             <div>
               <p className="font-bold text-gray-800">{voyage.nom}</p>
@@ -89,7 +95,7 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
               <div className="flex flex-wrap gap-2">
                 {membres.map(m => (
                   <span key={m.id} className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${m.statut_invitation === 'joined' ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {m.type === 'enfant' ? '👶' : '🧑'} {m.prenom}
+                    {m.prenom}
                     {m.statut_invitation === 'joined' && ' ✓'}
                   </span>
                 ))}

@@ -114,13 +114,13 @@ export default function DocumentUploadModal({
   // même niveau qu'eux (en absolute, pas fixed) règle ça.
   return createPortal(
     <div
-      className="absolute inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+      className="absolute inset-0 z-50 flex items-center justify-center p-6"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={onClose}
     >
       <div
         className="bg-white rounded-3xl w-full max-w-md flex flex-col"
-        style={{ maxHeight: '90dvh', boxShadow: '0 25px 70px -10px rgba(0,0,0,0.35)' }}
+        style={{ maxHeight: '100%', boxShadow: '0 25px 70px -10px rgba(0,0,0,0.35)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* En-tête fixe — ne scrolle pas */}

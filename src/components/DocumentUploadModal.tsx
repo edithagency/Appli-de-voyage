@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import {
   IdCard, BookUser, FileCheck2, Plane, Building2, Shield, Syringe,
-  Ticket, Pill, Paperclip, Pin, Check, X,
+  Ticket, Pill, Paperclip, Pin, Check, X, Camera,
 } from 'lucide-react'
 import { uploadDocument } from '@/app/coffre-fort/actions'
 
@@ -45,11 +45,11 @@ export default function DocumentUploadModal({
 }: Props) {
   const defaultPermanent = presetPermanent ?? (!presetVoyageId && !voyages.length === false ? true : !presetVoyageId)
 
-  const [type, setType] = useState(presetType ?? 'passeport')
+  const [type, setType] = useState(presetType ?? '')
   const [membreId, setMembreId] = useState('tous')
   const [permanent, setPermanent] = useState(defaultPermanent)
   const [voyageId, setVoyageId] = useState(presetVoyageId ?? voyages[0]?.id ?? '')
-  const [fileName, setFileName] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
@@ -73,11 +73,30 @@ export default function DocumentUploadModal({
     if (!presetVoyageId && TYPES_PERMANENTS.includes(t)) setPermanent(true)
   }
 
+  function handleFilePick(f: File | undefined) {
+    if (f && f.size > 10 * 1024 * 1024) {
+      setError('Fichier trop lourd (max 10 Mo).')
+      setFile(null)
+      return
+    }
+    setError(null)
+    setFile(f ?? null)
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!type) {
+      setError('Choisis un type de document.')
+      return
+    }
+    if (!file) {
+      setError('Sélectionne un fichier ou prends une photo.')
+      return
+    }
     setError(null)
     setLoading(true)
     const fd = new FormData(e.currentTarget)
+    fd.set('file', file)
 
     // Gérer voyage_id via état (pas via le formulaire HTML)
     if (permanent || !voyageId) {
@@ -164,25 +183,38 @@ export default function DocumentUploadModal({
             {/* Fichier */}
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Fichier</p>
-              <label
-                className="flex flex-col items-center gap-2 p-5 rounded-2xl border border-dashed cursor-pointer transition-all"
-                style={{ borderColor: fileName ? '#EAB308' : '#E5E7EB', background: fileName ? '#FFFDD8' : '#FAFAFA' }}
-              >
-                {fileName ? <Check size={28} color="#CA8A04" /> : <Paperclip size={28} color="#9CA3AF" />}
-                <span className="text-sm text-gray-500 text-center">{fileName ?? 'PDF, JPG ou PNG · max 10 Mo'}</span>
-                <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required className="hidden"
-                  onChange={e => {
-                    const f = e.target.files?.[0]
-                    if (f && f.size > 10 * 1024 * 1024) {
-                      setError('Fichier trop lourd (max 10 Mo).')
-                      setFileName(null)
-                      e.target.value = ''
-                      return
-                    }
-                    setError(null)
-                    setFileName(f?.name ?? null)
-                  }} />
-              </label>
+              {file ? (
+                <label
+                  className="flex flex-col items-center gap-2 p-5 rounded-2xl border border-dashed cursor-pointer transition-all"
+                  style={{ borderColor: '#EAB308', background: '#FFFDD8' }}
+                >
+                  <Check size={28} color="#CA8A04" />
+                  <span className="text-sm text-gray-500 text-center">{file.name}</span>
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,image/*" className="hidden"
+                    onChange={e => handleFilePick(e.target.files?.[0])} />
+                </label>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <label
+                    className="flex flex-col items-center gap-2 p-5 rounded-2xl border border-dashed cursor-pointer transition-all"
+                    style={{ borderColor: '#E5E7EB', background: '#FAFAFA' }}
+                  >
+                    <Paperclip size={24} color="#9CA3AF" />
+                    <span className="text-xs text-gray-500 text-center">Ajouter un fichier</span>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
+                      onChange={e => handleFilePick(e.target.files?.[0])} />
+                  </label>
+                  <label
+                    className="flex flex-col items-center gap-2 p-5 rounded-2xl border border-dashed cursor-pointer transition-all"
+                    style={{ borderColor: '#E5E7EB', background: '#FAFAFA' }}
+                  >
+                    <Camera size={24} color="#9CA3AF" />
+                    <span className="text-xs text-gray-500 text-center">Prendre une photo</span>
+                    <input type="file" accept="image/*" capture="environment" className="hidden"
+                      onChange={e => handleFilePick(e.target.files?.[0])} />
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* Nom */}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Pencil, Share2, Baby, User, X, Check } from 'lucide-react'
+import { Pencil, Share2, Baby, User, X } from 'lucide-react'
 import { modifierVoyage } from './voyage-edit-actions'
 import { creerInvitation, retirerParticipant } from './participants-actions'
 import ParticipantsPanel from './ParticipantsPanel'
@@ -47,6 +47,7 @@ export default function VoyageEditButton({
   const [newPrenom, setNewPrenom] = useState('')
   const [newType, setNewType] = useState<'adulte' | 'enfant'>('adulte')
   const [addingMembre, setAddingMembre] = useState(false)
+  const [showAddParticipant, setShowAddParticipant] = useState(false)
 
   const modeEffectif = modeGestion === 'solo' ? 'organisateur' : modeGestion
 
@@ -69,6 +70,7 @@ export default function VoyageEditButton({
     }])
     setNewPrenom('')
     setNewType('adulte')
+    setShowAddParticipant(false)
     router.refresh()
   }
 
@@ -163,44 +165,56 @@ export default function VoyageEditButton({
               ))}
 
               {/* Ajout manuel */}
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newPrenom}
-                    onChange={e => setNewPrenom(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAjouterMembre(newPrenom, newType))}
-                    placeholder="Prénom"
-                    className="flex-1 min-w-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
-                  />
-                  <select
-                    value={newType}
-                    onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                    className="shrink-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
+              {showAddParticipant ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newPrenom}
+                      onChange={e => setNewPrenom(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAjouterMembre(newPrenom, newType))}
+                      placeholder="Prénom"
+                      autoFocus
+                      className="flex-1 min-w-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
+                    />
+                    <select
+                      value={newType}
+                      onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
+                      className="shrink-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
+                    >
+                      <option value="adulte">Adulte</option>
+                      <option value="enfant">Enfant</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={addingMembre || !newPrenom.trim()}
+                    onClick={() => handleAjouterMembre(newPrenom, newType)}
+                    className="w-full py-2.5 rounded-2xl font-semibold text-sm border disabled:opacity-50"
+                    style={{ background: 'white', color: '#36A6B2', borderColor: '#36A6B2' }}
                   >
-                    <option value="adulte">Adulte</option>
-                    <option value="enfant">Enfant</option>
-                  </select>
+                    {addingMembre ? '...' : '+ Ajouter'}
+                  </button>
                 </div>
+              ) : (
                 <button
                   type="button"
-                  disabled={addingMembre || !newPrenom.trim()}
-                  onClick={() => handleAjouterMembre(newPrenom, newType)}
-                  className="w-full py-2.5 rounded-2xl font-semibold text-sm border disabled:opacity-50"
+                  onClick={() => setShowAddParticipant(true)}
+                  className="w-full py-2.5 rounded-2xl font-semibold text-sm border"
                   style={{ background: 'white', color: '#36A6B2', borderColor: '#36A6B2' }}
                 >
-                  {addingMembre ? '...' : '+ Ajouter'}
+                  + Ajouter
                 </button>
-              </div>
+              )}
             </div>
           </div>
 
           {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">{error}</div>}
 
           <button onClick={handleSave} disabled={loading}
-            className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50 flex items-center justify-center gap-1.5"
+            className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            {loading ? 'Enregistrement...' : <><Check size={16} /> SAUVEGARDER</>}
+            {loading ? 'Enregistrement...' : 'SAUVEGARDER'}
           </button>
         </div>
       </ModalShell>

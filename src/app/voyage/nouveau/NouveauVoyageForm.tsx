@@ -143,7 +143,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               value={nom}
               onChange={e => setNom(e.target.value)}
               placeholder="Ex : Vacances au Japon 2025"
-              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
             />
           </div>
 
@@ -156,7 +156,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               onFocus={() => setShowDropdown(true)}
               onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
               placeholder="Rechercher un pays..."
-              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
             />
             {showDropdown && search.length > 0 && paysFiltered.length > 0 && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
@@ -165,7 +165,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                     key={p.code}
                     type="button"
                     onMouseDown={() => handleSelectPays(p)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm"
                   >
                     <span className="text-xl">{p.emoji}</span>
                     <span className="text-gray-800">{p.nom_fr}</span>
@@ -184,7 +184,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                 value={dateDepart}
                 min={today}
                 onChange={e => setDateDepart(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
               />
             </div>
             <div>
@@ -194,7 +194,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                 value={dateRetour}
                 min={dateDepart || today}
                 onChange={e => setDateRetour(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
               />
             </div>
           </div>
@@ -204,7 +204,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
           <button
             type="button"
             onClick={validerStep1}
-            className="w-full py-4 rounded-2xl font-semibold text-white text-lg"
+            className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
             style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
           >
             Continuer →
@@ -225,7 +225,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                 {participants.map((p, i) => (
                   <div key={i} className="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-2xl border border-blue-100">
                     {p.type === 'enfant' ? <Baby size={18} color="#36A6B2" /> : <User size={18} color="#36A6B2" />}
-                    <span className="font-medium text-gray-800 flex-1">{p.prenom}</span>
+                    <span className="font-medium text-gray-800 flex-1 text-sm">{p.prenom}</span>
                     <span className="text-xs text-gray-400 capitalize">{p.type}</span>
                     <button
                       type="button"
@@ -284,7 +284,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               type="button"
               onClick={validerStep2}
               disabled={isPending}
-              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-60"
+              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
             >
               {isPending ? 'Création...' : aDesParticipants ? 'Continuer →' : '✈️ Créer le voyage'}
@@ -316,7 +316,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
                   >
                     <Icon size={22} color="#36A6B2" className="mt-0.5 shrink-0" />
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-800">{m.label}</p>
+                      <p className="font-medium text-xs text-gray-800">{m.label}</p>
                       <p className="text-xs text-gray-400 mt-0.5">{m.desc}</p>
                     </div>
                     {active && <Check size={16} color="#36A6B2" className="mt-0.5 shrink-0" />}
@@ -330,7 +330,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Participants</p>
               <div className="flex flex-wrap gap-2">
                 {participants.map((p, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#36A6B2] text-sm font-medium">
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#36A6B2] text-xs font-semibold">
                     {p.type === 'enfant' ? <Baby size={14} /> : <User size={14} />} {p.prenom}
                   </span>
                 ))}
@@ -352,7 +352,7 @@ export default function NouveauVoyageForm({ pays, onClose }: {
               type="button"
               onClick={() => handleSubmit()}
               disabled={isPending}
-              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-60"
+              className="flex-1 py-3 rounded-2xl font-semibold text-white disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}
             >
               {isPending ? 'Création...' : '✈️ Créer le voyage'}

@@ -171,7 +171,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
           {isOrganisateur && (
             <VoyageEditButton
-              voyage={{ id: voyage.id, nom: voyage.nom, destination: voyage.destination, date_depart: voyage.date_depart, date_retour: voyage.date_retour }}
+              voyage={{ id: voyage.id, nom: voyage.nom, destination: voyage.destination, date_depart: voyage.date_depart, date_retour: voyage.date_retour, token_invitation: voyage.token_invitation, token_expire_at: voyage.token_expire_at }}
               membres={tousLesMembres.filter(m => m.role === 'membre')}
               modeGestion={voyage.mode_gestion}
             />

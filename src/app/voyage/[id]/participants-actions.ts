@@ -20,7 +20,7 @@ export async function creerInvitation(voyageId: string, prenom: string, type: 'a
   const { data, error } = await supabase
     .from('voyage_membres')
     .insert({ voyage_id: voyageId, prenom, type, role: 'membre', statut_invitation: 'pending' })
-    .select('id, token_invitation, token_expire_at, statut_invitation')
+    .select('id, statut_invitation')
     .single()
 
   if (error || !data) return { error: "Erreur lors de la création de l'invitation." }
@@ -52,7 +52,9 @@ export async function retirerParticipant(membreId: string, voyageId: string) {
   return { success: true }
 }
 
-export async function renouvelerInvitation(membreId: string, voyageId: string) {
+// Lien d'invitation unique pour tout le voyage : qui le reçoit choisit
+// ensuite qui il est parmi les participants pas encore rejoints.
+export async function renouvelerLienVoyage(voyageId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non connecté.' }
@@ -61,12 +63,11 @@ export async function renouvelerInvitation(membreId: string, voyageId: string) {
   if (!voyage || voyage.user_id !== user.id) return { error: 'Action non autorisée.' }
 
   const token = randomBytes(16).toString('hex')
-  const tokenExpireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+  const tokenExpireAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
 
-  const { error } = await supabase.from('voyage_membres')
-    .update({ token_invitation: token, token_expire_at: tokenExpireAt, statut_invitation: 'pending' })
-    .eq('id', membreId)
-    .eq('voyage_id', voyageId)
+  const { error } = await supabase.from('voyages')
+    .update({ token_invitation: token, token_expire_at: tokenExpireAt })
+    .eq('id', voyageId)
 
   if (error) return { error: 'Erreur lors du renouvellement.' }
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Pencil, Share2, Baby, User, X, Check, Link2 } from 'lucide-react'
+import { Pencil, Share2, Baby, User, X } from 'lucide-react'
 import { modifierVoyage } from './voyage-edit-actions'
 import { creerInvitation, retirerParticipant } from './participants-actions'
 import ParticipantsPanel from './ParticipantsPanel'
@@ -13,8 +13,6 @@ type Membre = {
   prenom: string
   type: string
   statut_invitation: 'pending' | 'lien_copie' | 'joined'
-  token_invitation: string
-  token_expire_at: string | null
 }
 
 type Voyage = {
@@ -23,6 +21,8 @@ type Voyage = {
   destination: string
   date_depart: string
   date_retour: string
+  token_invitation: string
+  token_expire_at: string | null
 }
 
 export default function VoyageEditButton({
@@ -41,7 +41,6 @@ export default function VoyageEditButton({
   const [dateRetour, setDateRetour] = useState(voyage.date_retour)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
 
   const [membres, setMembres] = useState(membresInitiaux)
   const [newPrenom, setNewPrenom] = useState('')
@@ -65,8 +64,6 @@ export default function VoyageEditButton({
       prenom: prenom.trim(),
       type,
       statut_invitation: result.membre!.statut_invitation as Membre['statut_invitation'],
-      token_invitation: result.membre!.token_invitation,
-      token_expire_at: result.membre!.token_expire_at,
     }])
     setNewPrenom('')
     setNewType('adulte')
@@ -93,12 +90,6 @@ export default function VoyageEditButton({
       router.refresh()
     }
     setLoading(false)
-  }
-
-  async function handleCopy() {
-    await navigator.clipboard.writeText(window.location.href)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -221,35 +212,22 @@ export default function VoyageEditButton({
 
       {/* Modal partage */}
       <ModalShell open={showShare} onClose={() => setShowShare(false)} title="Partager ce voyage">
-        {membres.length > 0 ? (
-          <>
-            <p className="text-sm text-gray-500 mb-4">
-              {modeEffectif === 'partage'
-                ? "Partage le lien à chaque participant pour qu'il rejoigne le voyage."
-                : 'Membres du groupe — tu gères tout pour eux.'}
-            </p>
-            <ParticipantsPanel
-              participants={membres}
-              modeGestion={modeEffectif}
-              voyageId={voyage.id}
-              showHeader={false}
-            />
-          </>
-        ) : (
-          <div className="flex flex-col gap-4">
-            <p className="text-sm text-gray-500">Ajoute d&apos;abord des participants depuis &quot;Modifier le voyage&quot;, puis partage-leur un lien d&apos;invitation ici.</p>
-
-            <div className="flex items-center gap-2 p-3 rounded-2xl bg-gray-50 border border-gray-200">
-              <p className="text-xs text-gray-500 flex-1 truncate">{typeof window !== 'undefined' ? window.location.href : ''}</p>
-            </div>
-
-            <button onClick={handleCopy}
-              className="w-full py-3 rounded-2xl font-semibold text-white transition flex items-center justify-center gap-1.5"
-              style={{ background: copied ? '#1D9E75' : 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-              {copied ? <><Check size={16} /> LIEN COPIÉ</> : <><Link2 size={16} /> COPIER LE LIEN</>}
-            </button>
-          </div>
+        <p className="text-sm text-gray-500 mb-4">
+          {modeEffectif === 'partage'
+            ? "Un seul lien pour tout le monde : chaque participant choisit qui il est en le rejoignant."
+            : 'Membres du groupe — tu gères tout pour eux.'}
+        </p>
+        {membres.length === 0 && (
+          <p className="text-sm text-gray-500 mb-4">Ajoute d&apos;abord des participants depuis &quot;Modifier le voyage&quot; pour qu&apos;ils puissent se reconnaître en rejoignant.</p>
         )}
+        <ParticipantsPanel
+          participants={membres}
+          modeGestion={modeEffectif}
+          voyageId={voyage.id}
+          voyageToken={voyage.token_invitation}
+          voyageTokenExpireAt={voyage.token_expire_at}
+          showHeader={false}
+        />
       </ModalShell>
     </>
   )

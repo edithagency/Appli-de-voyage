@@ -1,24 +1,73 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { Baby, User } from 'lucide-react'
 import { rejoindreVoyage, rejoindreVoyageConnecte } from './actions'
+
+type MembreDisponible = { id: string; prenom: string; type: string }
 
 type Props = {
   token: string
-  membreId: string
-  membrePrenom: string
   voyageId: string
+  membresDisponibles: MembreDisponible[]
   isLoggedIn: boolean
   userEmail: string | null
 }
 
-export default function RejoindreForm({ token, membreId, membrePrenom, voyageId, isLoggedIn, userEmail }: Props) {
+export default function RejoindreForm({ token, voyageId, membresDisponibles, isLoggedIn, userEmail }: Props) {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [confirmEmail, setConfirmEmail] = useState(false)
+  // Un seul profil possible : pas besoin de demander, on le présélectionne.
+  const [selectedMembre, setSelectedMembre] = useState<MembreDisponible | null>(
+    membresDisponibles.length === 1 ? membresDisponibles[0] : null
+  )
   const [mode, setMode] = useState<'choix' | 'creer' | 'connecter'>(isLoggedIn ? 'connecter' : 'choix')
 
-  // Si déjà connecté, on propose juste de rejoindre directement
+  // Le profil choisi vient d'être pris par quelqu'un d'autre (course gagnée par un autre
+  // visiteur du même lien) : revient au choix sans perdre le message d'erreur.
+  function profilDejaPris(message: string) {
+    setSelectedMembre(null)
+    setMode(isLoggedIn ? 'connecter' : 'choix')
+    setError(message)
+  }
+
+  // Tout le monde a déjà rejoint : rien à choisir.
+  if (membresDisponibles.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm text-center">
+        <p className="text-gray-600 text-sm">
+          Tous les participants prévus ont déjà rejoint ce voyage. Si tu ne te reconnais pas
+          dans la liste ci-dessus, demande à l&apos;organisateur de t&apos;ajouter.
+        </p>
+      </div>
+    )
+  }
+
+  // Étape "qui es-tu ?" — avant tout le reste.
+  if (!selectedMembre) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-2">
+        <p className="text-center text-gray-600 text-sm mb-2">Tu es lequel des participants ?</p>
+        {error && <p className="text-red-500 text-sm text-center mb-2">{error}</p>}
+        {membresDisponibles.map(m => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => { setSelectedMembre(m); setError(null) }}
+            className="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-[#36A6B2] transition text-left"
+          >
+            {m.type === 'enfant' ? <Baby size={20} color="#36A6B2" /> : <User size={20} color="#36A6B2" />}
+            <span className="font-semibold text-gray-800">{m.prenom}</span>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  const membreId = selectedMembre.id
+  const membrePrenom = selectedMembre.prenom
+
   if (confirmEmail) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm text-center flex flex-col gap-4">
@@ -36,6 +85,11 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
   if (isLoggedIn) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        {membresDisponibles.length > 1 && (
+          <button type="button" onClick={() => setSelectedMembre(null)} className="text-sm text-gray-400 hover:text-gray-600 mb-3">
+            ← Ce n&apos;est pas moi
+          </button>
+        )}
         <p className="text-center text-gray-600 text-sm mb-1">Tu es connecté(e) en tant que</p>
         <p className="text-center font-semibold text-gray-800 mb-5">{userEmail}</p>
         <p className="text-center text-gray-500 text-sm mb-5">
@@ -48,7 +102,7 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
           onClick={() => {
             startTransition(async () => {
               const result = await rejoindreVoyageConnecte(membreId, voyageId)
-              if (result?.error) setError(result.error)
+              if (result?.error) profilDejaPris(result.error)
             })
           }}
           className="w-full py-4 rounded-xl font-semibold text-white text-lg disabled:opacity-60"
@@ -63,6 +117,11 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
   if (mode === 'choix') {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-3">
+        {membresDisponibles.length > 1 && (
+          <button type="button" onClick={() => setSelectedMembre(null)} className="text-sm text-gray-400 hover:text-gray-600 self-start">
+            ← Ce n&apos;est pas moi
+          </button>
+        )}
         <p className="text-center text-gray-600 text-sm mb-2">
           Pour rejoindre le voyage en tant que <strong>{membrePrenom}</strong>, tu as besoin d&apos;un compte Bon Vol.
         </p>
@@ -93,8 +152,9 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
           e.preventDefault()
           const data = new FormData(e.currentTarget)
           startTransition(async () => {
-            const result = await rejoindreVoyage(data, token, membreId)
+            const result = await rejoindreVoyage(data, token, membreId, voyageId)
             if (result?.confirmEmail) setConfirmEmail(true)
+            else if (result?.profileTaken) profilDejaPris(result.error)
             else if (result?.error) setError(result.error)
           })
         }}
@@ -172,8 +232,9 @@ export default function RejoindreForm({ token, membreId, membrePrenom, voyageId,
         e.preventDefault()
         const data = new FormData(e.currentTarget)
         startTransition(async () => {
-          const result = await rejoindreVoyage(data, token, membreId)
-          if (result?.error) setError(result.error)
+          const result = await rejoindreVoyage(data, token, membreId, voyageId)
+          if (result?.profileTaken) profilDejaPris(result.error)
+          else if (result?.error) setError(result.error)
         })
       }}
     >

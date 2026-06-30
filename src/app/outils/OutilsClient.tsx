@@ -225,6 +225,10 @@ export default function OutilsClient({
     )
   }
 
+  // Favoris d'abord (du plus récemment ajouté au plus ancien), puis le reste dans
+  // l'ordre habituel — une seule grille continue, même forme de carte partout.
+  const outilsTries = [...favorisOutils, ...nonFavorisOutils]
+
   return (
     <div className="min-h-screen" style={{ background: '#FFFFFF', paddingBottom: 100 }}>
       <header className="bg-white border-b border-gray-100 px-4 sticky top-0 z-10">
@@ -237,26 +241,8 @@ export default function OutilsClient({
       <main className="max-w-2xl mx-auto px-5 pt-4 pb-6">
         <p className={`font-bold uppercase ${poppins.className}`} style={{ color: '#004850', fontSize: 30, letterSpacing: '-0.03em', margin: '0 0 12px' }}>Mes outils</p>
 
-        {favorisOutils.length > 0 && (
-          <>
-            <p style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#9CA3AF',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              margin: '0 0 8px 4px',
-            }}>
-              Favoris
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-              {favorisOutils.map(renderCard)}
-            </div>
-          </>
-        )}
-
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          {nonFavorisOutils.map(renderCard)}
+          {outilsTries.map(renderCard)}
         </div>
       </main>
 

@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { Poppins } from 'next/font/google'
-import { X, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
+import ModalShell from '@/components/ModalShell'
+import BudgetCalculateur from './BudgetCalculateur'
 import DeviseGenerique from './DeviseGenerique'
 import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
@@ -20,14 +22,7 @@ const FAVORIS_STORAGE_KEY = 'bonvol_outils_favoris'
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['700'] })
 
-const GRADIENTS = [
-  'linear-gradient(135deg, #36A6B2, #1D7480)',
-  'linear-gradient(135deg, #8B7FD9, #534AB7)',
-  'linear-gradient(135deg, #34C28E, #0F6B4F)',
-  'linear-gradient(135deg, #F0998A, #C2410C)',
-  'linear-gradient(135deg, #5BAEEF, #1D4ED8)',
-  'linear-gradient(135deg, #E08AD0, #A21CAF)',
-]
+const CARD_COLORS = ['#fffcc7', '#d7f7fa', '#ffe9ba', '#e7f8ce', '#f1e7e0']
 
 const OUTILS = [
   {
@@ -107,7 +102,14 @@ const OUTILS = [
     description: 'Nom générique + équivalents locaux par pays',
     premium: true,
   },
-].map((o, i) => ({ ...o, gradient: GRADIENTS[i % GRADIENTS.length] }))
+  {
+    id: 'budget',
+    emoji: '💰',
+    titre: 'Calculateur de budget',
+    description: 'Estimation par destination · Budget / Confort / Luxe',
+    premium: false,
+  },
+].map((o, i) => ({ ...o, color: CARD_COLORS[i % CARD_COLORS.length] }))
 
 export default function OutilsClient({
   pays, defaultPaysCode, autoOpenTool, isLoggedIn, favorisInitiaux,
@@ -164,14 +166,14 @@ export default function OutilsClient({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: outil.gradient,
-          boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+          background: outil.color,
+          boxShadow: '0 4px 14px rgba(0,0,0,0.07)',
           cursor: 'pointer',
           overflow: 'hidden',
         }}>
         <div style={{
           width: 44, height: 44, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.22)',
+          background: 'rgba(0,0,0,0.07)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 22,
         }}>
@@ -194,30 +196,18 @@ export default function OutilsClient({
         >
           <Star
             size={20}
-            fill={isFavori ? '#FFFDD8' : 'none'}
-            color={isFavori ? '#FFFDD8' : '#D1D5DB'}
+            fill={isFavori ? '#004850' : 'none'}
+            color={isFavori ? '#004850' : 'rgba(0,0,0,0.2)'}
             strokeWidth={1.5}
           />
         </button>
 
-        {outil.premium && (
-          <span style={{
-            position: 'absolute', top: 42, right: 12,
-            background: 'rgba(255,255,255,0.22)',
-            color: 'white',
-            fontSize: 10,
-            fontWeight: 700,
-            padding: '4px 10px',
-            borderRadius: 9999,
-            whiteSpace: 'nowrap',
-          }}>Premium</span>
-        )}
 
         <div>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'white', margin: 0, lineHeight: 1.25 }}>
+          <p style={{ fontWeight: 700, fontSize: 15, color: '#1a2e2f', margin: 0, lineHeight: 1.25 }}>
             {outil.titre}
           </p>
-          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', margin: '3px 0 0' }}>
+          <p style={{ fontSize: 12, color: 'rgba(0,0,0,0.45)', margin: '3px 0 0' }}>
             {outil.description}
           </p>
         </div>
@@ -246,41 +236,25 @@ export default function OutilsClient({
         </div>
       </main>
 
-      {/* Modale centrée */}
-      {openTool && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={() => setOpenTool(null)}
-        >
-          <div
-            className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[85vh] overflow-y-auto relative"
-            onClick={e => e.stopPropagation()}
-          >
-            <button onClick={() => setOpenTool(null)} style={{
-              position: 'absolute', top: 16, right: 16,
-              background: '#F3F4F6', borderRadius: '50%',
-              width: 32, height: 32,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: 'none', cursor: 'pointer',
-            }}>
-              <X size={16} color="#6B7280" />
-            </button>
-
-            {openTool === 'devises' && <DeviseGenerique />}
-            {openTool === 'tailles' && <TailleConverter />}
-            {openTool === 'horaire' && <DecalageHoraire />}
-            {openTool === 'bagages' && <ReglesBagages />}
-            {openTool === 'cartes' && <ComparateurCartes />}
-            {openTool === 'medical' && <TrousseMedicale pays={pays} defaultPaysCode={defaultPaysCode} />}
-            {openTool === 'phrases' && <PhrasesEssentielles pays={pays} defaultPaysCode={defaultPaysCode} />}
-            {openTool === 'urgences' && <NumerosUrgence pays={pays} defaultPaysCode={defaultPaysCode} />}
-            {openTool === 'demain' && <EtSiPartaisDemain />}
-            {openTool === 'permis' && <PermisGuide />}
-            {openTool === 'medicaments' && <MedicamentsTraducteur />}
-          </div>
-        </div>
-      )}
+      <ModalShell
+        open={!!openTool}
+        onClose={() => setOpenTool(null)}
+        title={OUTILS.find(o => o.id === openTool)?.titre ?? ''}
+        backdropClose={false}
+      >
+        {openTool === 'devises' && <DeviseGenerique />}
+        {openTool === 'tailles' && <TailleConverter />}
+        {openTool === 'horaire' && <DecalageHoraire />}
+        {openTool === 'bagages' && <ReglesBagages />}
+        {openTool === 'cartes' && <ComparateurCartes />}
+        {openTool === 'medical' && <TrousseMedicale pays={pays} defaultPaysCode={defaultPaysCode} />}
+        {openTool === 'phrases' && <PhrasesEssentielles pays={pays} defaultPaysCode={defaultPaysCode} />}
+        {openTool === 'urgences' && <NumerosUrgence pays={pays} defaultPaysCode={defaultPaysCode} />}
+        {openTool === 'demain' && <EtSiPartaisDemain />}
+        {openTool === 'permis' && <PermisGuide />}
+        {openTool === 'medicaments' && <MedicamentsTraducteur />}
+        {openTool === 'budget' && <BudgetCalculateur pays={pays} />}
+      </ModalShell>
     </div>
   )
 }

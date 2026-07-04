@@ -5,12 +5,13 @@ import { createPortal } from 'react-dom'
 import { X, ArrowLeft } from 'lucide-react'
 
 export default function ModalShell({
-  open, onClose, onBack, title, children,
+  open, onClose, onBack, title, backdropClose = true, children,
 }: {
   open: boolean
   onClose: () => void
   onBack?: () => void
   title: string
+  backdropClose?: boolean
   children: React.ReactNode
 }) {
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
@@ -31,7 +32,7 @@ export default function ModalShell({
     <div
       className="absolute inset-0 z-50 flex items-center justify-center py-14 px-7"
       style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={onClose}
+      onClick={backdropClose ? onClose : undefined}
     >
       <div
         className="bg-white rounded-3xl w-full max-w-md flex flex-col"
@@ -39,11 +40,11 @@ export default function ModalShell({
         onClick={e => e.stopPropagation()}
       >
         {/* En-tête fixe — ne scrolle pas */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0">
-          <h3 className="font-bold uppercase" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
+        <div className="flex items-center justify-between gap-4 px-6 pt-6 pb-4 shrink-0">
+          <h3 className="font-bold uppercase flex-1 min-w-0" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
             {title}
           </h3>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0 self-center">
             {onBack && (
               <button onClick={onBack} className="text-gray-300 hover:text-gray-500">
                 <ArrowLeft size={20} />

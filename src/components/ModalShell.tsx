@@ -41,7 +41,7 @@ export default function ModalShell({
       >
         {/* En-tête fixe — ne scrolle pas */}
         <div className="flex items-center justify-between gap-4 px-6 pt-6 pb-4 shrink-0">
-          <h3 className="font-bold uppercase flex-1 min-w-0" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
+          <h3 className="font-bold uppercase flex-1 min-w-0 truncate" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
             {title}
           </h3>
           <div className="flex items-center gap-3 shrink-0 self-center">

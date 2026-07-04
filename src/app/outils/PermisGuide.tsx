@@ -45,11 +45,6 @@ export default function PermisGuide() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Info IDP */}
-      <InfoBlock type="disclaimer">
-        <p>{PERMIS_INFO}</p>
-      </InfoBlock>
-
       {/* Sélecteur de pays */}
       <div>
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
@@ -99,6 +94,13 @@ export default function PermisGuide() {
                'PIC non requis'}
             </p>
           </div>
+
+          {/* Explication PIC — uniquement si le permis FR ne suffit pas */}
+          {!sel.valide && (
+            <InfoBlock type="disclaimer">
+              <p>{PERMIS_INFO}</p>
+            </InfoBlock>
+          )}
         </div>
       )}
 

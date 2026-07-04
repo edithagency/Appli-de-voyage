@@ -155,6 +155,7 @@ export default function MedicamentsTraducteur() {
       {/* Étape 1 : Choix du pays */}
       {!pays && (
         <div className="relative">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Pays</p>
           <input
             type="text"
             value={search}

@@ -269,11 +269,13 @@ const ALL_COUNTRIES = Array.from(
 ).sort((a, b) => a.pays.localeCompare(b.pays, 'fr'))
 
 export default function MedicamentsTraducteur() {
-  const [query, setQuery]                       = useState('')
-  const [selectedSymptome, setSelectedSymptome] = useState<string | null>(null)
-  const [paysDestination, setPaysDestination]   = useState<string | null>(null)
-  const [medicament, setMedicament]             = useState<Medicament | null>(null)
-  const [paysNom, setPaysNom]                   = useState<string | null>(null)
+  const [query, setQuery]                           = useState('')
+  const [selectedSymptome, setSelectedSymptome]     = useState<string | null>(null)
+  const [paysDestination, setPaysDestination]       = useState<string | null>(null)
+  const [destinationSearch, setDestinationSearch]   = useState('')
+  const [showDestinationList, setShowDestinationList] = useState(false)
+  const [medicament, setMedicament]                 = useState<Medicament | null>(null)
+  const [paysNom, setPaysNom]                       = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     if (paysDestination) {
@@ -302,10 +304,26 @@ export default function MedicamentsTraducteur() {
     setPaysNom(paysDestination) // si on vient d'une destination, saute l'étape pays
   }
 
+  const destinationFiltered = useMemo(() => {
+    if (!destinationSearch.trim()) return []
+    const q = destinationSearch.toLowerCase()
+    return ALL_COUNTRIES.filter(c => c.pays.toLowerCase().includes(q)).slice(0, 8)
+  }, [destinationSearch])
+
+  function selectDestination(c: { pays: string; emoji: string }) {
+    setPaysDestination(c.pays)
+    setDestinationSearch(c.pays)
+    setShowDestinationList(false)
+    setQuery('')
+    setSelectedSymptome(null)
+  }
+
   function reset() {
     setMedicament(null)
     setPaysNom(null)
     setPaysDestination(null)
+    setDestinationSearch('')
+    setShowDestinationList(false)
     setSelectedSymptome(null)
     setQuery('')
   }
@@ -328,7 +346,7 @@ export default function MedicamentsTraducteur() {
               <input
                 type="text"
                 value={query}
-                onChange={e => { setQuery(e.target.value); setSelectedSymptome(null); setPaysDestination(null) }}
+                onChange={e => { setQuery(e.target.value); setSelectedSymptome(null); setPaysDestination(null); setDestinationSearch(''); setShowDestinationList(false) }}
                 placeholder="Doliprane, Smecta, Imodium…"
                 className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
               />
@@ -345,7 +363,7 @@ export default function MedicamentsTraducteur() {
             <div className="flex flex-wrap gap-2">
               {SYMPTOMES.map(s => (
                 <button key={s.id}
-                  onClick={() => { setSelectedSymptome(selectedSymptome === s.id ? null : s.id); setQuery(''); setPaysDestination(null) }}
+                  onClick={() => { setSelectedSymptome(selectedSymptome === s.id ? null : s.id); setQuery(''); setPaysDestination(null); setDestinationSearch(''); setShowDestinationList(false) }}
                   className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all border"
                   style={{
                     background: selectedSymptome === s.id ? '#004850' : '#F9FAFB',
@@ -358,24 +376,38 @@ export default function MedicamentsTraducteur() {
             </div>
           </div>
 
-          {/* Destinations */}
+          {/* Destination */}
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
-            <div className="flex flex-wrap gap-2">
-              {ALL_COUNTRIES.map(c => (
-                <button key={c.pays}
-                  onClick={() => { setPaysDestination(paysDestination === c.pays ? null : c.pays); setQuery(''); setSelectedSymptome(null) }}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all border"
-                  style={{
-                    background: paysDestination === c.pays ? '#004850' : '#F9FAFB',
-                    color:      paysDestination === c.pays ? 'white'   : '#6B7280',
-                    borderColor: paysDestination === c.pays ? '#004850' : '#E5E7EB',
-                  }}>
-                  <span>{c.emoji}</span>
-                  <span>{c.pays}</span>
-                </button>
-              ))}
-            </div>
+            <input
+              type="text"
+              value={destinationSearch}
+              onChange={e => {
+                setDestinationSearch(e.target.value)
+                setShowDestinationList(true)
+                setPaysDestination(null)
+                setQuery('')
+                setSelectedSymptome(null)
+              }}
+              onFocus={() => setShowDestinationList(true)}
+              onBlur={() => setTimeout(() => setShowDestinationList(false), 150)}
+              placeholder="Rechercher un pays..."
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+            />
+            {showDestinationList && destinationFiltered.length > 0 && (
+              <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+                {destinationFiltered.map(c => (
+                  <button key={c.pays}
+                    type="button"
+                    onMouseDown={() => selectDestination(c)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
+                    <span className="text-xl">{c.emoji}</span>
+                    <span className="text-gray-800">{c.pays}</span>
+                    {paysDestination === c.pays && <span className="ml-auto text-[#36A6B2]">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Liste filtrée */}

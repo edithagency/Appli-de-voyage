@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { PaysOutil } from './NumerosUrgence'
+import InfoBlock from '@/components/InfoBlock'
 
 type Style = 'budget' | 'confort' | 'luxe'
 type BudgetData = { hebergement: number; repas: number; transport: number; activites: number }
@@ -277,8 +278,10 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
             ))}
           </div>
 
-          <div style={{ background: '#d7f7fa', borderRadius: 12, padding: '10px 14px', fontSize: 12, fontWeight: 500, color: '#1a3a3c', lineHeight: 1.5 }}>
-            Vol non inclus. Hébergement estimé pour une chambre partagée.
+          <div style={{ marginTop: 20 }}>
+            <InfoBlock type="info">
+              Vol non inclus. Hébergement estimé pour une chambre partagée.
+            </InfoBlock>
           </div>
         </div>
       ) : paysCode ? (

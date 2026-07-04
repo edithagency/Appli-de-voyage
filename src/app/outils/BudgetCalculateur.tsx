@@ -278,8 +278,8 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
             ))}
           </div>
 
-          <InfoBlock type="disclaimer">
-            Hébergement estimé pour une chambre partagée · Vol non inclus
+          <InfoBlock type="info">
+            Vol non inclus. Hébergement estimé pour une chambre partagée.
           </InfoBlock>
         </div>
       ) : paysCode ? (

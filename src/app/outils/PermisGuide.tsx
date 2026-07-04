@@ -99,25 +99,27 @@ export default function PermisGuide() {
         </div>
       )}
 
-      {/* Liste rapide */}
-      <div className="bg-gray-50 rounded-2xl p-3">
-        <p className="text-xs font-bold text-gray-500 mb-2">Statut rapide</p>
-        <div className="flex flex-col gap-1.5">
-          {PAYS_PERMIS.map(p => (
-            <div key={p.pays} className="flex items-center justify-between">
-              <span className="text-xs text-gray-600">{p.emoji} {p.pays}</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
-                background: p.idp === 'obligatoire' ? '#ffe9ba' : p.idp === 'recommandé' ? '#fffcc7' : '#e7f8ce',
-                color: p.idp === 'obligatoire' ? '#7A4A00' : p.idp === 'recommandé' ? '#786400' : '#2D5A1B',
-              }}>
-                {p.idp === 'obligatoire' ? 'IDP obligatoire' :
-                 p.idp === 'recommandé' ? 'IDP recommandé' :
-                 p.valide ? 'Permis FR OK' : 'Non valide'}
-              </span>
-            </div>
-          ))}
+      {/* Liste rapide — uniquement si aucun pays sélectionné */}
+      {!sel && (
+        <div className="bg-gray-50 rounded-2xl p-3">
+          <p className="text-xs font-bold text-gray-500 mb-2">Statut rapide</p>
+          <div className="flex flex-col gap-1.5">
+            {PAYS_PERMIS.map(p => (
+              <div key={p.pays} className="flex items-center justify-between">
+                <span className="text-xs text-gray-600">{p.emoji} {p.pays}</span>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
+                  background: p.idp === 'obligatoire' ? '#ffe9ba' : p.idp === 'recommandé' ? '#fffcc7' : '#e7f8ce',
+                  color: p.idp === 'obligatoire' ? '#7A4A00' : p.idp === 'recommandé' ? '#786400' : '#2D5A1B',
+                }}>
+                  {p.idp === 'obligatoire' ? 'IDP obligatoire' :
+                   p.idp === 'recommandé' ? 'IDP recommandé' :
+                   p.valide ? 'Permis FR OK' : 'Non valide'}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

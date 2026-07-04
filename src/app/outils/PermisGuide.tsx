@@ -79,19 +79,26 @@ export default function PermisGuide() {
       {/* Résultat */}
       {sel && (
         <div className="flex flex-col gap-3">
-          <InfoBlock type="info">
-            <p className="font-bold mb-1">
+          <div className="flex flex-col gap-2 px-4 py-3 bg-white rounded-2xl border border-gray-100">
+            {/* Statut coloré */}
+            <span className="self-start text-xs font-bold px-3 py-1 rounded-full" style={{
+              background: sel.valide ? '#e7f8ce' : '#ffe9ba',
+              color:      sel.valide ? '#2D5A1B' : '#7A4A00',
+            }}>
               {sel.valide ? 'Permis FR valide' : 'Permis FR insuffisant'}
-              {sel.duree && <span className="font-normal ml-2">({sel.duree} max)</span>}
-            </p>
-            <p>{sel.note}</p>
-          </InfoBlock>
+              {sel.duree && <span className="font-normal ml-1">· {sel.duree} max</span>}
+            </span>
 
-          <InfoBlock type="info">
-            {sel.idp === 'obligatoire' ? 'Permis international obligatoire' :
-             sel.idp === 'recommandé' ? 'Permis international recommandé' :
-             'Permis international non requis'}
-          </InfoBlock>
+            {/* Note */}
+            <p className="text-xs text-gray-500 leading-relaxed">{sel.note}</p>
+
+            {/* IDP */}
+            <p className="text-xs text-gray-600 font-semibold">
+              {sel.idp === 'obligatoire' ? 'Permis international obligatoire' :
+               sel.idp === 'recommandé' ? 'Permis international recommandé' :
+               'Permis international non requis'}
+            </p>
+          </div>
         </div>
       )}
 

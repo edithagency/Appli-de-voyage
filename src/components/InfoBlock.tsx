@@ -9,7 +9,7 @@ const STYLES: Record<InfoType, { background: string; color: string }> = {
 
 export default function InfoBlock({ type, children }: { type: InfoType; children: React.ReactNode }) {
   return (
-    <div style={{ ...STYLES[type], borderRadius: 12, padding: '10px 14px', fontSize: 12, fontWeight: 500, lineHeight: 1.5 }}>
+    <div style={{ ...STYLES[type], borderRadius: 12, padding: '10px 14px', fontSize: 12, fontWeight: 500, lineHeight: 1.5, fontStyle: 'italic' }}>
       {children}
     </div>
   )

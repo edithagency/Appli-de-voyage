@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import InfoBlock from '@/components/InfoBlock'
 
+type Equivalent = { pays: string; emoji: string; noms: string[] }
 type Medicament = {
   nom_fr: string[]
   generique: string
   categorie: string
   emoji: string
-  equivalents: { pays: string; emoji: string; noms: string[] }[]
+  equivalents: Equivalent[]
   note?: string
+  noteType?: 'alerte' | 'disclaimer'
 }
 
 const MEDICAMENTS: Medicament[] = [
@@ -34,7 +36,7 @@ const MEDICAMENTS: Medicament[] = [
     categorie: 'Anti-inflammatoire',
     emoji: '🔴',
     equivalents: [
-      { pays: 'États-Unis', emoji: '🇺🇸', noms: ['Advil', 'Motrin', 'Ibuprofen'] },
+      { pays: 'États-Unis / Canada', emoji: '🇺🇸', noms: ['Advil', 'Motrin', 'Ibuprofen'] },
       { pays: 'Royaume-Uni', emoji: '🇬🇧', noms: ['Nurofen', 'Brufen'] },
       { pays: 'Espagne', emoji: '🇪🇸', noms: ['Nurofen', 'Espidifen', 'Ibuprofen'] },
       { pays: 'Allemagne', emoji: '🇩🇪', noms: ['Ibuprofen', 'Dolormin'] },
@@ -58,7 +60,7 @@ const MEDICAMENTS: Medicament[] = [
     categorie: 'Diarrhée (action rapide)',
     emoji: '🔵',
     equivalents: [
-      { pays: 'États-Unis', emoji: '🇺🇸', noms: ['Imodium AD', 'Loperamide'] },
+      { pays: 'États-Unis / Canada', emoji: '🇺🇸', noms: ['Imodium AD', 'Loperamide'] },
       { pays: 'Royaume-Uni', emoji: '🇬🇧', noms: ['Imodium', 'Loperamide'] },
       { pays: 'Espagne', emoji: '🇪🇸', noms: ['Fortasec', 'Imodium'] },
       { pays: 'Thaïlande', emoji: '🇹🇭', noms: ['Imodium'] },
@@ -67,11 +69,11 @@ const MEDICAMENTS: Medicament[] = [
   },
   {
     nom_fr: ['Xyzall', 'Zyrtec', 'Clarityne', 'Aerius'],
-    generique: 'Antihistaminique (Lévocétirizine / Loratadine / Cétirizine)',
+    generique: 'Antihistaminique',
     categorie: 'Allergie',
     emoji: '🌸',
     equivalents: [
-      { pays: 'États-Unis', emoji: '🇺🇸', noms: ['Zyrtec', 'Claritin', 'Benadryl'] },
+      { pays: 'États-Unis / Canada', emoji: '🇺🇸', noms: ['Zyrtec', 'Claritin', 'Benadryl'] },
       { pays: 'Royaume-Uni', emoji: '🇬🇧', noms: ['Piriteze', 'Clarityn', 'Cetirizine'] },
       { pays: 'Espagne', emoji: '🇪🇸', noms: ['Zyrtec', 'Loratadina'] },
       { pays: 'Thaïlande', emoji: '🇹🇭', noms: ['Cetirizine', 'Loratadine'] },
@@ -80,10 +82,10 @@ const MEDICAMENTS: Medicament[] = [
   {
     nom_fr: ['Maalox', 'Gaviscon', 'Phosphalugel'],
     generique: 'Antiacide',
-    categorie: 'Brûlures d\'estomac',
+    categorie: "Brûlures d'estomac",
     emoji: '🟠',
     equivalents: [
-      { pays: 'États-Unis', emoji: '🇺🇸', noms: ['Tums', 'Rolaids', 'Pepto-Bismol'] },
+      { pays: 'États-Unis / Canada', emoji: '🇺🇸', noms: ['Tums', 'Rolaids', 'Pepto-Bismol'] },
       { pays: 'Royaume-Uni', emoji: '🇬🇧', noms: ['Gaviscon', 'Rennie'] },
       { pays: 'Espagne', emoji: '🇪🇸', noms: ['Almax', 'Maalox'] },
       { pays: 'Thaïlande', emoji: '🇹🇭', noms: ['Kremil-S', 'Antacid'] },
@@ -97,7 +99,8 @@ const MEDICAMENTS: Medicament[] = [
     equivalents: [
       { pays: 'International', emoji: '🌍', noms: ['Amoxicillin', 'Augmentin', 'Azithromycin'] },
     ],
-    note: '⚠️ Ordonnance requise dans la plupart des pays. Emportez votre ordonnance originale traduite en anglais.',
+    note: 'Ordonnance requise dans la plupart des pays. Emportez votre ordonnance originale traduite en anglais.',
+    noteType: 'alerte' as const,
   },
   {
     nom_fr: ['Nautamine', 'Mercalm'],
@@ -105,7 +108,7 @@ const MEDICAMENTS: Medicament[] = [
     categorie: 'Mal des transports',
     emoji: '🚢',
     equivalents: [
-      { pays: 'États-Unis', emoji: '🇺🇸', noms: ['Dramamine', 'Bonine'] },
+      { pays: 'États-Unis / Canada', emoji: '🇺🇸', noms: ['Dramamine', 'Bonine'] },
       { pays: 'Royaume-Uni', emoji: '🇬🇧', noms: ['Sea-Legs', 'Kwells'] },
       { pays: 'Espagne', emoji: '🇪🇸', noms: ['Biodramina'] },
       { pays: 'Australie', emoji: '🇦🇺', noms: ['Travacalm', 'Dramamine'] },
@@ -113,19 +116,23 @@ const MEDICAMENTS: Medicament[] = [
   },
 ]
 
-export default function MedicamentsTraducteur() {
-  const [query, setQuery] = useState('')
-  const [selected, setSelected] = useState<Medicament | null>(null)
+const ALL_COUNTRIES: { pays: string; emoji: string }[] = Array.from(
+  new Map(
+    MEDICAMENTS.flatMap(m => m.equivalents.map(e => [e.pays, { pays: e.pays, emoji: e.emoji }]))
+  ).values()
+).sort((a, b) => a.pays.localeCompare(b.pays, 'fr'))
 
-  const suggestions = useMemo(() => {
-    if (query.trim().length < 2) return []
-    const q = query.toLowerCase()
-    return MEDICAMENTS.filter(m =>
-      m.nom_fr.some(n => n.toLowerCase().includes(q)) ||
-      m.generique.toLowerCase().includes(q) ||
-      m.categorie.toLowerCase().includes(q)
-    )
-  }, [query])
+export default function MedicamentsTraducteur() {
+  const [pays, setPays] = useState<{ pays: string; emoji: string } | null>(null)
+  const [medicament, setMedicament] = useState<Medicament | null>(null)
+
+  const medsForPays = pays
+    ? MEDICAMENTS.filter(m => m.equivalents.some(e => e.pays === pays.pays))
+    : []
+
+  const equivalent = medicament && pays
+    ? medicament.equivalents.find(e => e.pays === pays.pays) ?? null
+    : null
 
   return (
     <div className="flex flex-col gap-4">
@@ -133,71 +140,75 @@ export default function MedicamentsTraducteur() {
         Ces informations ne remplacent pas un avis médical. Consultez un professionnel de santé avant de prendre tout médicament.
       </InfoBlock>
 
-      {/* Recherche */}
-      <div className="relative">
-        <input
-          type="text"
-          value={query}
-          onChange={e => { setQuery(e.target.value); setSelected(null) }}
-          placeholder="Doliprane, Smecta, Imodium…"
-          className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:border-gray-300"
-        />
-        {query && (
-          <button onClick={() => { setQuery(''); setSelected(null) }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">×</button>
-        )}
-      </div>
-
-      {/* Suggestions */}
-      {suggestions.length > 0 && !selected && (
-        <div className="flex flex-col gap-1">
-          {suggestions.map(m => (
-            <button key={m.generique} onClick={() => { setSelected(m); setQuery(m.nom_fr[0]) }}
-              className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-left hover:border-gray-200 transition">
-              <span className="text-xl">{m.emoji}</span>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">{m.nom_fr.join(' / ')}</p>
-                <p className="text-xs text-gray-400">{m.generique} — {m.categorie}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Résultat */}
-      {selected && (
-        <div className="flex flex-col gap-3">
-          <div className="rounded-2xl px-4 py-3" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            <p className="text-white font-bold text-sm">{selected.emoji} {selected.generique}</p>
-            <p className="text-white/80 text-xs mt-0.5">{selected.categorie}</p>
-            <p className="text-white/70 text-xs mt-1">Noms FR : {selected.nom_fr.join(', ')}</p>
-          </div>
-
-          {selected.note && (
-            <InfoBlock type={selected.note.startsWith('⚠️') ? 'alerte' : 'disclaimer'}>
-              {selected.note.replace(/^⚠️\s*/, '')}
-            </InfoBlock>
-          )}
-
-          <div className="flex flex-col gap-2">
-            {selected.equivalents.map(eq => (
-              <div key={eq.pays} className="bg-white border border-gray-100 rounded-xl px-4 py-3">
-                <p className="text-xs font-bold text-gray-600 mb-1.5">{eq.emoji} {eq.pays}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {eq.noms.map(n => (
-                    <span key={n} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700">{n}</span>
-                  ))}
-                </div>
-              </div>
+      {/* Étape 1 : Choix du pays */}
+      {!pays && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Choisir un pays</p>
+          <div className="flex flex-wrap gap-2">
+            {ALL_COUNTRIES.map(c => (
+              <button key={c.pays} onClick={() => setPays(c)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-semibold text-gray-700 hover:border-gray-300 transition">
+                <span>{c.emoji}</span>
+                <span>{c.pays}</span>
+              </button>
             ))}
           </div>
         </div>
       )}
 
-      {query.length >= 2 && suggestions.length === 0 && !selected && (
-        <p className="text-sm text-gray-400 text-center py-4">
-          Médicament non trouvé. Cherchez par nom générique ou demandez en pharmacie le <strong>generic name</strong>.
-        </p>
+      {/* Étape 2 : Choix du médicament */}
+      {pays && !medicament && (
+        <div className="flex flex-col gap-3">
+          <button onClick={() => setPays(null)}
+            className="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-gray-600 transition self-start">
+            <span>←</span>
+            <span>{pays.emoji} {pays.pays}</span>
+          </button>
+          <div className="flex flex-col gap-1.5">
+            {medsForPays.map(m => (
+              <button key={m.generique} onClick={() => setMedicament(m as Medicament)}
+                className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-3 text-left hover:border-gray-200 transition">
+                <span className="text-xl">{m.emoji}</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">{m.nom_fr.join(' / ')}</p>
+                  <p className="text-xs text-gray-400">{m.categorie}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Étape 3 : Résultat unique */}
+      {pays && medicament && equivalent && (
+        <div className="flex flex-col gap-3">
+          <button onClick={() => setMedicament(null)}
+            className="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-gray-600 transition self-start">
+            <span>←</span>
+            <span>{pays.emoji} {pays.pays} · {medicament.nom_fr[0]}</span>
+          </button>
+
+          <div className="rounded-2xl px-4 py-4 flex flex-col gap-3" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
+            <div>
+              <p className="text-white/70 text-xs mb-1">En France</p>
+              <p className="text-white font-bold text-sm">{medicament.nom_fr.join(' · ')}</p>
+            </div>
+            <div>
+              <p className="text-white/70 text-xs mb-2">{pays.emoji} {pays.pays}</p>
+              <div className="flex flex-wrap gap-2">
+                {equivalent.noms.map(n => (
+                  <span key={n} className="text-sm font-bold px-3 py-1.5 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.2)' }}>{n}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {medicament.note && (
+            <InfoBlock type={medicament.noteType ?? 'disclaimer'}>
+              {medicament.note}
+            </InfoBlock>
+          )}
+        </div>
       )}
     </div>
   )

@@ -74,10 +74,10 @@ const PAYS_ZONE: Record<string, string> = {
   AU:'oceanie',NZ:'oceanie',FJ:'oceanie',PG:'oceanie',WS:'oceanie',TO:'oceanie',VU:'oceanie',SB:'oceanie',
 }
 
-const STYLES: { id: Style; label: string; emoji: string }[] = [
-  { id: 'budget',  label: 'Backpack', emoji: '🎒' },
-  { id: 'confort', label: 'Confort', emoji: '🏡' },
-  { id: 'luxe',    label: 'Luxe',    emoji: '✨' },
+const STYLES: { id: Style; label: string }[] = [
+  { id: 'budget',  label: 'Backpack' },
+  { id: 'confort', label: 'Confort' },
+  { id: 'luxe',    label: 'Luxe' },
 ]
 
 const CATEGORIES = [
@@ -203,7 +203,7 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
             key={s.id}
             onClick={() => setStyle(s.id)}
             style={{
-              padding: '9px 4px',
+              padding: '6px 4px',
               borderRadius: 12,
               border: `2px solid ${style === s.id ? '#004850' : '#E5E7EB'}`,
               background: style === s.id ? '#004850' : 'white',
@@ -213,7 +213,7 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
               cursor: 'pointer',
             }}
           >
-            {s.emoji} {s.label}
+            {s.label}
           </button>
         ))}
       </div>

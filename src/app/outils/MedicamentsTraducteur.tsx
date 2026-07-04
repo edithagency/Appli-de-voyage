@@ -267,6 +267,8 @@ export default function MedicamentsTraducteur() {
   const [selectedSymptome, setSelectedSymptome] = useState<string | null>(null)
   const [medicament, setMedicament]             = useState<Medicament | null>(null)
   const [paysNom, setPaysNom]                   = useState<string | null>(null)
+  const [destSearch, setDestSearch]             = useState('')
+  const [showDestList, setShowDestList]         = useState(false)
 
   const filtered = useMemo(() => {
     const bySymptome = selectedSymptome
@@ -291,6 +293,8 @@ export default function MedicamentsTraducteur() {
   function reset() {
     setMedicament(null)
     setPaysNom(null)
+    setDestSearch('')
+    setShowDestList(false)
     setSelectedSymptome(null)
     setQuery('')
   }
@@ -358,7 +362,7 @@ export default function MedicamentsTraducteur() {
         </div>
       )}
 
-      {/* Étape 2 : Choix du pays (si pas venu par destination) */}
+      {/* Étape 2 : Choix de la destination */}
       {medicament && !paysNom && (
         <div className="flex flex-col gap-3">
           <button onClick={reset}
@@ -366,15 +370,32 @@ export default function MedicamentsTraducteur() {
             <span>←</span>
             <span>{medicament.nom_fr[0]}</span>
           </button>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Destination</p>
-          <div className="w-full bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
-            {medicament.equivalents.map(eq => (
-              <button key={eq.pays} onClick={() => setPaysNom(eq.pays)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
-                <span className="text-xl">{eq.emoji}</span>
-                <span className="text-gray-800">{eq.pays}</span>
-              </button>
-            ))}
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
+            <input
+              type="text"
+              value={destSearch}
+              onChange={e => { setDestSearch(e.target.value); setShowDestList(true) }}
+              onFocus={() => setShowDestList(true)}
+              onBlur={() => setTimeout(() => setShowDestList(false), 150)}
+              placeholder="Rechercher un pays..."
+              className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+            />
+            {showDestList && (
+              <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+                {medicament.equivalents
+                  .filter(eq => !destSearch.trim() || eq.pays.toLowerCase().includes(destSearch.toLowerCase()))
+                  .map(eq => (
+                    <button key={eq.pays}
+                      type="button"
+                      onMouseDown={() => { setPaysNom(eq.pays); setDestSearch(eq.pays); setShowDestList(false) }}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
+                      <span className="text-xl">{eq.emoji}</span>
+                      <span className="text-gray-800">{eq.pays}</span>
+                    </button>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
       )}

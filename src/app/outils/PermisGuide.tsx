@@ -79,7 +79,7 @@ export default function PermisGuide() {
       {/* Résultat */}
       {sel && (
         <div className="flex flex-col gap-3">
-          <InfoBlock type={sel.valide ? 'info' : 'alerte'}>
+          <InfoBlock type="info">
             <p className="font-bold mb-1">
               {sel.valide ? 'Permis FR valide' : 'Permis FR insuffisant'}
               {sel.duree && <span className="font-normal ml-2">({sel.duree} max)</span>}
@@ -87,11 +87,7 @@ export default function PermisGuide() {
             <p>{sel.note}</p>
           </InfoBlock>
 
-          <InfoBlock type={
-            sel.idp === 'obligatoire' ? 'alerte' :
-            sel.idp === 'recommandé' ? 'disclaimer' :
-            'info'
-          }>
+          <InfoBlock type="info">
             {sel.idp === 'obligatoire' ? 'Permis international obligatoire' :
              sel.idp === 'recommandé' ? 'Permis international recommandé' :
              'Permis international non requis'}

@@ -40,11 +40,11 @@ export default function ModalShell({
         onClick={e => e.stopPropagation()}
       >
         {/* En-tête fixe — ne scrolle pas */}
-        <div className="flex items-center justify-between gap-4 px-6 pt-6 pb-4 shrink-0">
-          <h3 className="font-bold uppercase flex-1 min-w-0 truncate" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
+        <div className="relative px-6 pt-6 pb-4 shrink-0">
+          <h3 className="font-bold uppercase pr-10" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>
             {title}
           </h3>
-          <div className="flex items-center gap-3 shrink-0 self-center">
+          <div className="absolute top-6 right-6 flex items-center gap-3">
             {onBack && (
               <button onClick={onBack} className="text-gray-300 hover:text-gray-500">
                 <ArrowLeft size={20} />

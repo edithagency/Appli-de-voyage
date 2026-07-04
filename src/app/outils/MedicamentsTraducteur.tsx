@@ -405,19 +405,28 @@ export default function MedicamentsTraducteur() {
           <button onClick={() => setPaysNom(null)}
             className="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-gray-600 transition self-start">
             <span>←</span>
-            <span>{medicament.nom_fr[0]} · {paysNom}</span>
+            <span>Changer de destination</span>
           </button>
 
-          <div className="rounded-2xl px-4 py-4 flex flex-col gap-3" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
-            <div>
-              <p className="text-white/70 text-xs mb-1">En France</p>
-              <p className="text-white font-bold text-sm">{medicament.nom_fr.join(' · ')}</p>
+          <div className="rounded-2xl overflow-hidden border border-gray-100">
+            {/* En-tête : nom français — contexte */}
+            <div className="px-4 py-3 flex items-center gap-2" style={{ background: '#F3F4F6' }}>
+              <span className="text-xs text-gray-400 italic">En France :</span>
+              <span className="text-xs font-semibold text-gray-600">{medicament.nom_fr.join(' / ')}</span>
             </div>
-            <div>
-              <p className="text-white/70 text-xs mb-2">{equivalent.emoji} {paysNom}</p>
+
+            {/* Corps : ce qu'il faut demander */}
+            <div className="px-4 py-5 flex flex-col gap-3" style={{ background: '#004850' }}>
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                {equivalent.emoji} À demander en pharmacie ({paysNom})
+              </p>
               <div className="flex flex-wrap gap-2">
                 {equivalent.noms.map(n => (
-                  <span key={n} className="text-sm font-bold px-3 py-1.5 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.2)' }}>{n}</span>
+                  <span key={n}
+                    className="font-bold rounded-xl px-4 py-2"
+                    style={{ background: 'rgba(255,255,255,0.12)', color: 'white', fontSize: 16, letterSpacing: '-0.01em' }}>
+                    {n}
+                  </span>
                 ))}
               </div>
             </div>

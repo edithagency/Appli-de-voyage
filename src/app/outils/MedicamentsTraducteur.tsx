@@ -161,7 +161,7 @@ export default function MedicamentsTraducteur() {
             placeholder="Rechercher un pays..."
             className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
           />
-          {paysFiltered.length > 0 && (
+          {search.length > 0 && paysFiltered.length > 0 && (
             <div className="w-full bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
               {paysFiltered.map(c => (
                 <button key={c.pays} type="button" onClick={() => handleSelectPays(c)}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { COMPAGNIES } from '@/lib/utils/compagnies'
+import InfoBlock from '@/components/InfoBlock'
 
 export default function ReglesBagages() {
   const [compagnieId, setCompagnieId] = useState<string | null>(null)
@@ -101,9 +102,9 @@ export default function ReglesBagages() {
           </div>
 
           {compagnie.bagages.notes && (
-            <div className="bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3">
-              <p className="text-xs text-amber-800 leading-relaxed">💡 {compagnie.bagages.notes}</p>
-            </div>
+            <InfoBlock type="disclaimer">
+              {compagnie.bagages.notes}
+            </InfoBlock>
           )}
         </div>
       ) : (
@@ -121,12 +122,12 @@ function BagCard({ emoji, label, dims, poids, inclus, prix }: {
 }) {
   return (
     <div className="rounded-2xl p-3 text-center flex flex-col items-center gap-1"
-      style={{ background: inclus ? '#D1FAE5' : '#FEE2E2' }}>
+      style={{ background: inclus ? '#e7f8ce' : '#ffe9ba' }}>
       <span className="text-2xl">{emoji}</span>
       <span className="text-xs font-semibold leading-tight text-gray-700">{label}</span>
       {poids && <span className="text-xs font-bold text-gray-900">{poids}</span>}
       {dims && <span className="text-xs text-gray-500 leading-tight">{dims}</span>}
-      <span className="text-xs font-bold mt-0.5" style={{ color: inclus ? '#065F46' : '#991B1B' }}>
+      <span className="text-xs font-bold mt-0.5" style={{ color: inclus ? '#2D5A1B' : '#7A4A00' }}>
         {inclus ? '✓ Inclus' : prix ?? 'Payant'}
       </span>
     </div>

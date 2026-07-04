@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import InfoBlock from '@/components/InfoBlock'
 
 type Medicament = {
   nom_fr: string[]
@@ -128,9 +129,9 @@ export default function MedicamentsTraducteur() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-gray-500 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
-        ⚕️ <strong>Disclaimer :</strong> Ces informations ne remplacent pas un avis médical. Consultez un professionnel de santé avant de prendre tout médicament.
-      </p>
+      <InfoBlock type="disclaimer">
+        Ces informations ne remplacent pas un avis médical. Consultez un professionnel de santé avant de prendre tout médicament.
+      </InfoBlock>
 
       {/* Recherche */}
       <div className="relative">
@@ -173,9 +174,9 @@ export default function MedicamentsTraducteur() {
           </div>
 
           {selected.note && (
-            <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
-              <p className="text-xs text-amber-800 leading-relaxed">{selected.note}</p>
-            </div>
+            <InfoBlock type={selected.note.startsWith('⚠️') ? 'alerte' : 'disclaimer'}>
+              {selected.note.replace(/^⚠️\s*/, '')}
+            </InfoBlock>
           )}
 
           <div className="flex flex-col gap-2">

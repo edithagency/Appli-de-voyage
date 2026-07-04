@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import InfoBlock from '@/components/InfoBlock'
 
 const PAYS_PERMIS = [
   { pays: 'États-Unis', emoji: '🇺🇸', valide: true, idp: 'recommandé', duree: '1 an', note: 'Le permis FR est accepté dans la plupart des États. Le permis international est fortement recommandé avec une traduction officielle.' },
@@ -33,10 +34,9 @@ export default function PermisGuide() {
   return (
     <div className="flex flex-col gap-4">
       {/* Info IDP */}
-      <div className="rounded-2xl px-4 py-3" style={{ background: '#DBEAFE' }}>
-        <p className="text-xs font-bold text-gray-700 mb-1">🌍 Le Permis International (PIC)</p>
-        <p className="text-xs text-gray-600 leading-relaxed">{IDP_INFO}</p>
-      </div>
+      <InfoBlock type="disclaimer">
+        <p>{IDP_INFO}</p>
+      </InfoBlock>
 
       {/* Sélecteur de pays */}
       <select
@@ -53,27 +53,23 @@ export default function PermisGuide() {
       {/* Résultat */}
       {sel && (
         <div className="flex flex-col gap-3">
-          <div className={`rounded-2xl px-4 py-3.5 ${sel.valide ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-            <p className={`text-sm font-bold mb-1 ${sel.valide ? 'text-green-700' : 'text-red-700'}`}>
-              {sel.valide ? '✅ Permis FR valide' : '❌ Permis FR insuffisant'}
-              {sel.duree && <span className="font-normal text-xs ml-2">({sel.duree} max)</span>}
+          <InfoBlock type={sel.valide ? 'info' : 'alerte'}>
+            <p className="font-bold mb-1">
+              {sel.valide ? 'Permis FR valide' : 'Permis FR insuffisant'}
+              {sel.duree && <span className="font-normal ml-2">({sel.duree} max)</span>}
             </p>
-            <p className="text-xs leading-relaxed" style={{ color: sel.valide ? '#15803D' : '#B91C1C' }}>
-              {sel.note}
-            </p>
-          </div>
+            <p>{sel.note}</p>
+          </InfoBlock>
 
-          <div className={`rounded-xl px-4 py-3 ${
-            sel.idp === 'obligatoire' ? 'bg-amber-50 border border-amber-200' :
-            sel.idp === 'recommandé' ? 'bg-yellow-50 border border-yellow-100' :
-            'bg-gray-50'
-          }`}>
-            <p className="text-xs font-semibold text-gray-700">
-              {sel.idp === 'obligatoire' ? '⚠️ Permis international obligatoire' :
-               sel.idp === 'recommandé' ? '💡 Permis international recommandé' :
-               '✅ Permis international non requis'}
-            </p>
-          </div>
+          <InfoBlock type={
+            sel.idp === 'obligatoire' ? 'alerte' :
+            sel.idp === 'recommandé' ? 'disclaimer' :
+            'info'
+          }>
+            {sel.idp === 'obligatoire' ? 'Permis international obligatoire' :
+             sel.idp === 'recommandé' ? 'Permis international recommandé' :
+             'Permis international non requis'}
+          </InfoBlock>
         </div>
       )}
 
@@ -84,11 +80,10 @@ export default function PermisGuide() {
           {PAYS_PERMIS.map(p => (
             <div key={p.pays} className="flex items-center justify-between">
               <span className="text-xs text-gray-600">{p.emoji} {p.pays}</span>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                p.idp === 'obligatoire' ? 'bg-red-100 text-red-600' :
-                p.idp === 'recommandé' ? 'bg-amber-100 text-amber-700' :
-                'bg-green-100 text-green-700'
-              }`}>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
+                background: p.idp === 'obligatoire' ? '#ffe9ba' : p.idp === 'recommandé' ? '#fffcc7' : '#e7f8ce',
+                color: p.idp === 'obligatoire' ? '#7A4A00' : p.idp === 'recommandé' ? '#786400' : '#2D5A1B',
+              }}>
                 {p.idp === 'obligatoire' ? 'IDP obligatoire' :
                  p.idp === 'recommandé' ? 'IDP recommandé' :
                  p.valide ? 'Permis FR OK' : 'Non valide'}

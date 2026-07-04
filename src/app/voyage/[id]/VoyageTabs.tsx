@@ -11,6 +11,7 @@ import InfoCard from './InfoCard'
 import DeviseConverter from './DeviseConverter'
 import { getArianeUrl } from '@/lib/utils/paysCode'
 import { toggleInfoStatus } from './info-status-actions'
+import InfoBlock from '@/components/InfoBlock'
 
 const INFO_GRADIENTS = [
   'linear-gradient(135deg, #A78BFA, #7C3AED)',
@@ -105,10 +106,10 @@ export default function VoyageTabs({
     return () => document.removeEventListener('click', handler, true)
   }, [expandedInfo])
 
-  const niveauStyle: Record<string, { bg: string; text: string; label: string }> = {
-    vert:   { bg: 'bg-green-50 border-green-200',  text: 'text-green-700',  label: 'Sûr' },
-    orange: { bg: 'bg-amber-50 border-amber-200',  text: 'text-amber-700',  label: 'Vigilance recommandée' },
-    rouge:  { bg: 'bg-red-50 border-red-200',      text: 'text-red-700',    label: 'Déconseillé' },
+  const niveauStyle: Record<string, { label: string }> = {
+    vert:   { label: 'Sûr' },
+    orange: { label: 'Vigilance recommandée' },
+    rouge:  { label: 'Déconseillé' },
   }
   const securite = pays?.niveau_securite ? niveauStyle[pays.niveau_securite] : null
 
@@ -254,29 +255,27 @@ export default function VoyageTabs({
               onToggle={toggleInfo}
               {...infoCardProps('securite')}>
               <div className="flex flex-col gap-3">
-                <div className={`rounded-xl px-3 py-2.5 border ${securite.bg}`}>
-                  <p className={`text-xs font-semibold ${securite.text} mb-1`}>
+                <InfoBlock type={pays.niveau_securite === 'vert' ? 'info' : 'alerte'}>
+                  <p className="font-semibold mb-1">
                     {pays.niveau_securite === 'vert' && 'Vigilance normale'}
                     {pays.niveau_securite === 'orange' && 'Vigilance renforcée'}
                     {pays.niveau_securite === 'rouge' && 'Déconseillé sauf raison impérative'}
                   </p>
-                  <p className="text-xs text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed">
                     {pays.niveau_securite === 'vert' && 'La destination est considérée comme sûre. Adoptez les précautions habituelles en voyage.'}
                     {pays.niveau_securite === 'orange' && "Des risques existent dans certaines zones. Restez informé de l'actualité locale et évitez les zones à risque."}
                     {pays.niveau_securite === 'rouge' && 'Le gouvernement français déconseille fortement ce voyage. Consultez impérativement les conseils aux voyageurs avant tout départ.'}
                   </p>
-                  {pays.infos_securite && <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{pays.infos_securite}</p>}
-                </div>
+                  {pays.infos_securite && <p className="mt-1.5 leading-relaxed">{pays.infos_securite}</p>}
+                </InfoBlock>
                 <a href={arianeUrl} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl border bg-blue-50 border-blue-100 text-xs font-medium text-blue-700">
-                  <span>📋 Consulter les conseils & s&apos;inscrire sur Ariane</span>
+                  className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-gray-50 rounded-xl px-3 py-2">
+                  <span>Consulter les conseils & s&apos;inscrire sur Ariane</span>
                   <span className="opacity-60">↗</span>
                 </a>
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    <span className="font-semibold text-gray-700">Ariane</span> est le service d&apos;inscription du Ministère de l&apos;Europe et des Affaires étrangères. En cas de crise, l&apos;ambassade peut vous contacter. <span className="font-medium">Inscription gratuite et vivement conseillée.</span>
-                  </p>
-                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  <span className="font-semibold">Ariane</span> est le service d&apos;inscription du Ministère de l&apos;Europe et des Affaires étrangères. En cas de crise, l&apos;ambassade peut vous contacter. Inscription gratuite et vivement conseillée.
+                </p>
               </div>
             </InfoCard>
           )}
@@ -284,37 +283,37 @@ export default function VoyageTabs({
           <InfoCard id="visa" title="🛂 Visa & Entrée" gradient={INFO_GRADIENTS[1]} photo="/images/infos/visa.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('visa')}>
             <div className="flex flex-col gap-2.5">
               <div>
-                <p className="text-sm font-semibold text-gray-800 mb-1">{pays.visa_requis_france ? '⚠️ Visa requis' : '✅ Visa pas requis'}</p>
+                <p className="text-sm font-semibold text-gray-800 mb-1">{pays.visa_requis_france ? 'Visa requis' : 'Visa pas requis'}</p>
                 {pays.visa_details && <p className="text-xs text-gray-500 leading-relaxed">{pays.visa_details}</p>}
               </div>
               {pays.entree_details?.formulaire_arrivee?.obligatoire && (
-                <div className="rounded-xl px-3 py-2.5 border bg-amber-50 border-amber-200">
-                  <p className="text-xs font-semibold text-amber-700 mb-1">⚠️ {pays.entree_details.formulaire_arrivee.nom} obligatoire</p>
-                  {pays.entree_details.formulaire_arrivee.delai && <p className="text-xs text-amber-700 leading-relaxed">{pays.entree_details.formulaire_arrivee.delai}</p>}
-                  {pays.entree_details.formulaire_arrivee.note && <p className="text-xs text-gray-600 leading-relaxed mt-1">{pays.entree_details.formulaire_arrivee.note}</p>}
-                </div>
+                <InfoBlock type="alerte">
+                  <p className="font-semibold mb-1">{pays.entree_details.formulaire_arrivee.nom} obligatoire</p>
+                  {pays.entree_details.formulaire_arrivee.delai && <p className="leading-relaxed">{pays.entree_details.formulaire_arrivee.delai}</p>}
+                  {pays.entree_details.formulaire_arrivee.note && <p className="leading-relaxed mt-1">{pays.entree_details.formulaire_arrivee.note}</p>}
+                </InfoBlock>
               )}
               {pays.entree_details?.validite_passeport && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">📔 Passeport</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Passeport</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.validite_passeport}</p>
                 </div>
               )}
               {pays.entree_details?.billet_retour && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">🎫 Billet retour</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Billet retour</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.billet_retour}</p>
                 </div>
               )}
               {pays.entree_details?.preuve_fonds && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">💵 Preuve de fonds</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Preuve de fonds</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.preuve_fonds}</p>
                 </div>
               )}
               {pays.entree_details?.prolongation && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">⏳ Prolongation de séjour</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Prolongation de séjour</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.prolongation}</p>
                 </div>
               )}
@@ -324,24 +323,24 @@ export default function VoyageTabs({
           <InfoCard id="vaccins" title="💉 Vaccins" gradient={INFO_GRADIENTS[2]} photo="/images/infos/vaccins.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('vaccins')}>
             <div className="flex flex-col gap-2.5">
               <div>
-                <p className="text-sm font-semibold text-gray-800 mb-1">{pays.vaccins_obligatoires ? '⚠️ Obligatoires' : 'Aucun obligatoire'}</p>
+                <p className="text-sm font-semibold text-gray-800 mb-1">{pays.vaccins_obligatoires ? 'Obligatoires' : 'Aucun obligatoire'}</p>
                 {pays.vaccins_recommandes && <p className="text-xs text-gray-500 leading-relaxed">{pays.vaccins_recommandes}</p>}
               </div>
               {pays.sante_details?.paludisme && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">🦟 Paludisme</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Paludisme</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.sante_details.paludisme}</p>
                 </div>
               )}
               {pays.sante_details?.dengue && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">🦟 Dengue</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Dengue</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.sante_details.dengue}</p>
                 </div>
               )}
               {pays.sante_details?.eau && (
-                <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">💧 Eau</p>
+                <div>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Eau potable</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.sante_details.eau}</p>
                 </div>
               )}
@@ -352,14 +351,12 @@ export default function VoyageTabs({
             <InfoCard id="zones" title="🚨 Zones à éviter" gradient={INFO_GRADIENTS[3]} photo="/images/infos/zones.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('zones')}>
               <div className="flex flex-col gap-2">
                 {(pays.zones_deconseillees as { zone: string; niveau: string; note: string }[]).map((z, i) => {
-                  const style = z.niveau === 'rouge'
-                    ? { bg: 'bg-red-50 border-red-200', text: 'text-red-700', emoji: '🔴' }
-                    : { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', emoji: '🟠' }
+                  const emoji = z.niveau === 'rouge' ? '🔴' : '🟠'
                   return (
-                    <div key={i} className={`rounded-xl px-3 py-2.5 border ${style.bg}`}>
-                      <p className={`text-xs font-semibold ${style.text} mb-1`}>{style.emoji} {z.zone}</p>
-                      <p className="text-xs text-gray-600 leading-relaxed">{z.note}</p>
-                    </div>
+                    <InfoBlock key={i} type="alerte">
+                      <p className="font-semibold mb-1">{z.zone}</p>
+                      <p className="leading-relaxed">{z.note}</p>
+                    </InfoBlock>
                   )
                 })}
               </div>
@@ -411,14 +408,14 @@ export default function VoyageTabs({
               )}
               {pays.ambassade_info?.adresse && (
                 <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">🇫🇷 Ambassade de France</p>
+                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Ambassade de France</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.ambassade_info.adresse}</p>
                   {pays.ambassade_info.tel_urgence && <p className="text-xs text-gray-500 leading-relaxed mt-1">Urgence consulaire : {pays.ambassade_info.tel_urgence}</p>}
                 </div>
               )}
               {paysCode && (
                 <Link href={`/outils?pays=${paysCode}&open=urgences`}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl border bg-blue-50 border-blue-100 text-xs font-medium text-blue-700">
+                  className="flex items-center justify-between text-xs font-semibold text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
                   <span>Voir dans Outils (n&apos;importe quel pays)</span>
                   <span className="opacity-60">↗</span>
                 </Link>
@@ -487,7 +484,7 @@ export default function VoyageTabs({
                 </ul>
                 {paysCode && (
                   <Link href={`/outils?pays=${paysCode}&open=medical`}
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl border bg-blue-50 border-blue-100 text-xs font-medium text-blue-700">
+                    className="flex items-center justify-between text-xs font-semibold text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
                     <span>Voir dans Outils (n&apos;importe quel pays)</span>
                     <span className="opacity-60">↗</span>
                   </Link>
@@ -501,7 +498,7 @@ export default function VoyageTabs({
               <div className="flex flex-col gap-2">
                 {(pays.liens_officiels as { label: string; url: string; type: string }[]).map((lien, i) => (
                   <a key={i} href={lien.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-between px-3 py-2 rounded-xl border bg-blue-50 border-blue-100 text-xs font-medium text-blue-700">
+                    className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-gray-50 rounded-xl px-3 py-2">
                     <span>{lien.label}</span><span className="opacity-60">↗</span>
                   </a>
                 ))}
@@ -521,10 +518,7 @@ export default function VoyageTabs({
       {active === 'checklist' && (
         <div className="flex flex-col gap-4">
           {!isOrganisateur && modeGestion === 'partage' && (
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl px-4 py-3 text-sm text-blue-700 flex items-center gap-2">
-              <span>🔗</span>
-              <span>Ta checklist et ta valise personnelles pour ce voyage partagé.</span>
-            </div>
+            <p className="text-xs text-gray-500 leading-relaxed">Ta checklist et ta valise personnelles pour ce voyage partagé.</p>
           )}
           <ChecklistSection
             valises={valises}

@@ -126,7 +126,6 @@ export default function MedicamentsTraducteur() {
   const [pays, setPays] = useState<{ pays: string; emoji: string } | null>(null)
   const [medicament, setMedicament] = useState<Medicament | null>(null)
   const [search, setSearch] = useState('')
-  const [showDropdown, setShowDropdown] = useState(false)
 
   const paysFiltered = ALL_COUNTRIES.filter(c =>
     c.pays.toLowerCase().includes(search.toLowerCase())
@@ -134,8 +133,7 @@ export default function MedicamentsTraducteur() {
 
   function handleSelectPays(c: { pays: string; emoji: string }) {
     setPays(c)
-    setSearch(c.pays)
-    setShowDropdown(false)
+    setSearch('')
   }
 
   const medsForPays = pays
@@ -154,28 +152,24 @@ export default function MedicamentsTraducteur() {
 
       {/* Étape 1 : Choix du pays */}
       {!pays && (
-        <div className="relative">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Destination</p>
           <input
             type="text"
             value={search}
-            onChange={e => { setSearch(e.target.value); setShowDropdown(true) }}
-            onFocus={() => setShowDropdown(true)}
-            onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Rechercher un pays..."
             className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
           />
-          {showDropdown && paysFiltered.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
-              {paysFiltered.map(c => (
-                <button key={c.pays} type="button" onMouseDown={() => handleSelectPays(c)}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm">
-                  <span className="text-xl">{c.emoji}</span>
-                  <span className="text-gray-800">{c.pays}</span>
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-col gap-1 rounded-2xl border border-gray-100 bg-white overflow-hidden">
+            {paysFiltered.map(c => (
+              <button key={c.pays} type="button" onClick={() => handleSelectPays(c)}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left transition text-sm border-b border-gray-50 last:border-0">
+                <span className="text-xl">{c.emoji}</span>
+                <span className="text-gray-800">{c.pays}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

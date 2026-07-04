@@ -303,12 +303,9 @@ export default function MedicamentsTraducteur() {
             <div className="w-full bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
               {suggestions.map(m => (
                 <button key={m.generique} onClick={() => selectMedicament(m)}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
-                  <span className="text-xl">{m.emoji}</span>
-                  <div>
-                    <p className="font-semibold text-gray-800">{m.nom_fr.join(' / ')}</p>
-                    <p className="text-xs text-gray-400">{m.categorie}</p>
-                  </div>
+                  className="w-full flex flex-col px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
+                  <p className="font-semibold text-gray-800">{m.nom_fr.join(' / ')}</p>
+                  <p className="text-xs text-gray-400 italic">{m.categorie}</p>
                 </button>
               ))}
             </div>
@@ -322,7 +319,7 @@ export default function MedicamentsTraducteur() {
           <button onClick={reset}
             className="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-gray-600 transition self-start">
             <span>←</span>
-            <span>{medicament.emoji} {medicament.nom_fr[0]}</span>
+            <span>{medicament.nom_fr[0]}</span>
           </button>
           <div className="relative">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
@@ -345,7 +342,7 @@ export default function MedicamentsTraducteur() {
           <button onClick={() => setPays(null)}
             className="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-gray-600 transition self-start">
             <span>←</span>
-            <span>{medicament.emoji} {medicament.nom_fr[0]} · {pays.pays}</span>
+            <span>{medicament.nom_fr[0]} · {pays.pays}</span>
           </button>
 
           <div className="rounded-2xl px-4 py-4 flex flex-col gap-3" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>

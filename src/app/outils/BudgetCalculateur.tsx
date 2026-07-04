@@ -288,10 +288,6 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
         <p style={{ color: '#9CA3AF', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>
           Pas de données disponibles pour cette destination.
         </p>
-      ) : (
-        <p style={{ color: '#D1D5DB', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
-          Sélectionne une destination pour voir l&apos;estimation.
-        </p>
       )}
     </div>
   )

@@ -115,7 +115,7 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
   const [search, setSearch] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const [jours, setJours] = useState(7)
-  const [personnes, setPersonnes] = useState(2)
+  const [personnes, setPersonnes] = useState(1)
   const [style, setStyle] = useState<Style>('confort')
 
   const paysFiltered = pays.filter(p =>

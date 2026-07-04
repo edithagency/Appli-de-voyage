@@ -375,8 +375,7 @@ export default function MedicamentsTraducteur() {
             <input
               type="text"
               value={destSearch}
-              onChange={e => { setDestSearch(e.target.value); setShowDestList(true) }}
-              onFocus={() => setShowDestList(true)}
+              onChange={e => { setDestSearch(e.target.value); setShowDestList(e.target.value.length > 0) }}
               onBlur={() => setTimeout(() => setShowDestList(false), 150)}
               placeholder="Rechercher un pays..."
               className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"

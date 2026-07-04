@@ -288,7 +288,7 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
         <p style={{ color: '#9CA3AF', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>
           Pas de données disponibles pour cette destination.
         </p>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -161,15 +161,17 @@ export default function MedicamentsTraducteur() {
             placeholder="Rechercher un pays..."
             className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
           />
-          <div className="flex flex-col gap-1 rounded-2xl border border-gray-100 bg-white overflow-hidden">
-            {paysFiltered.map(c => (
-              <button key={c.pays} type="button" onClick={() => handleSelectPays(c)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left transition text-sm border-b border-gray-50 last:border-0">
-                <span className="text-xl">{c.emoji}</span>
-                <span className="text-gray-800">{c.pays}</span>
-              </button>
-            ))}
-          </div>
+          {paysFiltered.length > 0 && (
+            <div className="w-full bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+              {paysFiltered.map(c => (
+                <button key={c.pays} type="button" onClick={() => handleSelectPays(c)}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm">
+                  <span className="text-xl">{c.emoji}</span>
+                  <span className="text-gray-800">{c.pays}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

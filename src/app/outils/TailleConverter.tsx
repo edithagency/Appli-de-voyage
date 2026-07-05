@@ -47,14 +47,14 @@ const VETEMENTS_HOMME = [
 type Category = 'chaussures_h' | 'chaussures_f' | 'vetements_f' | 'vetements_h'
 
 const CATS: { key: Category; label: string; emoji: string }[] = [
-  { key: 'chaussures_h', label: 'Chaussures homme', emoji: '👞' },
-  { key: 'chaussures_f', label: 'Chaussures femme', emoji: '👠' },
   { key: 'vetements_f',  label: 'Vêtements femme',  emoji: '👗' },
   { key: 'vetements_h',  label: 'Vêtements homme',  emoji: '👕' },
+  { key: 'chaussures_f', label: 'Chaussures femme', emoji: '👠' },
+  { key: 'chaussures_h', label: 'Chaussures homme', emoji: '👞' },
 ]
 
 export default function TailleConverter() {
-  const [cat, setCat] = useState<Category>('chaussures_h')
+  const [cat, setCat] = useState<Category>('vetements_f')
 
   const rows = cat === 'chaussures_h' ? CHAUSSURES_HOMME
     : cat === 'chaussures_f' ? CHAUSSURES_FEMME

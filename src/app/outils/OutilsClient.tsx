@@ -243,7 +243,7 @@ export default function OutilsClient({
         backdropClose={false}
       >
         {openTool === 'devises' && <DeviseGenerique />}
-        {openTool === 'tailles' && <TailleConverter />}
+        {openTool === 'tailles' && <TailleConverter pays={pays} />}
         {openTool === 'horaire' && <DecalageHoraire />}
         {openTool === 'bagages' && <ReglesBagages />}
         {openTool === 'cartes' && <ComparateurCartes />}

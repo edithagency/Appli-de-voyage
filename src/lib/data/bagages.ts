@@ -26,7 +26,7 @@ export type RegleCompagnie = {
 
 export const reglesBagages: Record<string, RegleCompagnie> = {
   air_france: {
-    lien_officiel: 'https://www.airfrance.fr/FR/fr/common/guidevoyageur/pratique/bagage-cabine-airfrance.htm',
+    lien_officiel: 'https://wwws.airfrance.fr/information/bagages/bagage-cabine-soute',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -47,7 +47,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   easyjet: {
-    lien_officiel: 'https://www.easyjet.com/fr/bagages',
+    lien_officiel: 'https://www.easyjet.com/fr/aide/bagage/bagage-a-main',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -68,7 +68,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   ryanair: {
-    lien_officiel: 'https://www.ryanair.com/fr/fr/informations-utiles/aide-aux-passagers/politique-bagages',
+    lien_officiel: 'https://help.ryanair.com/hc/en-gb/articles/12888036565521-Ryanair-s-Bag-Policy',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -89,7 +89,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   transavia: {
-    lien_officiel: 'https://www.transavia.com/fr-FR/service-et-bagages/bagages/',
+    lien_officiel: 'https://www.transavia.com/aide/fr-fr/bagages/bagages-cabine',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -237,7 +237,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   british: {
-    lien_officiel: 'https://www.britishairways.com/fr-fr/information/baggage-essentials/hand-baggage-allowances',
+    lien_officiel: 'https://www.britishairways.com/en-gb/information/baggage-essentials/hand-baggage-allowances',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {

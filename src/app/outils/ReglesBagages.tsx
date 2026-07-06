@@ -93,7 +93,7 @@ export default function ReglesBagages() {
     : null
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5" style={{ minHeight: 220 }}>
 
       {/* ÉTAPE 1 */}
       <div className="relative">

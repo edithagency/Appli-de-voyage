@@ -1,41 +1,132 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
 const VILLES = [
-  { label: 'Paris',         tz: 'Europe/Paris' },
-  { label: 'Londres',       tz: 'Europe/London' },
-  { label: 'Lisbonne',      tz: 'Europe/Lisbon' },
-  { label: 'Madrid',        tz: 'Europe/Madrid' },
-  { label: 'Marrakech',     tz: 'Africa/Casablanca' },
-  { label: 'Tunis',         tz: 'Africa/Tunis' },
-  { label: 'Le Caire',      tz: 'Africa/Cairo' },
-  { label: 'Dakar',         tz: 'Africa/Dakar' },
-  { label: 'Nairobi',       tz: 'Africa/Nairobi' },
-  { label: 'Johannesburg',  tz: 'Africa/Johannesburg' },
-  { label: 'Moscou',        tz: 'Europe/Moscow' },
-  { label: 'Istanbul',      tz: 'Europe/Istanbul' },
-  { label: 'Dubaï',         tz: 'Asia/Dubai' },
-  { label: 'Mumbai',        tz: 'Asia/Kolkata' },
-  { label: 'Bangkok',       tz: 'Asia/Bangkok' },
-  { label: 'Bali',          tz: 'Asia/Makassar' },
-  { label: 'Singapour',     tz: 'Asia/Singapore' },
-  { label: 'Hong Kong',     tz: 'Asia/Hong_Kong' },
-  { label: 'Pékin',         tz: 'Asia/Shanghai' },
-  { label: 'Tokyo',         tz: 'Asia/Tokyo' },
-  { label: 'Séoul',         tz: 'Asia/Seoul' },
-  { label: 'Sydney',        tz: 'Australia/Sydney' },
-  { label: 'Auckland',      tz: 'Pacific/Auckland' },
-  { label: 'New York',      tz: 'America/New_York' },
-  { label: 'Montréal',      tz: 'America/Toronto' },
-  { label: 'Chicago',       tz: 'America/Chicago' },
-  { label: 'Los Angeles',   tz: 'America/Los_Angeles' },
-  { label: 'Mexico',        tz: 'America/Mexico_City' },
-  { label: 'São Paulo',     tz: 'America/Sao_Paulo' },
-  { label: 'Buenos Aires',  tz: 'America/Argentina/Buenos_Aires' },
+  // Europe
+  { label: 'Paris',          tz: 'Europe/Paris' },
+  { label: 'Londres',        tz: 'Europe/London' },
+  { label: 'Lisbonne',       tz: 'Europe/Lisbon' },
+  { label: 'Madrid',         tz: 'Europe/Madrid' },
+  { label: 'Barcelone',      tz: 'Europe/Madrid' },
+  { label: 'Rome',           tz: 'Europe/Rome' },
+  { label: 'Amsterdam',      tz: 'Europe/Amsterdam' },
+  { label: 'Berlin',         tz: 'Europe/Berlin' },
+  { label: 'Prague',         tz: 'Europe/Prague' },
+  { label: 'Vienne',         tz: 'Europe/Vienna' },
+  { label: 'Zurich',         tz: 'Europe/Zurich' },
+  { label: 'Genève',         tz: 'Europe/Zurich' },
+  { label: 'Bruxelles',      tz: 'Europe/Brussels' },
+  { label: 'Stockholm',      tz: 'Europe/Stockholm' },
+  { label: 'Oslo',           tz: 'Europe/Oslo' },
+  { label: 'Copenhague',     tz: 'Europe/Copenhagen' },
+  { label: 'Helsinki',       tz: 'Europe/Helsinki' },
+  { label: 'Dublin',         tz: 'Europe/Dublin' },
+  { label: 'Reykjavik',      tz: 'Atlantic/Reykjavik' },
+  { label: 'Varsovie',       tz: 'Europe/Warsaw' },
+  { label: 'Budapest',       tz: 'Europe/Budapest' },
+  { label: 'Bucarest',       tz: 'Europe/Bucharest' },
+  { label: 'Athènes',        tz: 'Europe/Athens' },
+  { label: 'Istanbul',       tz: 'Europe/Istanbul' },
+  { label: 'Moscou',         tz: 'Europe/Moscow' },
+  // Afrique
+  { label: 'Casablanca',     tz: 'Africa/Casablanca' },
+  { label: 'Marrakech',      tz: 'Africa/Casablanca' },
+  { label: 'Tunis',          tz: 'Africa/Tunis' },
+  { label: 'Alger',          tz: 'Africa/Algiers' },
+  { label: 'Le Caire',       tz: 'Africa/Cairo' },
+  { label: 'Dakar',          tz: 'Africa/Dakar' },
+  { label: 'Abidjan',        tz: 'Africa/Abidjan' },
+  { label: 'Lagos',          tz: 'Africa/Lagos' },
+  { label: 'Accra',          tz: 'Africa/Accra' },
+  { label: 'Nairobi',        tz: 'Africa/Nairobi' },
+  { label: 'Addis-Abeba',    tz: 'Africa/Addis_Ababa' },
+  { label: 'Dar es Salaam',  tz: 'Africa/Dar_es_Salaam' },
+  { label: 'Johannesburg',   tz: 'Africa/Johannesburg' },
+  { label: 'Antananarivo',   tz: 'Indian/Antananarivo' },
+  // Moyen-Orient
+  { label: 'Dubaï',          tz: 'Asia/Dubai' },
+  { label: 'Abou Dabi',      tz: 'Asia/Dubai' },
+  { label: 'Riyad',          tz: 'Asia/Riyadh' },
+  { label: 'Doha',           tz: 'Asia/Qatar' },
+  { label: 'Koweït',         tz: 'Asia/Kuwait' },
+  { label: 'Mascate',        tz: 'Asia/Muscat' },
+  { label: 'Amman',          tz: 'Asia/Amman' },
+  { label: 'Beyrouth',       tz: 'Asia/Beirut' },
+  { label: 'Tel Aviv',       tz: 'Asia/Jerusalem' },
+  { label: 'Téhéran',        tz: 'Asia/Tehran' },
+  // Asie centrale & du Sud
+  { label: 'Kaboul',         tz: 'Asia/Kabul' },
+  { label: 'Karachi',        tz: 'Asia/Karachi' },
+  { label: 'Islamabad',      tz: 'Asia/Karachi' },
+  { label: 'Delhi',          tz: 'Asia/Kolkata' },
+  { label: 'Mumbai',         tz: 'Asia/Kolkata' },
+  { label: 'Katmandou',      tz: 'Asia/Kathmandu' },
+  { label: 'Dacca',          tz: 'Asia/Dhaka' },
+  { label: 'Colombo',        tz: 'Asia/Colombo' },
+  { label: 'Tachkent',       tz: 'Asia/Tashkent' },
+  { label: 'Almaty',         tz: 'Asia/Almaty' },
+  { label: 'Tbilissi',       tz: 'Asia/Tbilisi' },
+  { label: 'Bakou',          tz: 'Asia/Baku' },
+  // Asie du Sud-Est & Est
+  { label: 'Bangkok',        tz: 'Asia/Bangkok' },
+  { label: 'Hanoï',          tz: 'Asia/Bangkok' },
+  { label: 'Ho Chi Minh',    tz: 'Asia/Ho_Chi_Minh' },
+  { label: 'Phnom Penh',     tz: 'Asia/Phnom_Penh' },
+  { label: 'Vientiane',      tz: 'Asia/Vientiane' },
+  { label: 'Yangon',         tz: 'Asia/Yangon' },
+  { label: 'Bali',           tz: 'Asia/Makassar' },
+  { label: 'Jakarta',        tz: 'Asia/Jakarta' },
+  { label: 'Singapour',      tz: 'Asia/Singapore' },
+  { label: 'Kuala Lumpur',   tz: 'Asia/Kuala_Lumpur' },
+  { label: 'Manille',        tz: 'Asia/Manila' },
+  { label: 'Hong Kong',      tz: 'Asia/Hong_Kong' },
+  { label: 'Taipei',         tz: 'Asia/Taipei' },
+  { label: 'Pékin',          tz: 'Asia/Shanghai' },
+  { label: 'Shanghai',       tz: 'Asia/Shanghai' },
+  { label: 'Tokyo',          tz: 'Asia/Tokyo' },
+  { label: 'Séoul',          tz: 'Asia/Seoul' },
+  // Océanie
+  { label: 'Sydney',         tz: 'Australia/Sydney' },
+  { label: 'Melbourne',      tz: 'Australia/Melbourne' },
+  { label: 'Perth',          tz: 'Australia/Perth' },
+  { label: 'Auckland',       tz: 'Pacific/Auckland' },
+  { label: 'Nouméa',         tz: 'Pacific/Noumea' },
+  { label: 'Papeete',        tz: 'Pacific/Tahiti' },
+  { label: 'Fidji',          tz: 'Pacific/Fiji' },
+  // Amériques
+  { label: 'New York',       tz: 'America/New_York' },
+  { label: 'Miami',          tz: 'America/New_York' },
+  { label: 'Washington',     tz: 'America/New_York' },
+  { label: 'Toronto',        tz: 'America/Toronto' },
+  { label: 'Montréal',       tz: 'America/Toronto' },
+  { label: 'Chicago',        tz: 'America/Chicago' },
+  { label: 'Los Angeles',    tz: 'America/Los_Angeles' },
+  { label: 'San Francisco',  tz: 'America/Los_Angeles' },
+  { label: 'Vancouver',      tz: 'America/Vancouver' },
+  { label: 'Mexico',         tz: 'America/Mexico_City' },
+  { label: 'La Havane',      tz: 'America/Havana' },
+  { label: 'Panama',         tz: 'America/Panama' },
+  { label: 'Bogotá',         tz: 'America/Bogota' },
+  { label: 'Lima',           tz: 'America/Lima' },
+  { label: 'São Paulo',      tz: 'America/Sao_Paulo' },
+  { label: 'Rio de Janeiro', tz: 'America/Sao_Paulo' },
+  { label: 'Santiago',       tz: 'America/Santiago' },
+  { label: 'Buenos Aires',   tz: 'America/Argentina/Buenos_Aires' },
+  { label: 'Caracas',        tz: 'America/Caracas' },
+  // France d'outre-mer
+  { label: 'Fort-de-France', tz: 'America/Martinique' },
+  { label: 'Pointe-à-Pitre', tz: 'America/Guadeloupe' },
+  { label: 'Cayenne',        tz: 'America/Cayenne' },
+  { label: 'La Réunion',     tz: 'Indian/Reunion' },
 ]
 
 type Ville = typeof VILLES[0]
+
+function matchVille(label: string, q: string): boolean {
+  const ql = q.toLowerCase()
+  return label.toLowerCase().split(/[\s\-]+/).some(w => w.startsWith(ql))
+}
 
 function loadVille(key: string, fallback: Ville): Ville {
   if (typeof window === 'undefined') return fallback
@@ -65,8 +156,8 @@ function getOffset(date: Date, tz: string): number {
 
 export default function DecalageHoraire() {
   const [now,   setNow]   = useState(new Date())
-  const [city1, setCity1] = useState<Ville>(() => loadVille('horaire_1', { label: 'Paris',   tz: 'Europe/Paris'   }))
-  const [city2, setCity2] = useState<Ville>(() => loadVille('horaire_2', { label: 'Bangkok', tz: 'Asia/Bangkok'   }))
+  const [city1, setCity1] = useState<Ville>(() => loadVille('horaire_1', { label: 'Paris',   tz: 'Europe/Paris' }))
+  const [city2, setCity2] = useState<Ville>(() => loadVille('horaire_2', { label: 'Bangkok', tz: 'Asia/Bangkok' }))
 
   const [search1, setSearch1] = useState(city1.label)
   const [search2, setSearch2] = useState(city2.label)
@@ -87,11 +178,11 @@ export default function DecalageHoraire() {
     setSearch2(v.label); setShowList2(false)
   }
 
-  const filtered1 = showList1
-    ? VILLES.filter(v => v.label.toLowerCase().includes(search1.toLowerCase())).slice(0, 6)
+  const filtered1 = showList1 && search1.trim()
+    ? VILLES.filter(v => matchVille(v.label, search1)).slice(0, 6)
     : []
-  const filtered2 = showList2
-    ? VILLES.filter(v => v.label.toLowerCase().includes(search2.toLowerCase())).slice(0, 6)
+  const filtered2 = showList2 && search2.trim()
+    ? VILLES.filter(v => matchVille(v.label, search2)).slice(0, 6)
     : []
 
   const diff = getOffset(now, city2.tz) - getOffset(now, city1.tz)
@@ -109,6 +200,7 @@ export default function DecalageHoraire() {
           <input
             type="text"
             value={search1}
+            onFocus={() => { setSearch1(''); setShowList1(false) }}
             onChange={e => { setSearch1(e.target.value); setShowList1(e.target.value.length > 0) }}
             onBlur={() => setTimeout(() => { setShowList1(false); setSearch1(city1.label) }, 150)}
             placeholder="Rechercher…"
@@ -120,6 +212,7 @@ export default function DecalageHoraire() {
           <input
             type="text"
             value={search2}
+            onFocus={() => { setSearch2(''); setShowList2(false) }}
             onChange={e => { setSearch2(e.target.value); setShowList2(e.target.value.length > 0) }}
             onBlur={() => setTimeout(() => { setShowList2(false); setSearch2(city2.label) }, 150)}
             placeholder="Rechercher…"
@@ -132,7 +225,7 @@ export default function DecalageHoraire() {
       {showList1 && filtered1.length > 0 && (
         <div className="w-full -mt-2 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
           {filtered1.map(v => (
-            <button key={v.tz} type="button"
+            <button key={v.label} type="button"
               onMouseDown={() => select1(v)}
               className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
               {v.label}
@@ -143,7 +236,7 @@ export default function DecalageHoraire() {
       {showList2 && filtered2.length > 0 && (
         <div className="w-full -mt-2 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
           {filtered2.map(v => (
-            <button key={v.tz} type="button"
+            <button key={v.label} type="button"
               onMouseDown={() => select2(v)}
               className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
               {v.label}

@@ -9,11 +9,9 @@ import DeviseGenerique from './DeviseGenerique'
 import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
 import ReglesBagages from './ReglesBagages'
-import ComparateurCartes from './ComparateurCartes'
 import TrousseMedicale from './TrousseMedicale'
 import PhrasesEssentielles from './PhrasesEssentielles'
 import NumerosUrgence, { type PaysOutil } from './NumerosUrgence'
-import EtSiPartaisDemain from './EtSiPartaisDemain'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
 import { toggleFavoriOutil } from './favoris-actions'
@@ -54,13 +52,6 @@ const OUTILS = [
     premium: false,
   },
   {
-    id: 'cartes',
-    emoji: '💳',
-    titre: 'Comparateur cartes bancaires',
-    description: "Frais à l'étranger · Revolut, Wise, N26...",
-    premium: false,
-  },
-  {
     id: 'medical',
     emoji: '💊',
     titre: 'Trousse médicale',
@@ -79,13 +70,6 @@ const OUTILS = [
     emoji: '🚨',
     titre: "Numéros d'urgence",
     description: 'Police · Ambulance · Ambassade par pays',
-    premium: false,
-  },
-  {
-    id: 'demain',
-    emoji: '⚡',
-    titre: 'Et si je partais demain ?',
-    description: 'Vérifier ma préparation instantanément',
     premium: false,
   },
   {
@@ -246,11 +230,9 @@ export default function OutilsClient({
         {openTool === 'tailles' && <TailleConverter pays={pays} />}
         {openTool === 'horaire' && <DecalageHoraire />}
         {openTool === 'bagages' && <ReglesBagages />}
-        {openTool === 'cartes' && <ComparateurCartes />}
         {openTool === 'medical' && <TrousseMedicale pays={pays} defaultPaysCode={defaultPaysCode} />}
         {openTool === 'phrases' && <PhrasesEssentielles pays={pays} defaultPaysCode={defaultPaysCode} />}
         {openTool === 'urgences' && <NumerosUrgence pays={pays} defaultPaysCode={defaultPaysCode} />}
-        {openTool === 'demain' && <EtSiPartaisDemain />}
         {openTool === 'permis' && <PermisGuide />}
         {openTool === 'medicaments' && <MedicamentsTraducteur />}
         {openTool === 'budget' && <BudgetCalculateur pays={pays} />}

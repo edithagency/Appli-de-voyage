@@ -91,11 +91,8 @@ export default function ReglesBagages() {
 
       {/* ÉTAPE 1 */}
       <div>
-        <p style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', margin: '0 0 2px' }}>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
           Quelle est ta compagnie ?
-        </p>
-        <p style={{ fontSize: 12, color: '#9CA3AF', fontStyle: 'italic', margin: '0 0 12px' }}>
-          Sélectionne la compagnie de ton vol aller
         </p>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
           {COMPAGNIES.map(c => {

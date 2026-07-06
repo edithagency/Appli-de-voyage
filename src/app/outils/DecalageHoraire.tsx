@@ -14,7 +14,9 @@ function loadVille(key: string, fallback: Ville): Ville {
   const label = localStorage.getItem(key + '_label')
   const lat   = localStorage.getItem(key + '_lat')
   const lon   = localStorage.getItem(key + '_lon')
-  return tz && label ? { tz, label, lat: lat ? +lat : undefined, lon: lon ? +lon : undefined } : fallback
+  // Si lat/lon absents (ancien format), on repart des défauts pour avoir le globe
+  if (!tz || !label || !lat || !lon) return fallback
+  return { tz, label, lat: +lat, lon: +lon }
 }
 
 function saveVille(key: string, v: Ville) {
@@ -125,8 +127,8 @@ export default function DecalageHoraire() {
     ? { bg: '#F3F4F6', text: '#6B7280' }
     : { bg: '#e7f8ce', text: '#2D5A1B' }
 
-  const globeCity1 = p1.city.lat != null ? { label: p1.city.label, lat: p1.city.lat!, lon: p1.city.lon! } : null
-  const globeCity2 = p2.city.lat != null ? { label: p2.city.label, lat: p2.city.lat!, lon: p2.city.lon! } : null
+  const globeCity1 = { label: p1.city.label, lat: p1.city.lat ?? DEFAULT_1.lat!, lon: p1.city.lon ?? DEFAULT_1.lon! }
+  const globeCity2 = { label: p2.city.label, lat: p2.city.lat ?? DEFAULT_2.lat!, lon: p2.city.lon ?? DEFAULT_2.lon! }
 
   return (
     <div className="flex flex-col gap-4">
@@ -195,9 +197,7 @@ export default function DecalageHoraire() {
       </div>
 
       {/* Globe 3D */}
-      {globeCity1 && globeCity2 && (
-        <GlobeViz city1={globeCity1} city2={globeCity2} />
-      )}
+      <GlobeViz city1={globeCity1} city2={globeCity2} />
     </div>
   )
 }

@@ -177,9 +177,11 @@ export default function ReglesBagages() {
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: '0 0 1px' }}>
                       {bloc.titre}
                     </p>
-                    <p style={{ fontSize: 11, color: '#6B7280', margin: 0 }}>
-                      {data.dimensions} · {data.poids}
-                    </p>
+                    {data.statut !== 'non_autorise' && (
+                      <p style={{ fontSize: 11, color: '#6B7280', margin: 0 }}>
+                        {data.dimensions} · {data.poids}
+                      </p>
+                    )}
                   </div>
                   <div style={{
                     padding: '4px 10px',

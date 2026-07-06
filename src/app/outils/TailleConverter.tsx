@@ -170,9 +170,6 @@ export default function TailleConverter({ pays }: { pays: PaysOutil[] }) {
                 <th className="py-2.5 px-4 text-left text-xs font-bold text-gray-500">
                   {isShoes ? 'Pointure FR' : 'Taille FR'}
                 </th>
-                {!isShoes && cat === 'vetements_h' && (
-                  <th className="py-2.5 px-3 text-center text-xs font-bold text-gray-400">Poitrine</th>
-                )}
                 <th className="py-2.5 px-4 text-center text-xs font-bold" style={{ color: '#36A6B2' }}>
                   {selectedPays?.emoji} {selectedPays?.nom_fr}
                 </th>
@@ -182,11 +179,6 @@ export default function TailleConverter({ pays }: { pays: PaysOutil[] }) {
               {rows.map((r, i) => (
                 <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                   <td className="py-2.5 px-4 font-bold text-gray-800">{r.fr}</td>
-                  {!isShoes && cat === 'vetements_h' && (
-                    <td className="py-2.5 px-3 text-center text-gray-400 text-xs">
-                      {(r as typeof VETEMENTS_HOMME[0]).chest}
-                    </td>
-                  )}
                   <td className="py-2.5 px-4 text-center font-semibold" style={{ color: '#004850' }}>
                     {(r as Record<string, string | number>)[effectiveSys] ?? '—'}
                   </td>
@@ -200,9 +192,6 @@ export default function TailleConverter({ pays }: { pays: PaysOutil[] }) {
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="py-2.5 px-3 text-left text-xs font-bold text-gray-500">FR</th>
-                {!isShoes && cat === 'vetements_h' && (
-                  <th className="py-2.5 px-2 text-center text-xs font-bold text-gray-400">Poitrine</th>
-                )}
                 <th className="py-2.5 px-2 text-center text-xs font-bold text-gray-500">🇺🇸 US</th>
                 <th className="py-2.5 px-2 text-center text-xs font-bold text-gray-500">🇬🇧 UK</th>
                 {isWomenClothes && <th className="py-2.5 px-2 text-center text-xs font-bold text-gray-500">🇮🇹 IT</th>}
@@ -215,11 +204,6 @@ export default function TailleConverter({ pays }: { pays: PaysOutil[] }) {
               {rows.map((r, i) => (
                 <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                   <td className="py-2 px-3 font-bold text-gray-800">{r.fr}</td>
-                  {!isShoes && cat === 'vetements_h' && (
-                    <td className="py-2 px-2 text-center text-gray-400 text-xs">
-                      {(r as typeof VETEMENTS_HOMME[0]).chest}
-                    </td>
-                  )}
                   <td className="py-2 px-2 text-center text-gray-600 text-xs">{(r as Record<string, string | number>).us}</td>
                   <td className="py-2 px-2 text-center text-gray-600 text-xs">{(r as Record<string, string | number>).uk}</td>
                   {isWomenClothes && <td className="py-2 px-2 text-center text-gray-600 text-xs">{(r as typeof VETEMENTS_FEMME[0]).it}</td>}

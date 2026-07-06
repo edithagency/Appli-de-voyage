@@ -4,18 +4,18 @@ import { useState } from 'react'
 import { reglesBagages, type Statut } from '@/lib/data/bagages'
 
 const COMPAGNIES = [
-  { id: 'air_france', nom: 'Air France',       logo: '🇫🇷' },
-  { id: 'easyjet',   nom: 'EasyJet',           logo: '🟠' },
-  { id: 'ryanair',   nom: 'Ryanair',           logo: '🔵' },
-  { id: 'transavia', nom: 'Transavia',         logo: '🟢' },
-  { id: 'vueling',   nom: 'Vueling',           logo: '🟡' },
-  { id: 'emirates',  nom: 'Emirates',          logo: '🔴' },
-  { id: 'turkish',   nom: 'Turkish Airlines',  logo: '🇹🇷' },
-  { id: 'qatar',     nom: 'Qatar Airways',     logo: '🟤' },
-  { id: 'lufthansa', nom: 'Lufthansa',         logo: '🟡' },
-  { id: 'klm',       nom: 'KLM',              logo: '🔵' },
-  { id: 'british',   nom: 'British Airways',   logo: '🇬🇧' },
-  { id: 'iberia',    nom: 'Iberia',            logo: '🇪🇸' },
+  { id: 'air_france', nom: 'Air France' },
+  { id: 'easyjet',   nom: 'EasyJet' },
+  { id: 'ryanair',   nom: 'Ryanair' },
+  { id: 'transavia', nom: 'Transavia' },
+  { id: 'vueling',   nom: 'Vueling' },
+  { id: 'emirates',  nom: 'Emirates' },
+  { id: 'turkish',   nom: 'Turkish Airlines' },
+  { id: 'qatar',     nom: 'Qatar Airways' },
+  { id: 'lufthansa', nom: 'Lufthansa' },
+  { id: 'klm',       nom: 'KLM' },
+  { id: 'british',   nom: 'British Airways' },
+  { id: 'iberia',    nom: 'Iberia' },
 ]
 
 const TYPES_BILLET = [
@@ -49,8 +49,10 @@ const inputStyle: React.CSSProperties = {
 }
 
 export default function ReglesBagages() {
-  const [compagnieId, setCompagnieId] = useState<string | null>(null)
-  const [billetId,    setBilletId]    = useState<string | null>(null)
+  const [compagnieId,   setCompagnieId]   = useState<string | null>(null)
+  const [billetId,      setBilletId]      = useState<string | null>(null)
+  const [search,        setSearch]        = useState('')
+  const [showDropdown,  setShowDropdown]  = useState(false)
   const [L, setL] = useState('')
   const [H, setH] = useState('')
   const [P, setP] = useState('')
@@ -59,11 +61,15 @@ export default function ReglesBagages() {
   const compagnie = COMPAGNIES.find(c => c.id === compagnieId) ?? null
   const regles    = compagnieId ? reglesBagages[compagnieId] : null
 
-  function selectCompagnie(id: string) {
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const filtered = COMPAGNIES.filter(c => norm(c.nom).includes(norm(search))).slice(0, 6)
+
+  function selectCompagnie(id: string, nom: string) {
     setCompagnieId(id)
+    setSearch(nom)
+    setShowDropdown(false)
     setBilletId(null)
     setL(''); setH(''); setP(''); setKg('')
-    // Si pas de distinction de tarifs, on sélectionne "basic" directement
     if (reglesBagages[id]?.pas_de_distinction) {
       setTimeout(() => setBilletId('basic'), 50)
     }
@@ -90,36 +96,30 @@ export default function ReglesBagages() {
     <div className="flex flex-col gap-5">
 
       {/* ÉTAPE 1 */}
-      <div>
+      <div className="relative">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
           Quelle est ta compagnie ?
         </p>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-          {COMPAGNIES.map(c => {
-            const isSelected = compagnieId === c.id
-            return (
-              <div key={c.id} onClick={() => selectCompagnie(c.id)} style={{
-                display: 'inline-flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 6,
-                padding: '12px 16px',
-                borderRadius: 16,
-                border: isSelected ? '2px solid #36A6B2' : '2px solid #F0F0F0',
-                background: isSelected ? '#F0FAFA' : 'white',
-                cursor: 'pointer',
-                minWidth: 80,
-                flexShrink: 0,
-                transition: 'border-color 0.15s, background 0.15s',
-              }}>
-                <span style={{ fontSize: 28 }}>{c.logo}</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#374151', textAlign: 'center', whiteSpace: 'nowrap' }}>
-                  {c.nom}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+        <input
+          type="text"
+          value={search}
+          onChange={e => { setSearch(e.target.value); setShowDropdown(true); setCompagnieId(null); setBilletId(null) }}
+          onFocus={() => setShowDropdown(true)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+          placeholder="Rechercher une compagnie..."
+          className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+        />
+        {showDropdown && search.length > 0 && filtered.length > 0 && (
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+            {filtered.map(c => (
+              <button key={c.id} type="button" onMouseDown={() => selectCompagnie(c.id, c.nom)}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm">
+                <span className="text-gray-800">{c.nom}</span>
+                {compagnieId === c.id && <span className="ml-auto text-[#36A6B2]">✓</span>}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ÉTAPE 2 — type de billet */}

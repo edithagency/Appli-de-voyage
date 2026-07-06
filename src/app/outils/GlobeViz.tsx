@@ -49,7 +49,7 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
     // — Scene & Camera —
     const scene  = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100)
-    camera.position.z = 3.0
+    camera.position.z = 4.2
 
     // — Lights —
     scene.add(new THREE.AmbientLight(0xffffff, 0.5))

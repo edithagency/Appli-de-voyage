@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import InfoBlock from '@/components/InfoBlock'
 
 const DEVISES = [
   { code: 'EUR', label: 'Euro', symbole: '€', flag: '🇪🇺' },
@@ -49,9 +50,9 @@ type Side = 'from' | 'to' | null
 export default function DeviseGenerique() {
   const [rates, setRates] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
-  const [from, setFrom] = useState('EUR')
-  const [to, setTo] = useState('USD')
-  const [valFrom, setValFrom] = useState('1')
+  const [from, setFrom] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('devise_from') : null) ?? 'EUR')
+  const [to, setTo]     = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('devise_to')   : null) ?? 'USD')
+  const [valFrom, setValFrom] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('devise_val') : null) ?? '1')
   const [valTo, setValTo] = useState('')
   const [picker, setPicker] = useState<Side>(null)
   const [search, setSearch] = useState('')
@@ -64,7 +65,10 @@ export default function DeviseGenerique() {
         const r = data.eur ?? {}
         setRates(r)
         setLoading(false)
-        setValTo(fmt(fromEur(1, 'USD', r)))
+        const savedFrom = (typeof window !== 'undefined' ? localStorage.getItem('devise_from') : null) ?? 'EUR'
+        const savedTo   = (typeof window !== 'undefined' ? localStorage.getItem('devise_to')   : null) ?? 'USD'
+        const savedVal  = parseFloat((typeof window !== 'undefined' ? localStorage.getItem('devise_val') : null) ?? '1')
+        setValTo(fmt(fromEur(toEur(isNaN(savedVal) ? 1 : savedVal, savedFrom, r), savedTo, r)))
       })
       .catch(() => setLoading(false))
   }, [])
@@ -76,6 +80,7 @@ export default function DeviseGenerique() {
 
   function handleFrom(v: string) {
     setValFrom(v)
+    localStorage.setItem('devise_val', v)
     const n = parseFloat(v)
     setValTo(isNaN(n) ? '' : fmt(fromEur(toEur(n, from, rates), to, rates)))
   }
@@ -83,16 +88,20 @@ export default function DeviseGenerique() {
   function handleTo(v: string) {
     setValTo(v)
     const n = parseFloat(v)
-    setValFrom(isNaN(n) ? '' : fmt(fromEur(toEur(n, to, rates), from, rates)))
+    const fromVal = isNaN(n) ? '' : fmt(fromEur(toEur(n, to, rates), from, rates))
+    setValFrom(fromVal)
+    localStorage.setItem('devise_val', fromVal)
   }
 
   function selectCurrency(code: string) {
     if (picker === 'from') {
       setFrom(code)
+      localStorage.setItem('devise_from', code)
       const n = parseFloat(valFrom)
       setValTo(isNaN(n) ? '' : fmt(fromEur(toEur(n, code, rates), to, rates)))
     } else {
       setTo(code)
+      localStorage.setItem('devise_to', code)
       const n = parseFloat(valFrom)
       setValTo(isNaN(n) ? '' : fmt(fromEur(toEur(n, from, rates), code, rates)))
     }
@@ -102,8 +111,11 @@ export default function DeviseGenerique() {
   function swap() {
     setFrom(to)
     setTo(from)
+    localStorage.setItem('devise_from', to)
+    localStorage.setItem('devise_to', from)
     setValFrom(valTo)
     setValTo(valFrom)
+    localStorage.setItem('devise_val', valTo)
   }
 
   const fromInfo = DEVISES.find(d => d.code === from)!
@@ -215,11 +227,10 @@ export default function DeviseGenerique() {
         </div>
       )}
 
-      <p className="text-xs text-gray-400 text-center">
-        {loading ? '' : Object.keys(rates).length > 0
-          ? '🔄 Taux BCE mis à jour quotidiennement'
-          : '⚠️ Taux indisponibles — vérifiez votre connexion'}
-      </p>
+      {!loading && (Object.keys(rates).length > 0
+        ? <InfoBlock type="disclaimer">🔄 Taux BCE mis à jour quotidiennement</InfoBlock>
+        : <InfoBlock type="alerte">⚠️ Taux indisponibles — vérifiez votre connexion</InfoBlock>
+      )}
     </div>
   )
 }

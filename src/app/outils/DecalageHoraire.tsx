@@ -136,7 +136,7 @@ export default function DecalageHoraire() {
       {/* Sélecteurs */}
       <div className="grid grid-cols-2 gap-3">
         {[p1, p2].map((p, idx) => (
-          <div key={idx}>
+          <div key={idx} className="relative">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
               Ville {idx + 1}
             </p>
@@ -155,7 +155,7 @@ export default function DecalageHoraire() {
               )}
             </div>
             {p.showList && p.results.length > 0 && (
-              <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden z-20">
                 {p.results.map((r, i) => (
                   <button key={i} type="button"
                     onMouseDown={() => p.select(r)}

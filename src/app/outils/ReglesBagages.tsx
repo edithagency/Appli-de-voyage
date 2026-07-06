@@ -226,7 +226,7 @@ export default function ReglesBagages() {
               }}>
                 {rentreEnCabine
                   ? 'Ton bagage rentre en cabine'
-                  : 'Trop grand — il faudra le mettre en soute'}
+                  : 'Trop grand, il faudra le mettre en soute'}
               </div>
             )}
           </div>

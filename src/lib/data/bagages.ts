@@ -1,0 +1,281 @@
+export type Statut = 'inclus' | 'payant' | 'non_autorise'
+
+export type BagageData = {
+  dimensions: string
+  poids: string
+  statut: Statut
+  prix: number | null
+}
+
+export type Billet = {
+  sous_siege: BagageData
+  cabine: BagageData
+  soute: BagageData
+}
+
+export type RegleCompagnie = {
+  lien_officiel: string
+  date_maj: string
+  pas_de_distinction?: boolean
+  billets: {
+    basic: Billet
+    standard: Billet
+    flex: Billet
+  }
+}
+
+export const reglesBagages: Record<string, RegleCompagnie> = {
+  air_france: {
+    lien_officiel: 'https://www.airfrance.fr/FR/fr/common/guidevoyageur/pratique/bagage-cabine-airfrance.htm',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 30 },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  easyjet: {
+    lien_officiel: 'https://www.easyjet.com/fr/bagages',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '45×36×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '15 kg max',     statut: 'payant', prix: 8 },
+        soute:      { dimensions: '275 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 13 },
+      },
+      standard: {
+        sous_siege: { dimensions: '45×36×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '15 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '275 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 13 },
+      },
+      flex: {
+        sous_siege: { dimensions: '45×36×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '15 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '275 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  ryanair: {
+    lien_officiel: 'https://www.ryanair.com/fr/fr/informations-utiles/aide-aux-passagers/politique-bagages',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×20×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×20 cm', poids: '10 kg max',     statut: 'payant', prix: 6 },
+        soute:      { dimensions: 'Standard',    poids: '20 kg',         statut: 'payant', prix: 12 },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×20×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×20 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: 'Standard',    poids: '20 kg',         statut: 'payant', prix: 12 },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×20×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×20 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: 'Standard',    poids: '20 kg',         statut: 'inclus', prix: null },
+      },
+    },
+  },
+  transavia: {
+    lien_officiel: 'https://www.transavia.com/fr-FR/service-et-bagages/bagages/',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '20 kg',      statut: 'payant', prix: 20 },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '20 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '20 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  vueling: {
+    lien_officiel: 'https://www.vueling.com/fr/services-vueling/avant-de-voyager/bagages',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×30×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×20 cm', poids: '10 kg max',     statut: 'payant', prix: 10 },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 20 },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×30×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×20 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 20 },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×30×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×20 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  emirates: {
+    lien_officiel: 'https://www.emirates.com/fr/french/before-you-fly/baggage/checked-baggage/',
+    date_maj: '14 juin 2026',
+    pas_de_distinction: true,
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '55×38×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×38×20 cm', poids: '7 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '150 cm cumulés', poids: '30 kg',      statut: 'inclus', prix: null },
+      },
+      standard: {
+        sous_siege: { dimensions: '55×38×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×38×20 cm', poids: '7 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '150 cm cumulés', poids: '30 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '55×38×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×38×20 cm', poids: '7 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '150 cm cumulés', poids: '30 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  turkish: {
+    lien_officiel: 'https://www.turkishairlines.com/fr-fr/voyager-avec-nous/informations-bagages/',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×23 cm', poids: '8 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '20 kg',      statut: 'inclus', prix: null },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×23 cm', poids: '8 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×23 cm', poids: '8 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '30 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  qatar: {
+    lien_officiel: 'https://www.qatarairways.com/fr-fr/baggage/allowance.html',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '50×37×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '50×37×25 cm', poids: '7 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+      standard: {
+        sous_siege: { dimensions: '50×37×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '50×37×25 cm', poids: '7 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '30 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '50×37×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '50×37×25 cm', poids: '7 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '30 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  lufthansa: {
+    lien_officiel: 'https://www.lufthansa.com/fr/fr/bagages',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×30×10 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×23 cm', poids: '8 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 30 },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×30×10 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×23 cm', poids: '8 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×30×10 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×40×23 cm', poids: '8 kg max',      statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  klm: {
+    lien_officiel: 'https://www.klm.com/fr/fr/information/baggage',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '35×25×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 25 },
+      },
+      standard: {
+        sous_siege: { dimensions: '35×25×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '35×25×25 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  british: {
+    lien_officiel: 'https://www.britishairways.com/fr-fr/information/baggage-essentials/hand-baggage-allowances',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '45×36×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '23 kg max',     statut: 'payant', prix: 15 },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 35 },
+      },
+      standard: {
+        sous_siege: { dimensions: '45×36×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '23 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+      flex: {
+        sous_siege: { dimensions: '45×36×20 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '23 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+  iberia: {
+    lien_officiel: 'https://www.iberia.com/fr/information-for-travellers/baggage/',
+    date_maj: '14 juin 2026',
+    billets: {
+      basic: {
+        sous_siege: { dimensions: '40×30×10 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '10 kg max',     statut: 'payant', prix: 12 },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 25 },
+      },
+      standard: {
+        sous_siege: { dimensions: '40×30×10 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'payant', prix: 25 },
+      },
+      flex: {
+        sous_siege: { dimensions: '40×30×10 cm', poids: 'Pas de limite', statut: 'inclus', prix: null },
+        cabine:     { dimensions: '56×45×25 cm', poids: '10 kg max',     statut: 'inclus', prix: null },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',      statut: 'inclus', prix: null },
+      },
+    },
+  },
+}

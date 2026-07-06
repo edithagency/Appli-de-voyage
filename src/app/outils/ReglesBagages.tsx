@@ -1,135 +1,251 @@
 'use client'
 
 import { useState } from 'react'
-import { COMPAGNIES } from '@/lib/utils/compagnies'
-import InfoBlock from '@/components/InfoBlock'
+import { reglesBagages, type Statut } from '@/lib/data/bagages'
+
+const COMPAGNIES = [
+  { id: 'air_france', nom: 'Air France',       logo: '🇫🇷' },
+  { id: 'easyjet',   nom: 'EasyJet',           logo: '🟠' },
+  { id: 'ryanair',   nom: 'Ryanair',           logo: '🔵' },
+  { id: 'transavia', nom: 'Transavia',         logo: '🟢' },
+  { id: 'vueling',   nom: 'Vueling',           logo: '🟡' },
+  { id: 'emirates',  nom: 'Emirates',          logo: '🔴' },
+  { id: 'turkish',   nom: 'Turkish Airlines',  logo: '🇹🇷' },
+  { id: 'qatar',     nom: 'Qatar Airways',     logo: '🟤' },
+  { id: 'lufthansa', nom: 'Lufthansa',         logo: '🟡' },
+  { id: 'klm',       nom: 'KLM',              logo: '🔵' },
+  { id: 'british',   nom: 'British Airways',   logo: '🇬🇧' },
+  { id: 'iberia',    nom: 'Iberia',            logo: '🇪🇸' },
+]
+
+const TYPES_BILLET = [
+  { id: 'basic',    label: 'Basic' },
+  { id: 'standard', label: 'Standard' },
+  { id: 'flex',     label: 'Flex / Premium' },
+]
+
+const BLOCS = [
+  { id: 'sous_siege' as const, titre: 'Petit bagage', sousTitre: 'Sous le siège', icon: '🎒' },
+  { id: 'cabine'     as const, titre: 'Bagage cabine', sousTitre: 'Dans le coffre', icon: '🧳' },
+  { id: 'soute'      as const, titre: 'Valise en soute', sousTitre: 'En soute', icon: '📦' },
+]
+
+const statutStyle = {
+  inclus:        { bg: '#F0FDF4', border: '#BBF7D0', badgeBg: '#DCFCE7', badgeColor: '#166534' },
+  payant:        { bg: '#FFFBEB', border: '#FDE68A', badgeBg: '#FEF3C7', badgeColor: '#B45309' },
+  non_autorise:  { bg: '#FEF2F2', border: '#FECACA', badgeBg: '#FEE2E2', badgeColor: '#991B1B' },
+}
+
+const inputStyle: React.CSSProperties = {
+  flex: 1,
+  padding: '10px 8px',
+  borderRadius: 10,
+  border: '1px solid #E5E7EB',
+  fontSize: 13,
+  textAlign: 'center',
+  background: 'white',
+  outline: 'none',
+  minWidth: 0,
+}
 
 export default function ReglesBagages() {
   const [compagnieId, setCompagnieId] = useState<string | null>(null)
-  const [showSelect, setShowSelect] = useState(true)
-  const [search, setSearch] = useState('')
+  const [billetId,    setBilletId]    = useState<string | null>(null)
+  const [L, setL] = useState('')
+  const [H, setH] = useState('')
+  const [P, setP] = useState('')
+  const [kg, setKg] = useState('')
 
   const compagnie = COMPAGNIES.find(c => c.id === compagnieId) ?? null
+  const regles    = compagnieId ? reglesBagages[compagnieId] : null
 
-  function handleSelect(id: string) {
+  function selectCompagnie(id: string) {
     setCompagnieId(id)
-    setShowSelect(false)
-    setSearch('')
+    setBilletId(null)
+    setL(''); setH(''); setP(''); setKg('')
+    // Si pas de distinction de tarifs, on sélectionne "basic" directement
+    if (reglesBagages[id]?.pas_de_distinction) {
+      setTimeout(() => setBilletId('basic'), 50)
+    }
   }
 
-  const filtered = COMPAGNIES.filter(c =>
-    c.nom.toLowerCase().includes(search.toLowerCase())
-  )
+  const billet = billetId && regles ? regles.billets[billetId as 'basic' | 'standard' | 'flex'] : null
+
+  // Vérificateur de bagage cabine
+  const dims = billet ? billet.cabine.dimensions : null
+  const dimsMatch = dims?.match(/(\d+)×(\d+)×(\d+)/)
+  const lMax = dimsMatch ? parseInt(dimsMatch[1]) : null
+  const hMax = dimsMatch ? parseInt(dimsMatch[2]) : null
+  const pMax = dimsMatch ? parseInt(dimsMatch[3]) : null
+  const poidsMatch = billet?.cabine.poids.match(/(\d+)/)
+  const kgMax = poidsMatch ? parseInt(poidsMatch[1]) : null
+
+  const lv = parseFloat(L), hv = parseFloat(H), pv = parseFloat(P), kgv = parseFloat(kg)
+  const hasVerif = L && H && P
+  const rentreEnCabine = hasVerif && lMax && hMax && pMax
+    ? lv <= lMax && hv <= hMax && pv <= pMax && (kg ? (kgMax ? kgv <= kgMax : true) : true)
+    : null
 
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="font-bold text-gray-800 text-lg">🧳 Règles bagages</h2>
+    <div className="flex flex-col gap-5">
 
-      <div className="flex justify-between items-center">
-        <p className="text-xs text-gray-400">Dimensions et poids par compagnie aérienne</p>
-        <button
-          onClick={() => setShowSelect(!showSelect)}
-          className="shrink-0 text-xs px-3 py-2 rounded-xl font-semibold transition"
-          style={{ background: '#DBEAFE', color: '#36A6B2' }}>
-          {compagnie ? '✏️ Changer' : '+ Choisir'}
-        </button>
+      {/* ÉTAPE 1 */}
+      <div>
+        <p style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', margin: '0 0 2px' }}>
+          Quelle est ta compagnie ?
+        </p>
+        <p style={{ fontSize: 12, color: '#9CA3AF', fontStyle: 'italic', margin: '0 0 12px' }}>
+          Sélectionne la compagnie de ton vol aller
+        </p>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+          {COMPAGNIES.map(c => {
+            const isSelected = compagnieId === c.id
+            return (
+              <div key={c.id} onClick={() => selectCompagnie(c.id)} style={{
+                display: 'inline-flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 6,
+                padding: '12px 16px',
+                borderRadius: 16,
+                border: isSelected ? '2px solid #36A6B2' : '2px solid #F0F0F0',
+                background: isSelected ? '#F0FAFA' : 'white',
+                cursor: 'pointer',
+                minWidth: 80,
+                flexShrink: 0,
+                transition: 'border-color 0.15s, background 0.15s',
+              }}>
+                <span style={{ fontSize: 28 }}>{c.logo}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#374151', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                  {c.nom}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      {showSelect && (
-        <div className="rounded-xl bg-gray-50 px-3 py-3">
-          <input
-            type="text"
-            placeholder="Rechercher une compagnie..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] mb-3"
-            autoFocus
-          />
-          <div className="flex flex-col gap-1 max-h-52 overflow-y-auto">
-            <div className="flex flex-wrap gap-2">
-              {filtered.map(c => (
-                <button key={c.id} onClick={() => handleSelect(c.id)}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
-                  style={{
-                    background: compagnieId === c.id ? c.couleur : `${c.couleur}22`,
-                    color: compagnieId === c.id ? '#ffffff' : c.couleur,
-                  }}>
-                  {c.nom}
+      {/* ÉTAPE 2 — type de billet */}
+      {compagnie && !regles?.pas_de_distinction && (
+        <div style={{ animation: 'fadeIn 0.25s ease' }}>
+          <p style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', margin: '0 0 10px' }}>
+            Quel type de billet as-tu ?
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {TYPES_BILLET.map(t => {
+              const isSelected = billetId === t.id
+              return (
+                <button key={t.id} onClick={() => setBilletId(t.id)} style={{
+                  flex: 1,
+                  padding: '10px 6px',
+                  borderRadius: 9999,
+                  border: 'none',
+                  background: isSelected ? '#36A6B2' : '#F3F4F6',
+                  color: isSelected ? 'white' : '#6B7280',
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  transition: 'background 0.15s, color 0.15s',
+                }}>
+                  {t.label}
                 </button>
-              ))}
-            </div>
+              )
+            })}
           </div>
         </div>
       )}
 
-      {compagnie ? (
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <span className="px-3 py-1.5 rounded-full text-xs font-semibold"
-              style={{ background: compagnie.couleur, color: '#ffffff' }}>
-              {compagnie.nom}
-            </span>
-            <div>
-              <span className="text-xs px-2 py-0.5 rounded-full"
-                style={{ background: compagnie.type === 'low_cost' ? '#FEF3C7' : compagnie.type === 'long_courrier' ? '#DBEAFE' : '#F3F4F6', color: compagnie.type === 'low_cost' ? '#92400E' : compagnie.type === 'long_courrier' ? '#36A6B2' : '#6B7280' }}>
-                {compagnie.type === 'low_cost' ? 'Low cost' : compagnie.type === 'long_courrier' ? 'Long-courrier' : 'Classique'}
-              </span>
+      {/* ÉTAPE 3 — résultats */}
+      {billet && regles && (
+        <div style={{ animation: 'fadeIn 0.25s ease' }}>
+
+          {/* 3 blocs */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            {BLOCS.map(bloc => {
+              const data = billet[bloc.id]
+              const s = statutStyle[data.statut]
+              return (
+                <div key={bloc.id} style={{
+                  flex: 1,
+                  borderRadius: 16,
+                  padding: 12,
+                  background: s.bg,
+                  border: `1px solid ${s.border}`,
+                  textAlign: 'center',
+                }}>
+                  <span style={{ fontSize: 24 }}>{bloc.icon}</span>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', margin: '8px 0 2px' }}>
+                    {bloc.titre}
+                  </p>
+                  <p style={{ fontSize: 10, color: '#9CA3AF', margin: '0 0 8px' }}>
+                    {bloc.sousTitre}
+                  </p>
+                  <p style={{ fontSize: 11, color: '#374151', fontWeight: 600, margin: '0 0 2px' }}>
+                    {data.dimensions}
+                  </p>
+                  <p style={{ fontSize: 11, color: '#6B7280', margin: '0 0 8px' }}>
+                    {data.poids}
+                  </p>
+                  <div style={{
+                    padding: '3px 8px',
+                    borderRadius: 9999,
+                    background: s.badgeBg,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: s.badgeColor,
+                    display: 'inline-block',
+                  }}>
+                    {data.statut === 'inclus'
+                      ? '✅ Inclus'
+                      : data.statut === 'payant'
+                        ? `➕ À partir de ${data.prix}€`
+                        : '❌ Non autorisé'}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Vérificateur */}
+          <div style={{ background: '#F8F9FA', borderRadius: 16, padding: 16, marginBottom: 16 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, margin: '0 0 12px', color: '#1a1a1a' }}>
+              🔍 Mon bagage rentre-t-il ?
+            </p>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+              <input placeholder="L (cm)" type="number" style={inputStyle} value={L} onChange={e => setL(e.target.value)} />
+              <input placeholder="H (cm)" type="number" style={inputStyle} value={H} onChange={e => setH(e.target.value)} />
+              <input placeholder="P (cm)" type="number" style={inputStyle} value={P} onChange={e => setP(e.target.value)} />
+              <input placeholder="kg"     type="number" style={inputStyle} value={kg} onChange={e => setKg(e.target.value)} />
             </div>
+            {hasVerif && rentreEnCabine !== null && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: 12,
+                background: rentreEnCabine ? '#F0FDF4' : '#FEF2F2',
+                border: `1px solid ${rentreEnCabine ? '#BBF7D0' : '#FECACA'}`,
+                fontSize: 13,
+                fontWeight: 600,
+                color: rentreEnCabine ? '#166534' : '#991B1B',
+              }}>
+                {rentreEnCabine
+                  ? '✅ Ton bagage rentre en cabine'
+                  : '❌ Trop grand — il faudra le mettre en soute'}
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            <BagCard
-              emoji="👜"
-              label="Bagage personnel"
-              dims={compagnie.bagages.bagage_personnel.dimensions}
-              inclus={compagnie.bagages.bagage_personnel.inclus}
-            />
-            <BagCard
-              emoji="🎒"
-              label="Bagage cabine"
-              dims={compagnie.bagages.cabine.dimensions}
-              poids={compagnie.bagages.cabine.poids}
-              inclus={compagnie.bagages.cabine.inclus}
-              prix={!compagnie.bagages.cabine.inclus ? 'Payant' : undefined}
-            />
-            <BagCard
-              emoji="🧳"
-              label="Bagage soute"
-              poids={compagnie.bagages.soute.poids}
-              inclus={compagnie.bagages.soute.inclus}
-              prix={!compagnie.bagages.soute.inclus ? compagnie.bagages.soute.prix_aprox : undefined}
-            />
-          </div>
-
-          {compagnie.bagages.notes && (
-            <InfoBlock type="disclaimer">
-              {compagnie.bagages.notes}
-            </InfoBlock>
-          )}
-        </div>
-      ) : (
-        <div className="py-4 text-center">
-          <div className="text-3xl mb-2">✈️</div>
-          <p className="text-xs text-gray-400">Sélectionne ta compagnie aérienne pour voir les règles bagages.</p>
+          {/* Note de fiabilité */}
+          <p style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginBottom: 4, fontStyle: 'italic' }}>
+            Informations vérifiées le {regles.date_maj}. Toujours confirmer sur le site de la compagnie avant de voyager.
+          </p>
+          <a href={regles.lien_officiel} target="_blank" rel="noopener noreferrer"
+            style={{ display: 'block', textAlign: 'center', fontSize: 12, color: '#36A6B2', fontWeight: 600 }}>
+            Voir les règles officielles →
+          </a>
         </div>
       )}
-    </div>
-  )
-}
 
-function BagCard({ emoji, label, dims, poids, inclus, prix }: {
-  emoji: string; label: string; dims?: string; poids?: string; inclus: boolean; prix?: string
-}) {
-  return (
-    <div className="rounded-2xl p-3 text-center flex flex-col items-center gap-1"
-      style={{ background: inclus ? '#e7f8ce' : '#ffe9ba' }}>
-      <span className="text-2xl">{emoji}</span>
-      <span className="text-xs font-semibold leading-tight text-gray-700">{label}</span>
-      {poids && <span className="text-xs font-bold text-gray-900">{poids}</span>}
-      {dims && <span className="text-xs text-gray-500 leading-tight">{dims}</span>}
-      <span className="text-xs font-bold mt-0.5" style={{ color: inclus ? '#2D5A1B' : '#7A4A00' }}>
-        {inclus ? '✓ Inclus' : prix ?? 'Payant'}
-      </span>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { reglesBagages, type Statut } from '@/lib/data/bagages'
+import { Backpack, Luggage, Package, type LucideIcon } from 'lucide-react'
 
 const COMPAGNIES = [
   { id: 'air_france', nom: 'Air France' },
@@ -24,10 +25,10 @@ const TYPES_BILLET = [
   { id: 'flex',     label: 'Flex / Premium' },
 ]
 
-const BLOCS = [
-  { id: 'sous_siege' as const, titre: 'Petit bagage', sousTitre: 'Sous le siège', icon: '🎒' },
-  { id: 'cabine'     as const, titre: 'Bagage cabine', sousTitre: 'Dans le coffre', icon: '🧳' },
-  { id: 'soute'      as const, titre: 'Valise en soute', sousTitre: 'En soute', icon: '📦' },
+const BLOCS: { id: 'sous_siege' | 'cabine' | 'soute'; titre: string; sousTitre: string; Icon: LucideIcon }[] = [
+  { id: 'sous_siege', titre: 'Petit bagage',    sousTitre: 'Sous le siège',  Icon: Backpack },
+  { id: 'cabine',     titre: 'Bagage cabine',   sousTitre: 'Dans le coffre', Icon: Luggage  },
+  { id: 'soute',      titre: 'Valise en soute', sousTitre: 'En soute',       Icon: Package  },
 ]
 
 const statutStyle = {
@@ -171,7 +172,7 @@ export default function ReglesBagages() {
                   alignItems: 'center',
                   gap: 12,
                 }}>
-                  <span style={{ fontSize: 24, flexShrink: 0 }}>{bloc.icon}</span>
+                  <bloc.Icon size={22} color="#6B7280" style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: '0 0 1px' }}>
                       {bloc.titre}

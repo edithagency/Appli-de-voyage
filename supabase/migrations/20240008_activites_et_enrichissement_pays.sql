@@ -158,7 +158,7 @@ update public.pays set
 
   urgence_autres = '[
     {"label": "Numéro d''urgence général", "numero": "191"},
-    {"label": "Police touristique (anglophone)", "numero": "1155"},
+    {"label": "Police touristique", "numero": "1155"},
     {"label": "Ambulance / urgences médicales", "numero": "1669"},
     {"label": "Centre d''assistance touristique (TAC)", "numero": "1672"}
   ]'::jsonb,

@@ -105,9 +105,8 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
       opacity: 0.95,
     })))
 
-    // Orientation initiale
-    const avgLon = (city1.lon + city2.lon) / 2
-    group.rotation.y = (-avgLon - 90) * Math.PI / 180
+    // Orientation initiale : ville de départ face à la caméra
+    group.rotation.y = (-city1.lon - 90) * Math.PI / 180
 
     // — Drag pour tourner le globe —
     let dragging = false

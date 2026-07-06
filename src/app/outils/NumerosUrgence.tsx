@@ -68,34 +68,36 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
       </div>
 
       {p && (
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col">
-            {[
-              { label: 'Police', number: p.urgence_police, emoji: '🚔' },
-              { label: 'Ambulance', number: p.urgence_ambulance, emoji: '🚑' },
-              { label: 'Ambassade FR', number: p.urgence_ambassade_france, emoji: '🇫🇷' },
-            ].map(u => (
-              <div key={u.label} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
-                <span className="text-sm text-gray-600">{u.emoji} {u.label}</span>
-                <span className="text-sm font-bold text-gray-800">{u.number ?? '–'}</span>
-              </div>
-            ))}
-          </div>
-          {Array.isArray(p.urgence_autres) && p.urgence_autres.length > 0 && (
-            <div className="flex flex-col">
-              {p.urgence_autres.map((u, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                  <span className="text-xs text-gray-500">{u.label}</span>
-                  <span className="text-sm font-semibold text-gray-800">{u.numero}</span>
-                </div>
-              ))}
+        <div className="flex flex-col gap-2">
+          {[
+            { label: 'Police', number: p.urgence_police, emoji: '🚔' },
+            { label: 'Ambulance', number: p.urgence_ambulance, emoji: '🚑' },
+            { label: 'Ambassade FR', number: p.urgence_ambassade_france, emoji: '🇫🇷' },
+            ...(Array.isArray(p.urgence_autres) ? p.urgence_autres.map(u => ({ label: u.label, number: u.numero, emoji: '📞' })) : []),
+          ].map(u => u.number ? (
+            <a key={u.label} href={`tel:${u.number}`}
+              className="flex items-center justify-between px-4 py-3 rounded-2xl bg-gray-50 active:bg-gray-100 transition">
+              <span className="text-sm text-gray-700 font-medium">{u.emoji} {u.label}</span>
+              <span className="flex items-center gap-2">
+                <span className="text-base font-bold text-[#004850]">{u.number}</span>
+                <span className="text-lg">📲</span>
+              </span>
+            </a>
+          ) : (
+            <div key={u.label} className="flex items-center justify-between px-4 py-3 rounded-2xl bg-gray-50">
+              <span className="text-sm text-gray-400">{u.emoji} {u.label}</span>
+              <span className="text-sm text-gray-300 font-bold">–</span>
             </div>
-          )}
+          ))}
           {p.ambassade_info?.adresse && (
-            <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-              <p className="text-xs font-semibold text-gray-700 mb-0.5">🇫🇷 Ambassade de France</p>
-              <p className="text-xs text-gray-500 leading-relaxed">{p.ambassade_info.adresse}</p>
-              {p.ambassade_info.tel_urgence && <p className="text-xs text-gray-500 leading-relaxed mt-1">Urgence consulaire : {p.ambassade_info.tel_urgence}</p>}
+            <div className="bg-gray-50 rounded-2xl px-4 py-3 mt-1">
+              <p className="text-xs font-semibold text-gray-600 mb-1">🇫🇷 Ambassade de France</p>
+              <p className="text-xs text-gray-400 leading-relaxed">{p.ambassade_info.adresse}</p>
+              {p.ambassade_info.tel_urgence && (
+                <a href={`tel:${p.ambassade_info.tel_urgence}`} className="text-xs text-[#36A6B2] font-semibold mt-1 block">
+                  Urgence consulaire : {p.ambassade_info.tel_urgence}
+                </a>
+              )}
             </div>
           )}
         </div>

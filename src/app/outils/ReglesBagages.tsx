@@ -125,7 +125,7 @@ export default function ReglesBagages() {
       {/* ÉTAPE 2 — type de billet */}
       {compagnie && !regles?.pas_de_distinction && (
         <div style={{ animation: 'fadeIn 0.25s ease' }}>
-          <p style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', margin: '0 0 10px' }}>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
             Quel type de billet as-tu ?
           </p>
           <div style={{ display: 'flex', gap: 8 }}>

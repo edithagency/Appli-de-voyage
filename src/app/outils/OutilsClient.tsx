@@ -128,7 +128,7 @@ export default function OutilsClient({
         onClick={() => setOpenTool(outil.id)}
         style={{
           position: 'relative',
-          aspectRatio: '0.85',
+          aspectRatio: '1.1',
           borderRadius: 24,
           padding: 16,
           display: 'flex',

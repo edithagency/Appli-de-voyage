@@ -193,10 +193,10 @@ export default function ReglesBagages() {
                     flexShrink: 0,
                   }}>
                     {data.statut === 'inclus'
-                      ? '✅ Inclus'
+                      ? 'Inclus'
                       : data.statut === 'payant'
-                        ? `➕ ${data.prix}€`
-                        : '❌ Non autorisé'}
+                        ? `+ ${data.prix} €`
+                        : 'Non autorisé'}
                   </div>
                 </div>
               )
@@ -225,8 +225,8 @@ export default function ReglesBagages() {
                 color: rentreEnCabine ? '#166534' : '#991B1B',
               }}>
                 {rentreEnCabine
-                  ? '✅ Ton bagage rentre en cabine'
-                  : '❌ Trop grand — il faudra le mettre en soute'}
+                  ? 'Ton bagage rentre en cabine'
+                  : 'Trop grand — il faudra le mettre en soute'}
               </div>
             )}
           </div>

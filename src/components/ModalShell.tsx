@@ -30,7 +30,7 @@ export default function ModalShell({
   // même niveau qu'eux (en absolute, pas fixed) règle ça.
   return createPortal(
     <div
-      className="absolute inset-0 z-50 flex items-center justify-center py-2 px-4"
+      className="absolute inset-0 z-50 flex items-center justify-center py-2 px-7"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={backdropClose ? onClose : undefined}
     >

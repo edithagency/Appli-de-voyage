@@ -229,10 +229,6 @@ export default function ReglesBagages() {
             )}
           </div>
 
-          {/* Note de fiabilité */}
-          <p style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginBottom: 4, fontStyle: 'italic' }}>
-            Informations vérifiées le {regles.date_maj}. Toujours confirmer sur le site de la compagnie avant de voyager.
-          </p>
           <a href={regles.lien_officiel} target="_blank" rel="noopener noreferrer"
             style={{ display: 'block', textAlign: 'center', fontSize: 12, color: '#36A6B2', fontWeight: 600 }}>
             Voir les règles officielles →

@@ -176,7 +176,7 @@ export default function DecalageHoraire() {
             ) : (
               <>
                 <p className="text-2xl font-bold tabular-nums leading-none"
-                  style={{ color: idx === 0 ? '#36A6B2' : '#1a2e2f' }}>
+                  style={{ color: idx === 0 ? '#1a2e2f' : '#36A6B2' }}>
                   {formatHeure(now, p.city.tz)}
                 </p>
                 <p className="text-xs text-gray-400 capitalize leading-tight mt-1">

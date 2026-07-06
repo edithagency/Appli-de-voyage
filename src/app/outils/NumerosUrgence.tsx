@@ -108,7 +108,7 @@ function SlideToCall({ number }: { number: string }) {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Phone size={15} color={COLOR} />
+        <Phone size={15} color={COLOR} fill={COLOR} />
       </div>
     </div>
   )

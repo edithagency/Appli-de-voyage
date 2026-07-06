@@ -232,8 +232,9 @@ export default function ReglesBagages() {
           </div>
 
           <a href={regles.lien_officiel} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'block', textAlign: 'center', fontSize: 12, color: '#36A6B2', fontWeight: 600 }}>
-            Voir les règles officielles →
+            className="flex items-center justify-between text-xs font-semibold text-[#36A6B2] bg-[#36A6B2]/10 rounded-xl px-3 py-2">
+            <span>Voir les règles officielles</span>
+            <span className="opacity-60">↗</span>
           </a>
         </div>
       )}

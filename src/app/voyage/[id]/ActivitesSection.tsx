@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { toggleWishlistActivite } from './activites-actions'
+import InfoBlock from '@/components/InfoBlock'
 
 type Activite = {
   id: string
@@ -42,22 +43,21 @@ function NoteLines({ notes }: { notes: string }) {
   return (
     <div className="flex flex-col gap-1.5 mt-2">
       {lines.map((line, i) => {
-        let style = 'bg-gray-50 text-gray-600'
-        if (line.startsWith('💡')) style = 'bg-indigo-50 text-indigo-700'
-        else if (line.startsWith('⚠️')) style = 'bg-amber-50 text-amber-700'
-        else if (line.startsWith('🔗')) style = 'bg-blue-50 text-blue-700'
+        let type: 'disclaimer' | 'alerte' | 'info' = 'disclaimer'
+        if (line.startsWith('⚠️')) type = 'alerte'
+        else if (line.startsWith('🔗')) type = 'info'
 
         const match = line.match(urlRegex)
         return (
-          <div key={i} className={`text-xs rounded-lg px-2.5 py-2 leading-relaxed ${style}`}>
+          <InfoBlock key={i} type={type}>
             {match ? (
               <>
                 {line.slice(0, match.index)}
-                <a href={match[1]} target="_blank" rel="noopener noreferrer" className="underline font-medium">{match[1]}</a>
+                <a href={match[1]} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#36A6B2]">{match[1]}</a>
                 {line.slice((match.index ?? 0) + match[1].length)}
               </>
             ) : line}
-          </div>
+          </InfoBlock>
         )
       })}
     </div>

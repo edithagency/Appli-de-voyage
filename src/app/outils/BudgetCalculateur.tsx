@@ -74,6 +74,8 @@ const PAYS_ZONE: Record<string, string> = {
   AU:'oceanie',NZ:'oceanie',FJ:'oceanie',PG:'oceanie',WS:'oceanie',TO:'oceanie',VU:'oceanie',SB:'oceanie',
 }
 
+const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
 const STYLES: { id: Style; label: string }[] = [
   { id: 'budget',  label: 'Backpack' },
   { id: 'confort', label: 'Confort' },
@@ -119,7 +121,7 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
   const [style, setStyle] = useState<Style>('confort')
 
   const paysFiltered = pays.filter(p =>
-    p.nom_fr.toLowerCase().includes(search.toLowerCase())
+    norm(p.nom_fr).includes(norm(search))
   ).slice(0, 6)
 
   function handleSelectPays(p: PaysOutil) {

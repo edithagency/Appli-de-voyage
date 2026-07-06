@@ -16,6 +16,8 @@ export type PaysOutil = {
   budget_estimations?: Record<string, Record<string, number>> | null
 }
 
+const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
 export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOutil[]; defaultPaysCode?: string | null }) {
   const defaultPays = pays.find(x => x.code === defaultPaysCode) ?? null
   const [code, setCode] = useState(defaultPaysCode ?? '')
@@ -23,7 +25,7 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
   const [showDropdown, setShowDropdown] = useState(false)
 
   const paysFiltered = pays.filter(p =>
-    p.nom_fr.toLowerCase().includes(search.toLowerCase())
+    norm(p.nom_fr).includes(norm(search))
   ).slice(0, 6)
 
   function handleSelect(p: PaysOutil) {

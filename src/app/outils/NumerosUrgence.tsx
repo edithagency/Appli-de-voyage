@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Phone } from 'lucide-react'
+import { Phone, Shield, Ambulance, Landmark } from 'lucide-react'
 
 export type PaysOutil = {
   code: string
@@ -164,15 +164,15 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
       </div>
 
       {p && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {[
-            { label: 'Police', number: p.urgence_police, emoji: '🚔' },
-            { label: 'Ambulance', number: p.urgence_ambulance, emoji: '🚑' },
-            { label: 'Ambassade FR', number: p.urgence_ambassade_france, emoji: '🇫🇷' },
+            { label: 'Police', number: p.urgence_police, icon: <Shield size={18} color="#004850" /> },
+            { label: 'Ambulance', number: p.urgence_ambulance, icon: <Ambulance size={18} color="#004850" /> },
+            { label: 'Ambassade FR', number: p.urgence_ambassade_france, icon: <Landmark size={18} color="#004850" /> },
           ].map(u => (
-            <div key={u.label} className="bg-gray-50 rounded-2xl px-4 pt-3 pb-3 flex flex-col gap-2">
+            <div key={u.label} className="bg-gray-50 rounded-2xl px-4 pt-3 pb-3 flex flex-col gap-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600">{u.emoji} {u.label}</span>
+                <span className="flex items-center gap-2 text-sm font-medium text-gray-600">{u.icon} {u.label}</span>
                 <span className="text-lg font-bold text-[#004850]">{u.number ?? '–'}</span>
               </div>
               {u.number

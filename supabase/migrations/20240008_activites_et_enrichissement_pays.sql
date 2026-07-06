@@ -91,7 +91,7 @@ update public.pays set
 
   type_prise_electrique = 'Type A/B/C/O · 220V/50Hz — les prises de type C (européennes à broches rondes) sont généralement compatibles ; un adaptateur peut être utile pour les prises de type A/B (fiches plates américaines) encore fréquentes.',
 
-  urgence_police = '191 (ou 1155 pour la police touristique, anglophone)',
+  urgence_police = '191 (ou 1155 pour la police touristique)',
   urgence_ambulance = '1669',
   urgence_ambassade_france = '+66 2 657 5100',
 

@@ -233,6 +233,28 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
             </span>
           </div>
 
+          {/* Total */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total</span>
+            <span style={{ fontSize: 26, fontWeight: 800, color: '#004850' }}>{fmt(total)} €</span>
+          </div>
+
+          {/* Par jour / par personne */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+            {[
+              { label: 'Par jour', value: Math.round(total / jours) },
+              { label: 'Par personne', value: Math.round(total / personnes) },
+            ].map(({ label, value }) => (
+              <div key={label} style={{ background: '#F9FAFB', borderRadius: 12, padding: '8px 12px', textAlign: 'center' }}>
+                <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: '#374151' }}>{fmt(value)} €</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Séparateur */}
+          <div style={{ height: 1, background: '#F3F4F6', marginBottom: 10 }} />
+
           {/* Barres par catégorie */}
           {CATEGORIES.map(cat => (
             <div key={cat.key} style={{ marginBottom: 8 }}>
@@ -254,28 +276,6 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
             <span style={{ fontSize: 13, color: '#9CA3AF' }}>❓ Imprévus (10%)</span>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#9CA3AF' }}>{fmt(imprevu)} €</span>
-          </div>
-
-          {/* Séparateur */}
-          <div style={{ height: 1, background: '#F3F4F6', margin: '10px 0' }} />
-
-          {/* Total */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 15, fontWeight: 800, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total</span>
-            <span style={{ fontSize: 26, fontWeight: 800, color: '#004850' }}>{fmt(total)} €</span>
-          </div>
-
-          {/* Par jour / par personne */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            {[
-              { label: 'Par jour', value: Math.round(total / jours) },
-              { label: 'Par personne', value: Math.round(total / personnes) },
-            ].map(({ label, value }) => (
-              <div key={label} style={{ background: '#F9FAFB', borderRadius: 12, padding: '8px 12px', textAlign: 'center' }}>
-                <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: 17, fontWeight: 700, color: '#374151' }}>{fmt(value)} €</div>
-              </div>
-            ))}
           </div>
 
           <div style={{ marginTop: 12 }}>

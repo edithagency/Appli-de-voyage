@@ -137,7 +137,7 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
   return (
     <div
       ref={mountRef}
-      style={{ width: '100%', height: 240, borderRadius: 20, overflow: 'hidden', background: 'white' }}
+      style={{ width: '100%', height: 200, borderRadius: 20, overflow: 'hidden', background: 'white' }}
     />
   )
 }

@@ -155,7 +155,7 @@ export default function DecalageHoraire() {
               )}
             </div>
             {p.showList && p.results.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden z-20">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-y-auto z-20" style={{ maxHeight: '220px' }}>
                 {p.results.map((r, i) => (
                   <button key={i} type="button"
                     onMouseDown={() => p.select(r)}

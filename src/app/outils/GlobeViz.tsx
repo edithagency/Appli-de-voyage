@@ -5,6 +5,8 @@ import * as THREE from 'three'
 
 interface City { lat: number; lon: number; label: string }
 
+const GLOBE_H = 210  // hauteur fixe — doit correspondre au style du div
+
 function toVec3(lat: number, lon: number, r = 1): THREE.Vector3 {
   const phi   = (90 - lat) * Math.PI / 180
   const theta = (lon + 180) * Math.PI / 180
@@ -15,16 +17,15 @@ function toVec3(lat: number, lon: number, r = 1): THREE.Vector3 {
   ).multiplyScalar(r)
 }
 
-function arcPoints(c1: City, c2: City, n = 80, lift = 1.08): THREE.Vector3[] {
+function arcPoints(c1: City, c2: City, n = 80): THREE.Vector3[] {
   const a = toVec3(c1.lat, c1.lon)
   const b = toVec3(c2.lat, c2.lon)
   const pts: THREE.Vector3[] = []
   for (let i = 0; i <= n; i++) {
     const t = i / n
-    // slerp-like: lerp + normalize gives great circle
     const v = new THREE.Vector3().lerpVectors(a, b, t).normalize()
-    // arc bulge: highest at midpoint
-    const bulge = lift + 0.18 * Math.sin(t * Math.PI)
+    // arc légèrement surélevé (max +0.08 au milieu)
+    const bulge = 1.03 + 0.08 * Math.sin(t * Math.PI)
     pts.push(v.multiplyScalar(bulge))
   }
   return pts
@@ -37,8 +38,9 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
     const el = mountRef.current
     if (!el) return
 
-    const W = el.clientWidth
-    const H = el.clientHeight || 240
+    // Hauteur fixe pour éviter le bug clientHeight=0 au mount
+    const W = el.clientWidth || 300
+    const H = GLOBE_H
 
     // — Renderer —
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
@@ -47,9 +49,11 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
     el.appendChild(renderer.domElement)
 
     // — Scene & Camera —
+    // FOV vertical 38° : à z=3.5 la demi-hauteur visible = 3.5*tan(19°) ≈ 1.21
+    // Le globe (rayon 1) + arc (max 1.11) tient dans 1.21 avec marge
     const scene  = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100)
-    camera.position.z = 4.2
+    camera.position.z = 3.5
 
     // — Lights —
     scene.add(new THREE.AmbientLight(0xffffff, 0.5))
@@ -67,36 +71,32 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
     // — Globe —
     const geo = new THREE.SphereGeometry(1, 64, 64)
     const mat = new THREE.MeshPhongMaterial({ specular: 0x222222, shininess: 18 })
-    const globe = new THREE.Mesh(geo, mat)
-    group.add(globe)
+    group.add(new THREE.Mesh(geo, mat))
 
     new THREE.TextureLoader().load(
       'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
       tex => { mat.map = tex; mat.needsUpdate = true },
       undefined,
-      () => { mat.color.set(0x1a6090) }, // fallback
+      () => { mat.color.set(0x1a6090) },
     )
 
     // — Atmosphère —
-    const atmMat = new THREE.MeshPhongMaterial({
-      color: 0x4488ff, transparent: true, opacity: 0.07, side: THREE.FrontSide,
-    })
-    group.add(new THREE.Mesh(new THREE.SphereGeometry(1.05, 48, 48), atmMat))
+    group.add(new THREE.Mesh(
+      new THREE.SphereGeometry(1.04, 48, 48),
+      new THREE.MeshPhongMaterial({ color: 0x4488ff, transparent: true, opacity: 0.07, side: THREE.FrontSide })
+    ))
 
     // — Marqueurs —
     function addMarker(lat: number, lon: number, color: number) {
       const pos = toVec3(lat, lon, 1.03)
-
       const dot = new THREE.Mesh(
         new THREE.SphereGeometry(0.028, 16, 16),
         new THREE.MeshBasicMaterial({ color })
       )
       dot.position.copy(pos)
       group.add(dot)
-
-      // halo
       const halo = new THREE.Mesh(
-        new THREE.RingGeometry(0.040, 0.060, 32),
+        new THREE.RingGeometry(0.038, 0.056, 32),
         new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
       )
       halo.position.copy(pos)
@@ -109,12 +109,12 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
 
     // — Arc —
     const pts = arcPoints(city1, city2)
-    const arcGeo = new THREE.BufferGeometry().setFromPoints(pts)
-    const arcMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })
-    group.add(new THREE.Line(arcGeo, arcMat))
+    group.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })
+    ))
 
-    // — Orientation initiale : midpoint face caméra —
-    // Avec notre formule, lon=-90 est face caméra (z+). Pour centrer avgLon :
+    // — Orientation initiale —
     const avgLon = (city1.lon + city2.lon) / 2
     group.rotation.y = (-avgLon - 90) * Math.PI / 180
 
@@ -137,7 +137,7 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
   return (
     <div
       ref={mountRef}
-      style={{ width: '100%', height: 200, borderRadius: 20, overflow: 'hidden', background: 'white' }}
+      style={{ width: '100%', height: GLOBE_H, borderRadius: 20, overflow: 'hidden', background: 'white' }}
     />
   )
 }

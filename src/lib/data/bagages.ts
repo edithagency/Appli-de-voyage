@@ -32,7 +32,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
       basic: {
         sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite officielle', statut: 'inclus', prix: null },
         cabine:     { dimensions: '55×35×25 cm', poids: '12 kg max',               statut: 'inclus', prix: null },
-        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',                statut: 'payant', prix: 30 },
+        soute:      { dimensions: '158 cm cumulés', poids: '23 kg',                statut: 'payant', prix: 25 },
       },
       standard: {
         sous_siege: { dimensions: '40×30×15 cm', poids: 'Pas de limite officielle', statut: 'inclus', prix: null },

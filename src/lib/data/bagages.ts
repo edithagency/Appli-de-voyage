@@ -47,7 +47,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   easyjet: {
-    lien_officiel: 'https://www.easyjet.com/fr/aide/bagage/bagage-a-main',
+    lien_officiel: 'https://www.easyjet.com/fr/bagages',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -68,7 +68,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   ryanair: {
-    lien_officiel: 'https://help.ryanair.com/hc/en-gb/articles/12888036565521-Ryanair-s-Bag-Policy',
+    lien_officiel: 'https://www.ryanair.com/fr/fr/informations-utiles/aide-aux-passagers/politique-bagages',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -89,7 +89,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   transavia: {
-    lien_officiel: 'https://www.transavia.com/aide/fr-fr/bagages/bagages-cabine',
+    lien_officiel: 'https://www.transavia.com/fr-FR/service-et-bagages/bagages',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -110,7 +110,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   vueling: {
-    lien_officiel: 'https://www.vueling.com/fr/services-vueling/avant-de-voyager/bagages',
+    lien_officiel: 'https://www.vueling.com/fr/services-vueling/preparez-votre-vol/bagages',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -131,7 +131,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   emirates: {
-    lien_officiel: 'https://www.emirates.com/fr/french/before-you-fly/baggage/cabin-baggage/',
+    lien_officiel: 'https://www.emirates.com/fr/french/before-you-fly/baggage/cabin-baggage',
     date_maj: '6 juillet 2026',
     pas_de_distinction: true,
     billets: {
@@ -153,7 +153,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   turkish: {
-    lien_officiel: 'https://www.turkishairlines.com/fr-fr/voyager-avec-nous/informations-bagages/',
+    lien_officiel: 'https://www.turkishairlines.com/fr-fr/any-questions/baggage-information',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -216,7 +216,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   klm: {
-    lien_officiel: 'https://www.klm.com/fr/fr/information/baggage',
+    lien_officiel: 'https://www.klm.com/fr/fr/information/bagages',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -237,7 +237,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   british: {
-    lien_officiel: 'https://www.britishairways.com/en-gb/information/baggage-essentials/hand-baggage-allowances',
+    lien_officiel: 'https://www.britishairways.com/fr-fr/information/baggage-essentials/hand-baggage-allowances',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {
@@ -258,7 +258,7 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   iberia: {
-    lien_officiel: 'https://www.iberia.com/fr/information-for-travellers/baggage/',
+    lien_officiel: 'https://www.iberia.com/fr/information/bagages',
     date_maj: '6 juillet 2026',
     billets: {
       basic: {

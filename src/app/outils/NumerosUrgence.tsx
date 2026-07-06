@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Phone } from 'lucide-react'
 
 export type PaysOutil = {
@@ -18,6 +18,99 @@ export type PaysOutil = {
 }
 
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+const HANDLE = 52
+const PAD = 4
+const COLOR = '#36A6B2'
+
+function SlideToCall({ number }: { number: string }) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [dragging, setDragging] = useState(false)
+  const [offset, setOffset] = useState(0)
+  const [travel, setTravel] = useState(0)
+  const startXRef = useRef(0)
+  const calledRef = useRef(false)
+
+  const ratio = travel > 0 ? offset / travel : 0
+  const triggered = ratio >= 0.85
+
+  function onDown(x: number) {
+    const w = trackRef.current?.getBoundingClientRect().width ?? 0
+    const t = Math.max(0, w - HANDLE - PAD * 2)
+    setTravel(t)
+    startXRef.current = x
+    setOffset(0)
+    calledRef.current = false
+    setDragging(true)
+  }
+
+  function onMove(x: number) {
+    if (!dragging) return
+    const delta = x - startXRef.current
+    const next = Math.min(travel, Math.max(0, delta))
+    setOffset(next)
+  }
+
+  function onUp() {
+    if (!dragging) return
+    setDragging(false)
+    if (triggered && !calledRef.current) {
+      calledRef.current = true
+      window.location.href = `tel:${number}`
+    }
+    setOffset(0)
+  }
+
+  const handleLeft = dragging ? `${PAD + offset}px` : `${PAD}px`
+
+  return (
+    <div
+      ref={trackRef}
+      className="relative w-full select-none flex items-center justify-center"
+      style={{
+        height: HANDLE + PAD * 2,
+        borderRadius: 9999,
+        background: triggered ? COLOR : `${COLOR}15`,
+        border: triggered ? 'none' : `1.5px solid ${COLOR}40`,
+        transition: dragging ? 'none' : 'background 0.2s, border 0.2s',
+        cursor: 'grab',
+        touchAction: 'none',
+      }}
+      onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); onDown(e.clientX) }}
+      onPointerMove={e => onMove(e.clientX)}
+      onPointerUp={onUp}
+      onPointerCancel={() => { setDragging(false); setOffset(0) }}
+    >
+      <span style={{
+        fontSize: 12,
+        fontWeight: 600,
+        color: triggered ? 'white' : COLOR,
+        letterSpacing: '0.04em',
+        transition: 'color 0.2s',
+        userSelect: 'none',
+      }}>
+        {triggered ? 'APPEL EN COURS…' : 'GLISSER POUR APPELER'}
+      </span>
+
+      <div style={{
+        position: 'absolute',
+        top: PAD,
+        left: handleLeft,
+        width: HANDLE,
+        height: HANDLE,
+        borderRadius: 9999,
+        background: 'white',
+        boxShadow: `0 4px 12px rgba(0,0,0,0.12), 0 0 16px 2px ${COLOR}40`,
+        transition: dragging ? 'none' : 'left 0.25s',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Phone size={18} color={COLOR} />
+      </div>
+    </div>
+  )
+}
 
 export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOutil[]; defaultPaysCode?: string | null }) {
   const defaultPays = pays.find(x => x.code === defaultPaysCode) ?? null
@@ -69,26 +162,23 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
       </div>
 
       {p && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {[
             { label: 'Police', number: p.urgence_police, emoji: '🚔' },
             { label: 'Ambulance', number: p.urgence_ambulance, emoji: '🚑' },
             { label: 'Ambassade FR', number: p.urgence_ambassade_france, emoji: '🇫🇷' },
-          ].map(u => u.number ? (
-            <a key={u.label} href={`tel:${u.number}`}
-              className="flex items-center justify-between px-4 py-3 rounded-2xl bg-gray-50 active:bg-gray-100 transition">
-              <span className="text-sm text-gray-700 font-medium">{u.emoji} {u.label}</span>
-              <span className="flex items-center gap-2">
-                <span className="text-base font-bold text-[#004850]">{u.number}</span>
-                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#36A6B2]">
-                  <Phone size={15} color="white" />
-                </span>
-              </span>
-            </a>
-          ) : (
-            <div key={u.label} className="flex items-center justify-between px-4 py-3 rounded-2xl bg-gray-50">
-              <span className="text-sm text-gray-400">{u.emoji} {u.label}</span>
-              <span className="text-sm text-gray-300 font-bold">–</span>
+          ].map(u => (
+            <div key={u.label} className="bg-gray-50 rounded-2xl px-4 pt-3 pb-3 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">{u.emoji} {u.label}</span>
+                <span className="text-lg font-bold text-[#004850]">{u.number ?? '–'}</span>
+              </div>
+              {u.number
+                ? <SlideToCall number={u.number} />
+                : <div style={{ height: HANDLE + PAD * 2, borderRadius: 9999, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span className="text-xs text-gray-300 font-semibold">Non disponible</span>
+                  </div>
+              }
             </div>
           ))}
         </div>

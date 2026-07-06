@@ -69,16 +69,15 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
 
       {p && (
         <div className="flex flex-col gap-3">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col">
             {[
               { label: 'Police', number: p.urgence_police, emoji: '🚔' },
               { label: 'Ambulance', number: p.urgence_ambulance, emoji: '🚑' },
-              { label: 'Ambassade', number: p.urgence_ambassade_france, emoji: '🇫🇷' },
+              { label: 'Ambassade FR', number: p.urgence_ambassade_france, emoji: '🇫🇷' },
             ].map(u => (
-              <div key={u.label} className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-gray-50 text-center">
-                <span className="text-2xl">{u.emoji}</span>
-                <span className="text-xs text-gray-400 leading-tight">{u.label}</span>
-                <span className="text-sm font-bold text-gray-800 break-all">{u.number ?? '–'}</span>
+              <div key={u.label} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
+                <span className="text-sm text-gray-600">{u.emoji} {u.label}</span>
+                <span className="text-sm font-bold text-gray-800">{u.number ?? '–'}</span>
               </div>
             ))}
           </div>

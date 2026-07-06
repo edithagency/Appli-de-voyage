@@ -62,7 +62,10 @@ export default function ReglesBagages() {
   const regles    = compagnieId ? reglesBagages[compagnieId] : null
 
   const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
-  const filtered = COMPAGNIES.filter(c => norm(c.nom).includes(norm(search))).slice(0, 6)
+  const filtered = COMPAGNIES.filter(c => {
+    const q = norm(search)
+    return norm(c.nom).split(/[\s\-]+/).some(w => w.startsWith(q))
+  }).slice(0, 6)
 
   function selectCompagnie(id: string, nom: string) {
     setCompagnieId(id)

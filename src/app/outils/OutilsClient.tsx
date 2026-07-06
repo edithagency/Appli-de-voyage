@@ -172,7 +172,7 @@ export default function OutilsClient({
 
 
         <div>
-          <p style={{ fontWeight: 700, fontSize: 15, color: '#1a2e2f', margin: 0, lineHeight: 1.25 }}>
+          <p style={{ fontWeight: 700, fontSize: 13, color: '#1a2e2f', margin: 0, lineHeight: 1.25, textTransform: 'uppercase', letterSpacing: '-0.01em' }}>
             {outil.titre}
           </p>
           <p style={{ fontSize: 12, color: 'rgba(0,0,0,0.45)', margin: '3px 0 0' }}>

@@ -137,9 +137,6 @@ export default function DecalageHoraire() {
       <div className="grid grid-cols-2 gap-3">
         {[p1, p2].map((p, idx) => (
           <div key={idx} className="relative">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Ville {idx + 1}
-            </p>
             <div className="relative">
               <input
                 type="text"

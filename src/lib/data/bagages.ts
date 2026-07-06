@@ -131,23 +131,23 @@ export const reglesBagages: Record<string, RegleCompagnie> = {
     },
   },
   emirates: {
-    lien_officiel: 'https://www.emirates.com/fr/french/before-you-fly/baggage/cabin-baggage',
+    lien_officiel: 'https://www.emirates.com/fr/french/help/faq-topics/baggage-and-lost-property/faq/what-is-my-allowance-for-cabin-baggage/',
     date_maj: '6 juillet 2026',
     pas_de_distinction: true,
     billets: {
       basic: {
         sous_siege: { dimensions: '-',           poids: '-',        statut: 'non_autorise', prix: null },
-        cabine:     { dimensions: '55×38×20 cm', poids: '7 kg max', statut: 'inclus',       prix: null },
+        cabine:     { dimensions: '55×38×22 cm', poids: '7 kg max', statut: 'inclus',       prix: null },
         soute:      { dimensions: '150 cm cumulés', poids: '30 kg', statut: 'inclus',       prix: null },
       },
       standard: {
         sous_siege: { dimensions: '-',           poids: '-',        statut: 'non_autorise', prix: null },
-        cabine:     { dimensions: '55×38×20 cm', poids: '7 kg max', statut: 'inclus',       prix: null },
+        cabine:     { dimensions: '55×38×22 cm', poids: '7 kg max', statut: 'inclus',       prix: null },
         soute:      { dimensions: '150 cm cumulés', poids: '30 kg', statut: 'inclus',       prix: null },
       },
       flex: {
         sous_siege: { dimensions: '-',           poids: '-',        statut: 'non_autorise', prix: null },
-        cabine:     { dimensions: '55×38×20 cm', poids: '7 kg max', statut: 'inclus',       prix: null },
+        cabine:     { dimensions: '55×38×22 cm', poids: '7 kg max', statut: 'inclus',       prix: null },
         soute:      { dimensions: '150 cm cumulés', poids: '30 kg', statut: 'inclus',       prix: null },
       },
     },

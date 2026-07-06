@@ -13,20 +13,56 @@ export type PaysOutil = {
   ambassade_info: { adresse?: string; tel_urgence?: string } | null
   sante_details: { trousse_medicale?: string[] } | null
   phrases_essentielles: { fr: string; langue_locale: string; phonetique: string }[] | null
+  budget_estimations?: Record<string, Record<string, number>> | null
 }
 
 export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOutil[]; defaultPaysCode?: string | null }) {
-  const [code, setCode] = useState(defaultPaysCode ?? pays[0]?.code ?? '')
+  const defaultPays = pays.find(x => x.code === defaultPaysCode) ?? null
+  const [code, setCode] = useState(defaultPaysCode ?? '')
+  const [search, setSearch] = useState(defaultPays ? `${defaultPays.emoji} ${defaultPays.nom_fr}` : '')
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  const paysFiltered = pays.filter(p =>
+    p.nom_fr.toLowerCase().includes(search.toLowerCase())
+  ).slice(0, 6)
+
+  function handleSelect(p: PaysOutil) {
+    setCode(p.code)
+    setSearch(`${p.emoji} ${p.nom_fr}`)
+    setShowDropdown(false)
+  }
+
   const p = pays.find(x => x.code === code) ?? null
 
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="font-bold text-gray-800 text-lg">🚨 Numéros d&apos;urgence</h2>
-
-      <select value={code} onChange={e => setCode(e.target.value)}
-        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]">
-        {pays.map(x => <option key={x.code} value={x.code}>{x.emoji} {x.nom_fr}</option>)}
-      </select>
+      <div className="relative">
+        <input
+          type="text"
+          value={search}
+          onChange={e => { setSearch(e.target.value); setShowDropdown(true); setCode('') }}
+          onFocus={() => setShowDropdown(true)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+          placeholder="Rechercher un pays..."
+          className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+        />
+        {showDropdown && search.length > 0 && paysFiltered.length > 0 && (
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+            {paysFiltered.map(p => (
+              <button
+                key={p.code}
+                type="button"
+                onMouseDown={() => handleSelect(p)}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-left transition text-sm"
+              >
+                <span className="text-xl">{p.emoji}</span>
+                <span className="text-gray-800">{p.nom_fr}</span>
+                {code === p.code && <span className="ml-auto text-[#36A6B2]">✓</span>}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {p && (
         <div className="flex flex-col gap-3">

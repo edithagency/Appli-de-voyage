@@ -133,7 +133,7 @@ export default function DecalageHoraire() {
   return (
     <div className="flex flex-col gap-4">
       {/* Sélecteurs */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 pt-1">
         {[p1, p2].map((p, idx) => (
           <div key={idx} className="relative">
             <div className="relative">

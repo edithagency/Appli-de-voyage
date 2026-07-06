@@ -131,71 +131,65 @@ export default function DecalageHoraire() {
     ? { bg: '#F3F4F6', text: '#6B7280' }
     : { bg: '#e7f8ce', text: '#2D5A1B' }
 
-  function Picker({ p, label }: { p: ReturnType<typeof useCityPicker>; label: string }) {
-    return (
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{label}</p>
-        <div className="relative">
-          <input
-            type="text"
-            value={p.search}
-            onFocus={p.onFocus}
-            onChange={e => p.onChange(e.target.value)}
-            onBlur={p.onBlur}
-            placeholder="Rechercher une ville…"
-            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
-          />
-          {p.searching && (
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">…</span>
-          )}
-        </div>
-        {p.showList && p.results.length > 0 && (
-          <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
-            {p.results.map((r, i) => (
-              <button key={i} type="button"
-                onMouseDown={() => p.select(r)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
-                <span className="text-gray-800 font-medium">{r.label}</span>
-                <span className="text-gray-400 text-xs">{r.country}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  function Clock({ p, accent }: { p: ReturnType<typeof useCityPicker>; accent: boolean }) {
-    return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-0.5">
-        <p className="text-xs font-semibold text-gray-500 mb-1">{p.city.label}</p>
-        {p.loadingTz ? (
-          <p className="text-sm text-gray-400 italic">Chargement…</p>
-        ) : (
-          <>
-            <p className="text-2xl font-bold tabular-nums leading-none"
-              style={{ color: accent ? '#36A6B2' : '#1a2e2f' }}>
-              {formatHeure(now, p.city.tz)}
-            </p>
-            <p className="text-xs text-gray-400 capitalize leading-tight mt-1">
-              {formatJour(now, p.city.tz)}
-            </p>
-          </>
-        )}
-      </div>
-    )
-  }
-
   return (
     <div className="flex flex-col gap-4">
+      {/* Sélecteurs */}
       <div className="grid grid-cols-2 gap-3">
-        <Picker p={p1} label="Ville 1" />
-        <Picker p={p2} label="Ville 2" />
+        {[p1, p2].map((p, idx) => (
+          <div key={idx}>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              Ville {idx + 1}
+            </p>
+            <div className="relative">
+              <input
+                type="text"
+                value={p.search}
+                onFocus={p.onFocus}
+                onChange={e => p.onChange(e.target.value)}
+                onBlur={p.onBlur}
+                placeholder="Rechercher…"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+              />
+              {p.searching && (
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">…</span>
+              )}
+            </div>
+            {p.showList && p.results.length > 0 && (
+              <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+                {p.results.map((r, i) => (
+                  <button key={i} type="button"
+                    onMouseDown={() => p.select(r)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0">
+                    <span className="text-gray-800 font-medium">{r.label}</span>
+                    <span className="text-gray-400 text-xs">{r.country}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
+      {/* Horloges */}
       <div className="grid grid-cols-2 gap-3">
-        <Clock p={p1} accent={true} />
-        <Clock p={p2} accent={false} />
+        {[p1, p2].map((p, idx) => (
+          <div key={idx} className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-0.5">
+            <p className="text-xs font-semibold text-gray-500 mb-1">{p.city.label}</p>
+            {p.loadingTz ? (
+              <p className="text-sm text-gray-400 italic">Chargement…</p>
+            ) : (
+              <>
+                <p className="text-2xl font-bold tabular-nums leading-none"
+                  style={{ color: idx === 0 ? '#36A6B2' : '#1a2e2f' }}>
+                  {formatHeure(now, p.city.tz)}
+                </p>
+                <p className="text-xs text-gray-400 capitalize leading-tight mt-1">
+                  {formatJour(now, p.city.tz)}
+                </p>
+              </>
+            )}
+          </div>
+        ))}
       </div>
 
       <div className="flex justify-center">

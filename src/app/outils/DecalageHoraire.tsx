@@ -36,16 +36,15 @@ const VILLES = [
 ]
 
 type Ville = typeof VILLES[0]
-type Side = 1 | 2 | null
 
-function load(key: string, fallback: Ville): Ville {
+function loadVille(key: string, fallback: Ville): Ville {
   if (typeof window === 'undefined') return fallback
   const tz    = localStorage.getItem(key + '_tz')
   const label = localStorage.getItem(key + '_label')
   return tz && label ? { tz, label } : fallback
 }
 
-function save(key: string, v: Ville) {
+function saveVille(key: string, v: Ville) {
   localStorage.setItem(key + '_tz',    v.tz)
   localStorage.setItem(key + '_label', v.label)
 }
@@ -65,34 +64,34 @@ function getOffset(date: Date, tz: string): number {
 }
 
 export default function DecalageHoraire() {
-  const [now,    setNow]    = useState(new Date())
-  const [city1,  setCity1]  = useState<Ville>(() => load('horaire_1', { label: 'Paris',   tz: 'Europe/Paris' }))
-  const [city2,  setCity2]  = useState<Ville>(() => load('horaire_2', { label: 'Bangkok', tz: 'Asia/Bangkok' }))
-  const [active, setActive] = useState<Side>(null)
-  const [search, setSearch] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [now,   setNow]   = useState(new Date())
+  const [city1, setCity1] = useState<Ville>(() => loadVille('horaire_1', { label: 'Paris',   tz: 'Europe/Paris'   }))
+  const [city2, setCity2] = useState<Ville>(() => loadVille('horaire_2', { label: 'Bangkok', tz: 'Asia/Bangkok'   }))
+
+  const [search1, setSearch1] = useState(city1.label)
+  const [search2, setSearch2] = useState(city2.label)
+  const [showList1, setShowList1] = useState(false)
+  const [showList2, setShowList2] = useState(false)
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(id)
   }, [])
 
-  useEffect(() => {
-    if (active) {
-      setSearch('')
-      setTimeout(() => inputRef.current?.focus(), 30)
-    }
-  }, [active])
-
-  function selectVille(v: Ville) {
-    if (active === 1) { setCity1(v); save('horaire_1', v) }
-    else              { setCity2(v); save('horaire_2', v) }
-    setActive(null)
-    setSearch('')
+  function select1(v: Ville) {
+    setCity1(v); saveVille('horaire_1', v)
+    setSearch1(v.label); setShowList1(false)
+  }
+  function select2(v: Ville) {
+    setCity2(v); saveVille('horaire_2', v)
+    setSearch2(v.label); setShowList2(false)
   }
 
-  const filtered = search.trim()
-    ? VILLES.filter(v => v.label.toLowerCase().includes(search.toLowerCase())).slice(0, 6)
+  const filtered1 = showList1
+    ? VILLES.filter(v => v.label.toLowerCase().includes(search1.toLowerCase())).slice(0, 6)
+    : []
+  const filtered2 = showList2
+    ? VILLES.filter(v => v.label.toLowerCase().includes(search2.toLowerCase())).slice(0, 6)
     : []
 
   const diff = getOffset(now, city2.tz) - getOffset(now, city1.tz)
@@ -101,64 +100,75 @@ export default function DecalageHoraire() {
     ? { bg: '#F3F4F6', text: '#6B7280' }
     : { bg: '#e7f8ce', text: '#2D5A1B' }
 
-  function ClockCard({ city, side }: { city: Ville; side: Side }) {
-    const isActive = active === side
-    return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-1">
-        <button
-          onClick={() => setActive(isActive ? null : side)}
-          className="self-start flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all"
-          style={{
-            background: isActive ? '#004850' : '#F3F4F6',
-            color:      isActive ? 'white'   : '#374151',
-          }}
-        >
-          {city.label}
-          <span className="opacity-50 text-[10px]">{isActive ? '▲' : '▼'}</span>
-        </button>
-        <p className="text-2xl font-bold tabular-nums leading-none mt-2"
-          style={{ color: side === 1 ? '#36A6B2' : '#1a2e2f' }}>
-          {formatHeure(now, city.tz)}
-        </p>
-        <p className="text-xs text-gray-400 capitalize leading-tight">{formatJour(now, city.tz)}</p>
-      </div>
-    )
-  }
-
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3">
-        <ClockCard city={city1} side={1} />
-        <ClockCard city={city2} side={2} />
+      {/* Sélecteur ville 1 */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ville 1</p>
+        <input
+          type="text"
+          value={search1}
+          onChange={e => { setSearch1(e.target.value); setShowList1(e.target.value.length > 0) }}
+          onBlur={() => setTimeout(() => { setShowList1(false); setSearch1(city1.label) }, 150)}
+          placeholder="Rechercher une ville…"
+          className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+        />
+        {showList1 && filtered1.length > 0 && (
+          <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+            {filtered1.map(v => (
+              <button key={v.tz} type="button"
+                onMouseDown={() => select1(v)}
+                className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
+                {v.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Recherche inline */}
-      {active && (
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-          <div className="px-3 pt-3 pb-2">
-            <input
-              ref={inputRef}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              onBlur={() => setTimeout(() => { setActive(null); setSearch('') }, 150)}
-              placeholder="Rechercher une ville…"
-              className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm focus:outline-none"
-            />
+      {/* Sélecteur ville 2 */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ville 2</p>
+        <input
+          type="text"
+          value={search2}
+          onChange={e => { setSearch2(e.target.value); setShowList2(e.target.value.length > 0) }}
+          onBlur={() => setTimeout(() => { setShowList2(false); setSearch2(city2.label) }, 150)}
+          placeholder="Rechercher une ville…"
+          className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+        />
+        {showList2 && filtered2.length > 0 && (
+          <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+            {filtered2.map(v => (
+              <button key={v.tz} type="button"
+                onMouseDown={() => select2(v)}
+                className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
+                {v.label}
+              </button>
+            ))}
           </div>
-          {filtered.length > 0 && (
-            <div className="overflow-y-auto max-h-48">
-              {filtered.map(v => (
-                <button key={v.tz} type="button"
-                  onMouseDown={() => selectVille(v)}
-                  className="w-full flex items-center px-4 py-2.5 text-left hover:bg-gray-50 transition text-sm text-gray-800 border-b border-gray-50 last:border-0">
-                  {v.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
 
+      {/* Les deux horloges */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-0.5">
+          <p className="text-xs font-semibold text-gray-500 mb-1">{city1.label}</p>
+          <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: '#36A6B2' }}>
+            {formatHeure(now, city1.tz)}
+          </p>
+          <p className="text-xs text-gray-400 capitalize leading-tight mt-1">{formatJour(now, city1.tz)}</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-0.5">
+          <p className="text-xs font-semibold text-gray-500 mb-1">{city2.label}</p>
+          <p className="text-2xl font-bold tabular-nums leading-none text-gray-800">
+            {formatHeure(now, city2.tz)}
+          </p>
+          <p className="text-xs text-gray-400 capitalize leading-tight mt-1">{formatJour(now, city2.tz)}</p>
+        </div>
+      </div>
+
+      {/* Badge décalage */}
       <div className="flex justify-center">
         <span className="px-4 py-1.5 rounded-full text-sm font-bold"
           style={{ background: diffColor.bg, color: diffColor.text }}>

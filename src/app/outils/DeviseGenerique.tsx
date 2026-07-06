@@ -227,9 +227,8 @@ export default function DeviseGenerique() {
         </div>
       )}
 
-      {!loading && (Object.keys(rates).length > 0
-        ? <InfoBlock type="disclaimer">🔄 Taux BCE mis à jour quotidiennement</InfoBlock>
-        : <InfoBlock type="alerte">⚠️ Taux indisponibles — vérifiez votre connexion</InfoBlock>
+      {!loading && Object.keys(rates).length === 0 && (
+        <InfoBlock type="alerte">⚠️ Taux indisponibles — vérifiez votre connexion</InfoBlock>
       )}
     </div>
   )

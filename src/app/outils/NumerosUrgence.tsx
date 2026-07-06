@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Phone, Shield, Ambulance, Landmark } from 'lucide-react'
+import { Phone } from 'lucide-react'
 
 export type PaysOutil = {
   code: string
@@ -114,6 +114,21 @@ function SlideToCall({ number }: { number: string }) {
   )
 }
 
+function parseEntries(label: string, raw: string | null): { label: string; number: string }[] {
+  if (!raw) return []
+  const mainMatch = raw.match(/^([\d\s+]+?)(?:\s*\(|$)/)
+  const altMatch  = raw.match(/\(ou\s+(\d+)\s*([^)]*)\)/)
+  const entries: { label: string; number: string }[] = []
+  const mainNum = mainMatch?.[1]?.trim()
+  if (mainNum) entries.push({ label, number: mainNum })
+  if (altMatch) {
+    const altLabelRaw = altMatch[2].trim().replace(/^(pour la|pour|la|le|les)\s+/i, '')
+    const altLabel = altLabelRaw ? altLabelRaw.charAt(0).toUpperCase() + altLabelRaw.slice(1) : label
+    entries.push({ label: altLabel, number: altMatch[1] })
+  }
+  return entries
+}
+
 export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOutil[]; defaultPaysCode?: string | null }) {
   const defaultPays = pays.find(x => x.code === defaultPaysCode) ?? null
   const [code, setCode] = useState(defaultPaysCode ?? '')
@@ -166,21 +181,16 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
       {p && (
         <div className="flex flex-col gap-4">
           {[
-            { label: 'Police', number: p.urgence_police, icon: <Shield size={18} color="#004850" /> },
-            { label: 'Ambulance', number: p.urgence_ambulance, icon: <Ambulance size={18} color="#004850" /> },
-            { label: 'Ambassade FR', number: p.urgence_ambassade_france, icon: <Landmark size={18} color="#004850" /> },
+            ...parseEntries('Police', p.urgence_police),
+            ...parseEntries('Ambulance', p.urgence_ambulance),
+            ...parseEntries('Ambassade FR', p.urgence_ambassade_france),
           ].map(u => (
             <div key={u.label} className="bg-gray-50 rounded-2xl px-4 pt-3 pb-3 flex flex-col gap-2.5">
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-sm font-medium text-gray-600">{u.icon} {u.label}</span>
-                <span className="text-lg font-bold text-[#004850]">{u.number ?? '–'}</span>
+                <span className="text-sm font-medium text-gray-600">{u.label}</span>
+                <span className="text-lg font-bold text-[#004850]">{u.number}</span>
               </div>
-              {u.number
-                ? <SlideToCall number={u.number} />
-                : <div style={{ height: HANDLE + PAD * 2, borderRadius: 9999, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span className="text-xs text-gray-300 font-semibold">Non disponible</span>
-                  </div>
-              }
+              <SlideToCall number={u.number} />
             </div>
           ))}
         </div>

@@ -89,14 +89,21 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
       halo.lookAt(0, 0, 0)
       group.add(halo)
     }
-    addMarker(city1.lat, city1.lon, 0xffd700)
-    addMarker(city2.lat, city2.lon, 0x36a6b2)
+    addMarker(city1.lat, city1.lon, 0xffffff) // départ blanc
+    addMarker(city2.lat, city2.lon, 0x36a6b2) // arrivée bleu
 
-    // Arc — tube 3D pour avoir une vraie épaisseur
+    // Arc — tube 3D avec MeshPhongMaterial pour l'effet de relief
     const pts = arcCurve(city1, city2)
     const curve = new THREE.CatmullRomCurve3(pts)
-    const tube  = new THREE.TubeGeometry(curve, 80, 0.009, 6, false)
-    group.add(new THREE.Mesh(tube, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 })))
+    const tube  = new THREE.TubeGeometry(curve, 80, 0.011, 10, false)
+    group.add(new THREE.Mesh(tube, new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      emissive: new THREE.Color(0x99ccff),
+      emissiveIntensity: 0.4,
+      shininess: 90,
+      transparent: true,
+      opacity: 0.95,
+    })))
 
     // Orientation initiale
     const avgLon = (city1.lon + city2.lon) / 2
@@ -134,7 +141,7 @@ export default function GlobeViz({ city1, city2 }: { city1: City; city2: City })
     let rafId: number
     const animate = () => {
       rafId = requestAnimationFrame(animate)
-      if (autoRotate) group.rotation.y += 0.0018
+      if (autoRotate) group.rotation.y -= 0.0018 // sens de rotation de la Terre (est vers ouest visuellement)
       renderer.render(scene, camera)
     }
     animate()

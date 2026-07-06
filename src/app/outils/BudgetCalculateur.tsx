@@ -91,19 +91,19 @@ function Stepper({ label, value, onChange, min, max, unit }: {
   label: string; value: number; onChange: (v: number) => void; min: number; max: number; unit: string
 }) {
   return (
-    <div style={{ background: '#F9FAFB', borderRadius: 14, padding: '12px 14px' }}>
-      <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+    <div style={{ background: '#F9FAFB', borderRadius: 14, padding: '8px 12px' }}>
+      <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>
         {label}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
         <button
           onClick={() => onChange(Math.max(min, value - 1))}
-          style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 18, lineHeight: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#374151', fontWeight: 300 }}
+          style={{ width: 27, height: 27, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 18, lineHeight: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#374151', fontWeight: 300 }}
         >−</button>
         <span style={{ fontWeight: 700, fontSize: 15, color: '#111827' }}>{value} <span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF' }}>{unit}</span></span>
         <button
           onClick={() => onChange(Math.min(max, value + 1))}
-          style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 18, lineHeight: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#374151', fontWeight: 300 }}
+          style={{ width: 27, height: 27, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 18, lineHeight: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#374151', fontWeight: 300 }}
         >+</button>
       </div>
     </div>
@@ -159,10 +159,10 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
   const fmt = (n: number) => n.toLocaleString('fr-FR')
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* Sélecteur de pays — même design que "Ajouter un voyage" */}
       <div className="relative">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Destination</p>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Destination</p>
         <input
           type="text"
           value={search}
@@ -191,19 +191,19 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
       </div>
 
       {/* Durée & voyageurs */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <Stepper label="Durée" value={jours} onChange={setJours} min={1} max={90} unit="jours" />
         <Stepper label="Voyageurs" value={personnes} onChange={setPersonnes} min={1} max={20} unit="pers." />
       </div>
 
       {/* Style de voyage */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
         {STYLES.map(s => (
           <button
             key={s.id}
             onClick={() => setStyle(s.id)}
             style={{
-              padding: '6px 4px',
+              padding: '5px 4px',
               borderRadius: 12,
               border: `2px solid ${style === s.id ? '#004850' : '#E5E7EB'}`,
               background: style === s.id ? '#004850' : 'white',
@@ -222,7 +222,7 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
       {result ? (
         <div>
           {/* Badge source */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
             <span style={{
               fontSize: 11, fontWeight: 600,
               color:      result.source === 'verified' ? '#2D5A1B' : '#786400',
@@ -235,8 +235,8 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
 
           {/* Barres par catégorie */}
           {CATEGORIES.map(cat => (
-            <div key={cat.key} style={{ marginBottom: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+            <div key={cat.key} style={{ marginBottom: 8 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
                 <span style={{ fontSize: 13, color: '#4B5563' }}>{cat.emoji} {cat.label}</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>{fmt(amounts[cat.key])} €</span>
               </div>
@@ -251,34 +251,34 @@ export default function BudgetCalculateur({ pays }: { pays: PaysOutil[] }) {
           ))}
 
           {/* Imprévus */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
             <span style={{ fontSize: 13, color: '#9CA3AF' }}>❓ Imprévus (10%)</span>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#9CA3AF' }}>{fmt(imprevu)} €</span>
           </div>
 
           {/* Séparateur */}
-          <div style={{ height: 1, background: '#F3F4F6', margin: '14px 0' }} />
+          <div style={{ height: 1, background: '#F3F4F6', margin: '10px 0' }} />
 
           {/* Total */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: 15, fontWeight: 800, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total</span>
             <span style={{ fontSize: 26, fontWeight: 800, color: '#004850' }}>{fmt(total)} €</span>
           </div>
 
           {/* Par jour / par personne */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {[
               { label: 'Par jour', value: Math.round(total / jours) },
               { label: 'Par personne', value: Math.round(total / personnes) },
             ].map(({ label, value }) => (
-              <div key={label} style={{ background: '#F9FAFB', borderRadius: 12, padding: '12px 14px', textAlign: 'center' }}>
-                <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#374151' }}>{fmt(value)} €</div>
+              <div key={label} style={{ background: '#F9FAFB', borderRadius: 12, padding: '8px 12px', textAlign: 'center' }}>
+                <div style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: '#374151' }}>{fmt(value)} €</div>
               </div>
             ))}
           </div>
 
-          <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 12 }}>
             <InfoBlock type="info">
               Vol non inclus. Hébergement estimé pour une chambre partagée.
             </InfoBlock>

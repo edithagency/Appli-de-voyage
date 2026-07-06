@@ -9,7 +9,6 @@ import DeviseGenerique from './DeviseGenerique'
 import TailleConverter from './TailleConverter'
 import DecalageHoraire from './DecalageHoraire'
 import ReglesBagages from './ReglesBagages'
-import PhrasesEssentielles from './PhrasesEssentielles'
 import NumerosUrgence, { type PaysOutil } from './NumerosUrgence'
 import PermisGuide from './PermisGuide'
 import MedicamentsTraducteur from './MedicamentsTraducteur'
@@ -48,13 +47,6 @@ const OUTILS = [
     emoji: '🧳',
     titre: 'Règles bagages',
     description: 'Dimensions et poids par compagnie aérienne',
-    premium: false,
-  },
-  {
-    id: 'phrases',
-    emoji: '🗣️',
-    titre: 'Phrases essentielles',
-    description: '20 phrases vitales dans la langue locale',
     premium: false,
   },
   {
@@ -222,7 +214,6 @@ export default function OutilsClient({
         {openTool === 'tailles' && <TailleConverter pays={pays} />}
         {openTool === 'horaire' && <DecalageHoraire />}
         {openTool === 'bagages' && <ReglesBagages />}
-        {openTool === 'phrases' && <PhrasesEssentielles pays={pays} defaultPaysCode={defaultPaysCode} />}
         {openTool === 'urgences' && <NumerosUrgence pays={pays} defaultPaysCode={defaultPaysCode} />}
         {openTool === 'permis' && <PermisGuide />}
         {openTool === 'medicaments' && <MedicamentsTraducteur />}

@@ -52,7 +52,7 @@ export default function DeviseGenerique() {
   const [loading, setLoading] = useState(true)
   const [from, setFrom] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('devise_from') : null) ?? 'EUR')
   const [to, setTo]     = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('devise_to')   : null) ?? 'USD')
-  const [valFrom, setValFrom] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('devise_val') : null) ?? '1')
+  const [valFrom, setValFrom] = useState('1')
   const [valTo, setValTo] = useState('')
   const [picker, setPicker] = useState<Side>(null)
   const [search, setSearch] = useState('')
@@ -67,8 +67,7 @@ export default function DeviseGenerique() {
         setLoading(false)
         const savedFrom = (typeof window !== 'undefined' ? localStorage.getItem('devise_from') : null) ?? 'EUR'
         const savedTo   = (typeof window !== 'undefined' ? localStorage.getItem('devise_to')   : null) ?? 'USD'
-        const savedVal  = parseFloat((typeof window !== 'undefined' ? localStorage.getItem('devise_val') : null) ?? '1')
-        setValTo(fmt(fromEur(toEur(isNaN(savedVal) ? 1 : savedVal, savedFrom, r), savedTo, r)))
+        setValTo(fmt(fromEur(toEur(1, savedFrom, r), savedTo, r)))
       })
       .catch(() => setLoading(false))
   }, [])
@@ -80,7 +79,6 @@ export default function DeviseGenerique() {
 
   function handleFrom(v: string) {
     setValFrom(v)
-    localStorage.setItem('devise_val', v)
     const n = parseFloat(v)
     setValTo(isNaN(n) ? '' : fmt(fromEur(toEur(n, from, rates), to, rates)))
   }
@@ -88,9 +86,7 @@ export default function DeviseGenerique() {
   function handleTo(v: string) {
     setValTo(v)
     const n = parseFloat(v)
-    const fromVal = isNaN(n) ? '' : fmt(fromEur(toEur(n, to, rates), from, rates))
-    setValFrom(fromVal)
-    localStorage.setItem('devise_val', fromVal)
+    setValFrom(isNaN(n) ? '' : fmt(fromEur(toEur(n, to, rates), from, rates)))
   }
 
   function selectCurrency(code: string) {
@@ -115,7 +111,6 @@ export default function DeviseGenerique() {
     localStorage.setItem('devise_to', from)
     setValFrom(valTo)
     setValTo(valFrom)
-    localStorage.setItem('devise_val', valTo)
   }
 
   const fromInfo = DEVISES.find(d => d.code === from)!

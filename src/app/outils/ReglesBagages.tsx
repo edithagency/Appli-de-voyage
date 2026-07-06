@@ -231,11 +231,13 @@ export default function ReglesBagages() {
             )}
           </div>
 
-          <a href={regles.lien_officiel} target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-[#f2e6de] rounded-xl px-3 py-2">
+          <button
+            type="button"
+            onClick={() => window.open(regles.lien_officiel, '_blank', 'noopener,noreferrer')}
+            className="flex items-center justify-between w-full text-xs font-semibold text-gray-700 bg-[#f2e6de] rounded-xl px-3 py-2">
             <span>Voir les règles officielles</span>
             <span className="opacity-60">↗</span>
-          </a>
+          </button>
         </div>
       )}
 

@@ -53,7 +53,7 @@ function NoteLines({ notes }: { notes: string }) {
             {match ? (
               <>
                 {line.slice(0, match.index)}
-                <a href={match[1]} target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#36A6B2]">{match[1]}</a>
+                <a href={match[1]} target="_blank" rel="noopener noreferrer" className="font-semibold underline" style={{ background: '#f2e6de', borderRadius: 4, padding: '0 3px' }}>{match[1]}</a>
                 {line.slice((match.index ?? 0) + match[1].length)}
               </>
             ) : line}

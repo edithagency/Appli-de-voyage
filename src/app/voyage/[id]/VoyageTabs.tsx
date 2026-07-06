@@ -269,7 +269,7 @@ export default function VoyageTabs({
                   {pays.infos_securite && <p className="mt-1.5 leading-relaxed">{pays.infos_securite}</p>}
                 </InfoBlock>
                 <a href={arianeUrl} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-between text-xs font-semibold text-[#36A6B2] bg-[#36A6B2]/10 rounded-xl px-3 py-2">
+                  className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-[#f2e6de] rounded-xl px-3 py-2">
                   <span>Consulter les conseils & s&apos;inscrire sur Ariane</span>
                   <span className="opacity-60">↗</span>
                 </a>
@@ -498,7 +498,7 @@ export default function VoyageTabs({
               <div className="flex flex-col gap-2">
                 {(pays.liens_officiels as { label: string; url: string; type: string }[]).map((lien, i) => (
                   <a key={i} href={lien.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-between text-xs font-semibold text-[#36A6B2] bg-[#36A6B2]/10 rounded-xl px-3 py-2">
+                    className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-[#f2e6de] rounded-xl px-3 py-2">
                     <span>{lien.label}</span><span className="opacity-60">↗</span>
                   </a>
                 ))}

@@ -108,12 +108,7 @@ function SlideToCall({ number }: { number: string }) {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        {triggered
-          ? <Phone size={15} color={COLOR} />
-          : <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M9 6l6 6-6 6" stroke={COLOR} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-        }
+        <Phone size={15} color={COLOR} />
       </div>
     </div>
   )

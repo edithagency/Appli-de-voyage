@@ -203,8 +203,8 @@ export default function ReglesBagages() {
 
           {/* Vérificateur */}
           <div style={{ background: '#F8F9FA', borderRadius: 16, padding: 16, marginBottom: 16 }}>
-            <p style={{ fontSize: 14, fontWeight: 700, margin: '0 0 12px', color: '#1a1a1a' }}>
-              🔍 Mon bagage rentre-t-il ?
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Mon bagage rentre-t-il ?
             </p>
             <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
               <input placeholder="L (cm)" type="number" style={inputStyle} value={L} onChange={e => setL(e.target.value)} />

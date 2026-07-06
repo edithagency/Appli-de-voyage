@@ -1,27 +1,32 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import dynamic from 'next/dynamic'
 
-type Ville = { label: string; tz: string }
+const GlobeViz = dynamic(() => import('./GlobeViz'), { ssr: false })
+
+type Ville = { label: string; tz: string; lat?: number; lon?: number }
 type SearchResult = { label: string; country: string; lat: number; lon: number }
 
 function loadVille(key: string, fallback: Ville): Ville {
   if (typeof window === 'undefined') return fallback
   const tz    = localStorage.getItem(key + '_tz')
   const label = localStorage.getItem(key + '_label')
-  return tz && label ? { tz, label } : fallback
+  const lat   = localStorage.getItem(key + '_lat')
+  const lon   = localStorage.getItem(key + '_lon')
+  return tz && label ? { tz, label, lat: lat ? +lat : undefined, lon: lon ? +lon : undefined } : fallback
 }
 
 function saveVille(key: string, v: Ville) {
   localStorage.setItem(key + '_tz',    v.tz)
   localStorage.setItem(key + '_label', v.label)
+  if (v.lat != null) localStorage.setItem(key + '_lat', String(v.lat))
+  if (v.lon != null) localStorage.setItem(key + '_lon', String(v.lon))
 }
 
 async function searchCities(q: string): Promise<SearchResult[]> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=8&addressdetails=1`
-  const resp = await fetch(url, {
-    headers: { 'Accept-Language': 'fr', 'User-Agent': 'BonVol-TravelApp/1.0' },
-  })
+  const resp = await fetch(url, { headers: { 'Accept-Language': 'fr' } })
   const data: any[] = await resp.json()
   const seen = new Set<string>()
   const results: SearchResult[] = []
@@ -29,9 +34,9 @@ async function searchCities(q: string): Promise<SearchResult[]> {
     const name    = r.address?.city || r.address?.town || r.address?.village || r.address?.municipality || r.name
     const country = r.address?.country || ''
     if (!name) continue
-    const key = name + '|' + country
-    if (seen.has(key)) continue
-    seen.add(key)
+    const k = name + '|' + country
+    if (seen.has(k)) continue
+    seen.add(k)
     results.push({ label: name, country, lat: parseFloat(r.lat), lon: parseFloat(r.lon) })
     if (results.length >= 6) break
   }
@@ -39,9 +44,7 @@ async function searchCities(q: string): Promise<SearchResult[]> {
 }
 
 async function getTimezone(lat: number, lon: number): Promise<string> {
-  const resp = await fetch(
-    `https://timeapi.io/api/TimeZone/coordinate?latitude=${lat}&longitude=${lon}`
-  )
+  const resp = await fetch(`https://timeapi.io/api/TimeZone/coordinate?latitude=${lat}&longitude=${lon}`)
   const data = await resp.json()
   return data.timeZone
 }
@@ -61,19 +64,15 @@ function getOffset(date: Date, tz: string): number {
 }
 
 function useCityPicker(storageKey: string, fallback: Ville) {
-  const [city,         setCity]         = useState<Ville>(() => loadVille(storageKey, fallback))
-  const [search,       setSearch]       = useState(city.label)
-  const [results,      setResults]      = useState<SearchResult[]>([])
-  const [showList,     setShowList]     = useState(false)
-  const [searching,    setSearching]    = useState(false)
-  const [loadingTz,    setLoadingTz]    = useState(false)
+  const [city,      setCity]      = useState<Ville>(() => loadVille(storageKey, fallback))
+  const [search,    setSearch]    = useState(city.label)
+  const [results,   setResults]   = useState<SearchResult[]>([])
+  const [showList,  setShowList]  = useState(false)
+  const [searching, setSearching] = useState(false)
+  const [loadingTz, setLoadingTz] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  function onFocus() {
-    setSearch('')
-    setResults([])
-    setShowList(false)
-  }
+  function onFocus() { setSearch(''); setResults([]); setShowList(false) }
 
   function onChange(val: string) {
     setSearch(val)
@@ -83,31 +82,23 @@ function useCityPicker(storageKey: string, fallback: Ville) {
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await searchCities(val)
-        setResults(res)
-        setShowList(res.length > 0)
+        setResults(res); setShowList(res.length > 0)
       } catch { setResults([]) }
       finally { setSearching(false) }
     }, 350)
   }
 
   function onBlur() {
-    setTimeout(() => {
-      setShowList(false)
-      setSearch(city.label)
-      setResults([])
-    }, 150)
+    setTimeout(() => { setShowList(false); setSearch(city.label); setResults([]) }, 150)
   }
 
   async function select(r: SearchResult) {
-    setSearch(r.label)
-    setShowList(false)
-    setResults([])
+    setSearch(r.label); setShowList(false); setResults([])
     setLoadingTz(true)
     try {
       const tz = await getTimezone(r.lat, r.lon)
-      const v  = { label: r.label, tz }
-      setCity(v)
-      saveVille(storageKey, v)
+      const v: Ville = { label: r.label, tz, lat: r.lat, lon: r.lon }
+      setCity(v); saveVille(storageKey, v)
     } catch { /* garde l'ancien fuseau */ }
     finally { setLoadingTz(false) }
   }
@@ -115,10 +106,13 @@ function useCityPicker(storageKey: string, fallback: Ville) {
   return { city, search, results, showList, searching, loadingTz, onFocus, onChange, onBlur, select }
 }
 
+const DEFAULT_1: Ville = { label: 'Paris',   tz: 'Europe/Paris', lat: 48.8566, lon: 2.3522  }
+const DEFAULT_2: Ville = { label: 'Bangkok', tz: 'Asia/Bangkok',  lat: 13.7563, lon: 100.502 }
+
 export default function DecalageHoraire() {
   const [now, setNow] = useState(new Date())
-  const p1 = useCityPicker('horaire_1', { label: 'Paris',   tz: 'Europe/Paris' })
-  const p2 = useCityPicker('horaire_2', { label: 'Bangkok', tz: 'Asia/Bangkok'  })
+  const p1 = useCityPicker('horaire_1', DEFAULT_1)
+  const p2 = useCityPicker('horaire_2', DEFAULT_2)
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000)
@@ -130,6 +124,9 @@ export default function DecalageHoraire() {
   const diffColor = diff === 0
     ? { bg: '#F3F4F6', text: '#6B7280' }
     : { bg: '#e7f8ce', text: '#2D5A1B' }
+
+  const globeCity1 = p1.city.lat != null ? { label: p1.city.label, lat: p1.city.lat!, lon: p1.city.lon! } : null
+  const globeCity2 = p2.city.lat != null ? { label: p2.city.label, lat: p2.city.lat!, lon: p2.city.lon! } : null
 
   return (
     <div className="flex flex-col gap-4">
@@ -189,12 +186,18 @@ export default function DecalageHoraire() {
         ))}
       </div>
 
+      {/* Badge décalage */}
       <div className="flex justify-center">
         <span className="px-4 py-1.5 rounded-full text-sm font-bold"
           style={{ background: diffColor.bg, color: diffColor.text }}>
           {diffLabel} entre les deux
         </span>
       </div>
+
+      {/* Globe 3D */}
+      {globeCity1 && globeCity2 && (
+        <GlobeViz city1={globeCity1} city2={globeCity2} />
+      )}
     </div>
   )
 }

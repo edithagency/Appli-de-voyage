@@ -102,53 +102,55 @@ export default function DecalageHoraire() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Sélecteur ville 1 */}
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ville 1</p>
-        <input
-          type="text"
-          value={search1}
-          onChange={e => { setSearch1(e.target.value); setShowList1(e.target.value.length > 0) }}
-          onBlur={() => setTimeout(() => { setShowList1(false); setSearch1(city1.label) }, 150)}
-          placeholder="Rechercher une ville…"
-          className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
-        />
-        {showList1 && filtered1.length > 0 && (
-          <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
-            {filtered1.map(v => (
-              <button key={v.tz} type="button"
-                onMouseDown={() => select1(v)}
-                className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
-                {v.label}
-              </button>
-            ))}
-          </div>
-        )}
+      {/* Sélecteurs côte à côte */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ville 1</p>
+          <input
+            type="text"
+            value={search1}
+            onChange={e => { setSearch1(e.target.value); setShowList1(e.target.value.length > 0) }}
+            onBlur={() => setTimeout(() => { setShowList1(false); setSearch1(city1.label) }, 150)}
+            placeholder="Rechercher…"
+            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+          />
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ville 2</p>
+          <input
+            type="text"
+            value={search2}
+            onChange={e => { setSearch2(e.target.value); setShowList2(e.target.value.length > 0) }}
+            onBlur={() => setTimeout(() => { setShowList2(false); setSearch2(city2.label) }, 150)}
+            placeholder="Rechercher…"
+            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
+          />
+        </div>
       </div>
 
-      {/* Sélecteur ville 2 */}
-      <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ville 2</p>
-        <input
-          type="text"
-          value={search2}
-          onChange={e => { setSearch2(e.target.value); setShowList2(e.target.value.length > 0) }}
-          onBlur={() => setTimeout(() => { setShowList2(false); setSearch2(city2.label) }, 150)}
-          placeholder="Rechercher une ville…"
-          className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
-        />
-        {showList2 && filtered2.length > 0 && (
-          <div className="w-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
-            {filtered2.map(v => (
-              <button key={v.tz} type="button"
-                onMouseDown={() => select2(v)}
-                className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
-                {v.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Dropdowns */}
+      {showList1 && filtered1.length > 0 && (
+        <div className="w-full -mt-2 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+          {filtered1.map(v => (
+            <button key={v.tz} type="button"
+              onMouseDown={() => select1(v)}
+              className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
+              {v.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {showList2 && filtered2.length > 0 && (
+        <div className="w-full -mt-2 bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+          {filtered2.map(v => (
+            <button key={v.tz} type="button"
+              onMouseDown={() => select2(v)}
+              className="w-full flex items-center px-4 py-3 hover:bg-blue-50 text-left transition text-sm border-b border-gray-50 last:border-0 text-gray-800">
+              {v.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Les deux horloges */}
       <div className="grid grid-cols-2 gap-3">

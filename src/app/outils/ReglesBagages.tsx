@@ -157,45 +157,42 @@ export default function ReglesBagages() {
         <div style={{ animation: 'fadeIn 0.25s ease' }}>
 
           {/* 3 blocs */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
             {BLOCS.map(bloc => {
               const data = billet[bloc.id]
               const s = statutStyle[data.statut]
               return (
                 <div key={bloc.id} style={{
-                  flex: 1,
                   borderRadius: 16,
-                  padding: 12,
+                  padding: '12px 16px',
                   background: s.bg,
                   border: `1px solid ${s.border}`,
-                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
                 }}>
-                  <span style={{ fontSize: 24 }}>{bloc.icon}</span>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', margin: '8px 0 2px' }}>
-                    {bloc.titre}
-                  </p>
-                  <p style={{ fontSize: 10, color: '#9CA3AF', margin: '0 0 8px' }}>
-                    {bloc.sousTitre}
-                  </p>
-                  <p style={{ fontSize: 11, color: '#374151', fontWeight: 600, margin: '0 0 2px' }}>
-                    {data.dimensions}
-                  </p>
-                  <p style={{ fontSize: 11, color: '#6B7280', margin: '0 0 8px' }}>
-                    {data.poids}
-                  </p>
+                  <span style={{ fontSize: 24, flexShrink: 0 }}>{bloc.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: '0 0 1px' }}>
+                      {bloc.titre}
+                    </p>
+                    <p style={{ fontSize: 11, color: '#6B7280', margin: 0 }}>
+                      {data.dimensions} · {data.poids}
+                    </p>
+                  </div>
                   <div style={{
-                    padding: '3px 8px',
+                    padding: '4px 10px',
                     borderRadius: 9999,
                     background: s.badgeBg,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 700,
                     color: s.badgeColor,
-                    display: 'inline-block',
+                    flexShrink: 0,
                   }}>
                     {data.statut === 'inclus'
                       ? '✅ Inclus'
                       : data.statut === 'payant'
-                        ? `➕ À partir de ${data.prix}€`
+                        ? `➕ ${data.prix}€`
                         : '❌ Non autorisé'}
                   </div>
                 </div>

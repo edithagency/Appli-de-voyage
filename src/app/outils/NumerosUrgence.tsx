@@ -37,6 +37,7 @@ export default function NumerosUrgence({ pays, defaultPaysCode }: { pays: PaysOu
   return (
     <div className="flex flex-col gap-3">
       <div className="relative">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Destination</p>
         <input
           type="text"
           value={search}

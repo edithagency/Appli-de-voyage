@@ -6,45 +6,45 @@ import type { PaysOutil } from './NumerosUrgence'
 // --- Données ---
 
 const CHAUSSURES_FEMME = [
-  { fr: 35, us: '5',    uk: '2.5', jp: '22',   au: '4',   kr: '220' },
-  { fr: 36, us: '6',    uk: '3.5', jp: '23',   au: '5',   kr: '230' },
-  { fr: 37, us: '6.5', uk: '4',   jp: '23.5', au: '6',   kr: '235' },
-  { fr: 38, us: '7.5', uk: '5',   jp: '24',   au: '7',   kr: '240' },
-  { fr: 39, us: '8',   uk: '5.5', jp: '24.5', au: '8',   kr: '245' },
-  { fr: 40, us: '9',   uk: '6.5', jp: '25',   au: '9',   kr: '250' },
-  { fr: 41, us: '10',  uk: '7.5', jp: '25.5', au: '10',  kr: '255' },
-  { fr: 42, us: '11',  uk: '8.5', jp: '26',   au: '11',  kr: '260' },
+  { fr: 35, eu: '35', us: '5',    uk: '2.5', jp: '22',   au: '4',   kr: '220' },
+  { fr: 36, eu: '36', us: '6',    uk: '3.5', jp: '23',   au: '5',   kr: '230' },
+  { fr: 37, eu: '37', us: '6.5', uk: '4',   jp: '23.5', au: '6',   kr: '235' },
+  { fr: 38, eu: '38', us: '7.5', uk: '5',   jp: '24',   au: '7',   kr: '240' },
+  { fr: 39, eu: '39', us: '8',   uk: '5.5', jp: '24.5', au: '8',   kr: '245' },
+  { fr: 40, eu: '40', us: '9',   uk: '6.5', jp: '25',   au: '9',   kr: '250' },
+  { fr: 41, eu: '41', us: '10',  uk: '7.5', jp: '25.5', au: '10',  kr: '255' },
+  { fr: 42, eu: '42', us: '11',  uk: '8.5', jp: '26',   au: '11',  kr: '260' },
 ]
 
 const CHAUSSURES_HOMME = [
-  { fr: 39, us: '7',    uk: '6',    jp: '24.5', au: '6',    kr: '245' },
-  { fr: 40, us: '7.5', uk: '6.5', jp: '25',   au: '6.5', kr: '250' },
-  { fr: 41, us: '8',   uk: '7',   jp: '26',   au: '7',   kr: '260' },
-  { fr: 42, us: '9',   uk: '8',   jp: '26.5', au: '8',   kr: '265' },
-  { fr: 43, us: '10',  uk: '9',   jp: '27',   au: '9',   kr: '270' },
-  { fr: 44, us: '10.5',uk: '9.5', jp: '27.5', au: '9.5', kr: '275' },
-  { fr: 45, us: '11.5',uk: '10.5',jp: '28',   au: '10.5',kr: '280' },
-  { fr: 46, us: '12',  uk: '11',  jp: '29',   au: '11',  kr: '290' },
-  { fr: 47, us: '13',  uk: '12',  jp: '30',   au: '12',  kr: '300' },
+  { fr: 39, eu: '39', us: '7',    uk: '6',    jp: '24.5', au: '6',    kr: '245' },
+  { fr: 40, eu: '40', us: '7.5', uk: '6.5', jp: '25',   au: '6.5', kr: '250' },
+  { fr: 41, eu: '41', us: '8',   uk: '7',   jp: '26',   au: '7',   kr: '260' },
+  { fr: 42, eu: '42', us: '9',   uk: '8',   jp: '26.5', au: '8',   kr: '265' },
+  { fr: 43, eu: '43', us: '10',  uk: '9',   jp: '27',   au: '9',   kr: '270' },
+  { fr: 44, eu: '44', us: '10.5',uk: '9.5', jp: '27.5', au: '9.5', kr: '275' },
+  { fr: 45, eu: '45', us: '11.5',uk: '10.5',jp: '28',   au: '10.5',kr: '280' },
+  { fr: 46, eu: '46', us: '12',  uk: '11',  jp: '29',   au: '11',  kr: '290' },
+  { fr: 47, eu: '47', us: '13',  uk: '12',  jp: '30',   au: '12',  kr: '300' },
 ]
 
 const VETEMENTS_FEMME = [
-  { fr: 34, us: 'XS / 0',  uk: '6',  it: '38', jp: 'XS',  au: '6',  kr: '44'  },
-  { fr: 36, us: 'S / 2',   uk: '8',  it: '40', jp: 'S',   au: '8',  kr: '55'  },
-  { fr: 38, us: 'M / 4-6', uk: '10', it: '42', jp: 'M',   au: '10', kr: '66'  },
-  { fr: 40, us: 'L / 8',   uk: '12', it: '44', jp: 'L',   au: '12', kr: '77'  },
-  { fr: 42, us: 'XL / 10', uk: '14', it: '46', jp: 'XL',  au: '14', kr: '88'  },
-  { fr: 44, us: 'XXL / 12',uk: '16', it: '48', jp: 'XXL', au: '16', kr: '99'  },
-  { fr: 46, us: '3XL / 14',uk: '18', it: '50', jp: '3XL', au: '18', kr: '110' },
+  { fr: 34, eu: '34', us: 'XS / 0',  uk: '6',  it: '38', jp: 'XS',  au: '6',  kr: '44'  },
+  { fr: 36, eu: '36', us: 'S / 2',   uk: '8',  it: '40', jp: 'S',   au: '8',  kr: '55'  },
+  { fr: 38, eu: '38', us: 'M / 4-6', uk: '10', it: '42', jp: 'M',   au: '10', kr: '66'  },
+  { fr: 40, eu: '40', us: 'L / 8',   uk: '12', it: '44', jp: 'L',   au: '12', kr: '77'  },
+  { fr: 42, eu: '42', us: 'XL / 10', uk: '14', it: '46', jp: 'XL',  au: '14', kr: '88'  },
+  { fr: 44, eu: '44', us: 'XXL / 12',uk: '16', it: '48', jp: 'XXL', au: '16', kr: '99'  },
+  { fr: 46, eu: '46', us: '3XL / 14',uk: '18', it: '50', jp: '3XL', au: '18', kr: '110' },
 ]
 
 const VETEMENTS_HOMME = [
-  { fr: 'XS',  chest: '82–86 cm',  us: 'XS',  uk: 'XS',  jp: 'S',   au: 'XS',  kr: 'S'   },
-  { fr: 'S',   chest: '87–91 cm',  us: 'S',   uk: 'S',   jp: 'M',   au: 'S',   kr: 'M'   },
-  { fr: 'M',   chest: '92–96 cm',  us: 'M',   uk: 'M',   jp: 'L',   au: 'M',   kr: 'L'   },
-  { fr: 'L',   chest: '97–101 cm', us: 'L',   uk: 'L',   jp: 'XL',  au: 'L',   kr: 'XL'  },
-  { fr: 'XL',  chest: '102–107 cm',us: 'XL',  uk: 'XL',  jp: 'XXL', au: 'XL',  kr: 'XXL' },
-  { fr: 'XXL', chest: '108–113 cm',us: 'XXL', uk: 'XXL', jp: '3XL', au: 'XXL', kr: '3XL' },
+  { fr: 'XS',  eu: 'XS',  chest: '82–86 cm',  us: 'XS',  uk: 'XS',  jp: 'S',   au: 'XS',  kr: 'S'   },
+  { fr: 'S',   eu: 'S',   chest: '87–91 cm',  us: 'S',   uk: 'S',   jp: 'M',   au: 'S',   kr: 'M'   },
+  { fr: 'M',   eu: 'M',   chest: '92–96 cm',  us: 'M',   uk: 'M',   jp: 'L',   au: 'M',   kr: 'L'   },
+  { fr: 'L',   eu: 'L',   chest: '97–101 cm', us: 'L',   uk: 'L',   jp: 'XL',  au: 'L',   kr: 'XL'  },
+  { fr: 'XL',  eu: 'XL',  chest: '102–107 cm',us: 'XL',  uk: 'XL',  jp: 'XXL', au: 'XL',  kr: 'XXL' },
+  { fr: 'XXL', eu: 'XXL', chest: '108–113 cm',us: 'XXL', uk: 'XXL', jp: '3XL', au: 'XXL', kr: '3XL' },
 ]
 
 // Mapping code ISO → système de tailles
@@ -76,15 +76,6 @@ const CODE_TO_SYSTEM: Record<string, SysKey> = {
   MU: 'eu', MG: 'eu', SC: 'eu', CV: 'eu',
 }
 
-const SYS_LABELS: Record<SysKey, string> = {
-  us: 'États-Unis / Canada',
-  uk: 'Royaume-Uni / Inde',
-  it: 'Italie',
-  jp: 'Japon',
-  au: 'Australie / NZ',
-  kr: 'Corée / Chine',
-  eu: 'Europe (= FR)',
-}
 
 type Category = 'vetements_f' | 'vetements_h' | 'chaussures_f' | 'chaussures_h'
 
@@ -171,14 +162,7 @@ export default function TailleConverter({ pays }: { pays: PaysOutil[] }) {
 
       {/* Tableau */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        {effectiveSys === 'eu' ? (
-          <div className="px-4 py-6 text-center">
-            <p className="text-sm text-gray-500">
-              {selectedPays?.emoji} {selectedPays?.nom_fr} utilise les tailles européennes.
-            </p>
-            <p className="text-xs text-gray-400 mt-1">Tes tailles françaises sont directement valables.</p>
-          </div>
-        ) : effectiveSys ? (
+        {effectiveSys ? (
           // Mode pays sélectionné → FR + pays
           <table className="w-full text-sm">
             <thead>
@@ -190,7 +174,7 @@ export default function TailleConverter({ pays }: { pays: PaysOutil[] }) {
                   <th className="py-2.5 px-3 text-center text-xs font-bold text-gray-400">Poitrine</th>
                 )}
                 <th className="py-2.5 px-4 text-center text-xs font-bold" style={{ color: '#36A6B2' }}>
-                  {selectedPays?.emoji} {SYS_LABELS[effectiveSys]}
+                  {selectedPays?.emoji} {selectedPays?.nom_fr}
                 </th>
               </tr>
             </thead>

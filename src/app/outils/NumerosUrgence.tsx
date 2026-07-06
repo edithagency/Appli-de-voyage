@@ -19,36 +19,35 @@ export type PaysOutil = {
 
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-const HANDLE = 52
+const HANDLE_W = 60
+const HANDLE_H = 36
 const PAD = 4
 const COLOR = '#36A6B2'
 
 function SlideToCall({ number }: { number: string }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = useState(false)
-  const [offset, setOffset] = useState(0)
+  const [dragOffset, setDragOffset] = useState(0)
   const [travel, setTravel] = useState(0)
   const startXRef = useRef(0)
   const calledRef = useRef(false)
 
-  const ratio = travel > 0 ? offset / travel : 0
-  const triggered = ratio >= 0.85
+  const triggered = dragging ? dragOffset > travel * 0.85 : false
 
-  function onDown(x: number) {
+  function onDown(e: React.PointerEvent) {
     const w = trackRef.current?.getBoundingClientRect().width ?? 0
-    const t = Math.max(0, w - HANDLE - PAD * 2)
+    const t = Math.max(0, w - HANDLE_W - PAD * 2)
     setTravel(t)
-    startXRef.current = x
-    setOffset(0)
+    startXRef.current = e.clientX
+    setDragOffset(0)
     calledRef.current = false
     setDragging(true)
+    e.currentTarget.setPointerCapture(e.pointerId)
   }
 
-  function onMove(x: number) {
+  function onMove(e: React.PointerEvent) {
     if (!dragging) return
-    const delta = x - startXRef.current
-    const next = Math.min(travel, Math.max(0, delta))
-    setOffset(next)
+    setDragOffset(Math.min(travel, Math.max(0, e.clientX - startXRef.current)))
   }
 
   function onUp() {
@@ -58,55 +57,63 @@ function SlideToCall({ number }: { number: string }) {
       calledRef.current = true
       window.location.href = `tel:${number}`
     }
-    setOffset(0)
+    setDragOffset(0)
   }
 
-  const handleLeft = dragging ? `${PAD + offset}px` : `${PAD}px`
+  const handleLeft = dragging ? `${PAD + dragOffset}px` : `${PAD}px`
 
   return (
     <div
       ref={trackRef}
       className="relative w-full select-none flex items-center justify-center"
       style={{
-        height: HANDLE + PAD * 2,
+        height: HANDLE_H + PAD * 2,
         borderRadius: 9999,
-        background: triggered ? COLOR : `${COLOR}15`,
-        border: triggered ? 'none' : `1.5px solid ${COLOR}40`,
-        transition: dragging ? 'none' : 'background 0.2s, border 0.2s',
+        background: triggered ? COLOR : `${COLOR}0D`,
+        border: triggered ? 'none' : `1px solid ${COLOR}26`,
+        boxShadow: triggered ? `0 0 24px 6px ${COLOR}59, 0 4px 14px ${COLOR}40` : 'none',
+        transition: dragging ? 'none' : 'background 0.2s, box-shadow 0.3s, border 0.2s',
         cursor: 'grab',
         touchAction: 'none',
       }}
-      onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); onDown(e.clientX) }}
-      onPointerMove={e => onMove(e.clientX)}
+      onPointerDown={onDown}
+      onPointerMove={onMove}
       onPointerUp={onUp}
-      onPointerCancel={() => { setDragging(false); setOffset(0) }}
+      onPointerCancel={() => { setDragging(false); setDragOffset(0) }}
     >
       <span style={{
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: 600,
         color: triggered ? 'white' : COLOR,
-        letterSpacing: '0.04em',
+        letterSpacing: '0.01em',
         transition: 'color 0.2s',
         userSelect: 'none',
       }}>
-        {triggered ? 'APPEL EN COURS…' : 'GLISSER POUR APPELER'}
+        {triggered ? 'APPEL EN COURS…' : 'APPELER'}
       </span>
 
       <div style={{
         position: 'absolute',
         top: PAD,
         left: handleLeft,
-        width: HANDLE,
-        height: HANDLE,
+        width: HANDLE_W,
+        height: HANDLE_H,
         borderRadius: 9999,
         background: 'white',
-        boxShadow: `0 4px 12px rgba(0,0,0,0.12), 0 0 16px 2px ${COLOR}40`,
-        transition: dragging ? 'none' : 'left 0.25s',
+        boxShadow: triggered
+          ? `0 6px 16px rgba(0,0,0,0.16), 0 0 22px 6px ${COLOR}80`
+          : `0 4px 12px rgba(0,0,0,0.12), 0 0 16px 3px ${COLOR}4D`,
+        transition: dragging ? 'none' : 'left 0.2s, box-shadow 0.3s',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Phone size={18} color={COLOR} />
+        {triggered
+          ? <Phone size={15} color={COLOR} />
+          : <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M9 6l6 6-6 6" stroke={COLOR} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        }
       </div>
     </div>
   )

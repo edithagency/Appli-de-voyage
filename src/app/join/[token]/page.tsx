@@ -44,7 +44,8 @@ export default async function JoinVoyagePage({ params }: { params: Promise<{ tok
     .eq('role', 'membre')
 
   const membres = tousLesMembres ?? []
-  const membresDisponibles = membres.filter(m => m.statut_invitation !== 'joined')
+  // Un enfant n'a pas de compte : il ne peut jamais être "choisi" en rejoignant le lien.
+  const membresDisponibles = membres.filter(m => m.type === 'adulte' && m.statut_invitation !== 'joined')
 
   const code = getPaysCode(voyage.pays_code, voyage.destination)
   const photo = code ? `/images/pays/${code}.png` : null

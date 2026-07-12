@@ -2,19 +2,23 @@
 
 import { useRef, useState } from 'react'
 
-const HANDLE_WIDTH = 60
-const HANDLE_HEIGHT = 36
 const PADDING = 4
 
 export default function SlideToggle({
   completed, onToggle, color, labelIdle = 'À FAIRE', labelDone = 'FAIT',
+  handleWidth = 60, handleHeight = 36, fontSize = 13,
 }: {
   completed: boolean
   onToggle: () => void
   color: string
   labelIdle?: string
   labelDone?: string
+  handleWidth?: number
+  handleHeight?: number
+  fontSize?: number
 }) {
+  const HANDLE_WIDTH = handleWidth
+  const HANDLE_HEIGHT = handleHeight
   const trackRef = useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
@@ -65,7 +69,7 @@ export default function SlideToggle({
       className="relative w-full select-none flex items-center justify-center"
       style={{
         height: HANDLE_HEIGHT + PADDING * 2,
-        borderRadius: 9999,
+        borderRadius: 12,
         background: willComplete ? color : `${color}0D`,
         border: willComplete ? 'none' : `1px solid ${color}26`,
         boxShadow: willComplete ? `0 0 24px 6px ${color}59, 0 4px 14px ${color}40` : 'none',
@@ -75,11 +79,12 @@ export default function SlideToggle({
       }}
     >
       <span style={{
-        fontSize: 13,
-        fontWeight: 600,
-        color: willComplete ? 'white' : color,
+        fontSize,
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        color: willComplete ? 'white' : '#004850',
         transition: 'color 0.2s',
-        letterSpacing: '0.01em',
+        letterSpacing: '-0.02em',
       }}>
         {willComplete ? labelDone : labelIdle}
       </span>
@@ -90,7 +95,7 @@ export default function SlideToggle({
         left: handleLeft,
         width: HANDLE_WIDTH,
         height: HANDLE_HEIGHT,
-        borderRadius: 9999,
+        borderRadius: 8,
         background: 'white',
         boxShadow: willComplete
           ? `0 6px 16px rgba(0,0,0,0.16), 0 0 22px 6px ${color}80`
@@ -101,8 +106,8 @@ export default function SlideToggle({
         justifyContent: 'center',
       }}>
         {willComplete ? (
-          <svg width="14" height="11" viewBox="0 0 10 8" fill="none">
-            <path d="M1 4L3.5 6.5L9 1" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M5 13l4 4L19 7" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         ) : (
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">

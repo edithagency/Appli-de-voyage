@@ -5,6 +5,7 @@ import { Poppins } from 'next/font/google'
 import { Pin } from 'lucide-react'
 import DocumentCard from './DocumentCard'
 import DocumentUploadModal from '@/components/DocumentUploadModal'
+import InfoBlock from '@/components/InfoBlock'
 
 type Doc = {
   id: string
@@ -113,22 +114,22 @@ export default function CoffreFortClient({ docs, membres, voyages }: {
 
       {/* Alertes expiration */}
       {alertes.length > 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h2 className="font-semibold text-amber-800 text-sm mb-2">
+        <InfoBlock type="alerte">
+          <p style={{ fontWeight: 600, marginBottom: 4 }}>
             ⚠️ {alertes.length} document{alertes.length > 1 ? 's' : ''} à renouveler
-          </h2>
-          <div className="flex flex-col gap-1">
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {alertes.map(d => {
               const diff = Math.ceil((new Date(d.date_expiration!).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
               return (
-                <p key={d.id} className="text-xs text-amber-700">
+                <p key={d.id}>
                   {TYPE_LABELS[d.type] ?? d.type}
                   {d.membre?.prenom ? ` (${d.membre.prenom})` : ''} — {diff < 0 ? 'Expiré' : `expire dans ${diff} jours`}
                 </p>
               )
             })}
           </div>
-        </div>
+        </InfoBlock>
       )}
 
       {/* Liste */}

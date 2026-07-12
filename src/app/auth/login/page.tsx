@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { login } from '../actions'
+import InfoBlock from '@/components/InfoBlock'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
@@ -61,9 +62,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl px-4 py-3 text-sm">
-            {error}
-          </div>
+          <InfoBlock type="erreur">{error}</InfoBlock>
         )}
 
         <button

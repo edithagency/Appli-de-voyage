@@ -76,7 +76,8 @@ export default async function DashboardPage() {
   if (tousLesVoyages.length > 0) {
     const { data: tousLesMembres } = await supabase
       .from('voyage_membres')
-      .select('id, voyage_id, prenom, utilisateur:users(avatar_url, emoji_avatar)')
+      .select('id, voyage_id, prenom, type, utilisateur:users(avatar_url, emoji_avatar)')
+      .eq('type', 'adulte') // les enfants n'ont pas de compte, pas d'avatar à afficher
       .in('voyage_id', tousLesVoyages.map(v => v.id))
       .order('created_at', { ascending: true })
 

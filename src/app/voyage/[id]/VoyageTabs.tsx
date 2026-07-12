@@ -1,17 +1,29 @@
 'use client'
 
 import { useState, useEffect, useMemo, useTransition } from 'react'
-import Link from 'next/link'
-import { Info, CheckSquare, FolderLock, CreditCard, Map } from 'lucide-react'
+import { Info, CheckSquare, FolderLock, CreditCard, Map, Calendar, Siren, Ambulance as AmbulanceIcon, Landmark } from 'lucide-react'
 import ChecklistSection from './ChecklistSection'
 import VoyageDocuments from './VoyageDocuments'
 import EntreAmisTab from './EntreAmisTab'
 import ActivitesSection from './ActivitesSection'
+import PlanningSection from './PlanningSection'
+import type { Jour, Hebergement, Transport, ActivitePlanning, Repas, ActiviteFavorite, JourSpecial } from './PlanningJourSheet'
+import type { DocumentVoyage } from './LienDocument'
 import InfoCard from './InfoCard'
+import SlideToggle from './SlideToggle'
 import DeviseConverter from './DeviseConverter'
 import { getArianeUrl } from '@/lib/utils/paysCode'
 import { toggleInfoStatus } from './info-status-actions'
-import InfoBlock from '@/components/InfoBlock'
+import { calculerAge } from '@/lib/utils/calculerAge'
+
+// Interprète les **passages en gras** dans un texte issu de la fiche pays.
+function renderBold(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={i}>{part.slice(2, -2)}</strong>
+      : <span key={i}>{part}</span>
+  )
+}
 
 const INFO_GRADIENTS = [
   'linear-gradient(135deg, #A78BFA, #7C3AED)',
@@ -27,15 +39,15 @@ const INFO_GRADIENTS = [
 
 const DOC_TYPE_BY_INFO: Record<string, string> = {
   visa: 'visa',
+  passeport: 'passeport',
   vaccins: 'carnet_vaccins',
   assurance: 'assurance',
-  transport: 'billet_avion',
 }
 
-// Items quasi-obligatoires : tant qu'ils ne sont pas tous cochés, le score de
-// préparation plafonne à 70% (voir le calcul du pourcentage plus bas).
-const IMPORTANT_IDS = ['visa', 'vaccins', 'securite', 'zones', 'assurance', 'douane']
-const PRATIQUE_IDS = ['urgences', 'devise', 'prise', 'reseau', 'transport', 'trousse', 'liens']
+// Catégories fixes, communes à toutes les destinations. Seules les cartes
+// "importantes" ont un toggle (À faire/Fait ou À lire/Lu) ; les cartes
+// "pratiques" n'en ont aucun et ne comptent pas dans la progression.
+const IMPORTANT_IDS = ['securite', 'passeport', 'visa', 'vaccins', 'assurance', 'douane']
 
 type Pays = Record<string, any>
 type Activite = {
@@ -53,12 +65,14 @@ type Activite = {
 type Doc = { id: string; type: string; nom_fichier: string; storage_path: string; date_expiration: string | null; voyage_id: string | null; membre: { prenom: string } | null }
 type ChecklistItem = { id: string; valise_id: string; categorie: string; sous_categorie: string | null; label: string; description: string | null; quantite: string | null; obligatoire: boolean; completed: boolean }
 type Valise = { id: string; membre: { id: string; prenom: string; type: string }; items: ChecklistItem[]; bagagesTypes: string[] }
-type Membre = { id: string; prenom: string; type: 'adulte' | 'enfant'; avatarUrl?: string | null; emoji?: string | null }
+type Membre = { id: string; prenom: string; type: 'adulte' | 'enfant'; avatarUrl?: string | null; emoji?: string | null; dateNaissance?: string | null }
 
 export default function VoyageTabs({
   pays, documents, tousLesMembres, membresGeres, valises,
   voyageId, voyageNom, dateDepart, dateRetour, paysCode,
   depenses, budgetTotal, activites, wishlistActiviteIds, tauxLive, infoStatusParPersonne, jours,
+  planningJours, planningHebergements, planningTransports, planningActivites, planningRepas, activitesFavorites,
+  jourDepart, jourRetour, documentsVoyage,
   modeGestion, isOrganisateur, currentMembreId,
 }: {
   pays: Pays | null
@@ -78,6 +92,15 @@ export default function VoyageTabs({
   tauxLive: number | null
   infoStatusParPersonne: Record<string, Record<string, boolean>>
   jours: number
+  planningJours: Jour[]
+  planningHebergements: Hebergement[]
+  planningTransports: Transport[]
+  planningActivites: ActivitePlanning[]
+  planningRepas: Repas[]
+  activitesFavorites: ActiviteFavorite[]
+  jourDepart: JourSpecial
+  jourRetour: JourSpecial
+  documentsVoyage: DocumentVoyage[]
   modeGestion: 'solo' | 'organisateur' | 'partage'
   isOrganisateur: boolean
   currentMembreId: string
@@ -87,6 +110,7 @@ export default function VoyageTabs({
     { key: 'checklist',  label: 'Checklist', icon: CheckSquare, show: true },
     { key: 'documents',  label: 'Documents', icon: FolderLock,  show: true },
     { key: 'activites',  label: 'Activités', icon: Map,         show: true },
+    { key: 'planning',   label: 'Planning',  icon: Calendar,    show: true },
     { key: 'amis',       label: 'Budget',    icon: CreditCard,  show: true },
   ].filter(t => t.show)
 
@@ -94,6 +118,13 @@ export default function VoyageTabs({
   const [expandedInfo, setExpandedInfo] = useState<string | null>(null)
   const toggleInfo = (id: string) => setExpandedInfo(e => e === id ? null : id)
   const arianeUrl = getArianeUrl(paysCode)
+  // Liens contextuels (visa, santé, douane...) rattachés à leur carte via un type.
+  const lienParType = (type: string): { label: string; url: string } | undefined =>
+    (pays?.liens_officiels as { label: string; url: string; type: string }[] | undefined)?.find(l => l.type === type)
+
+  // Photos des cartes Infos : pour l'instant, seule la Thaïlande en a — case vide ailleurs.
+  const photoInfo = (nom: string) => paysCode === 'TH' ? `/images/infos/${nom}.png` : undefined
+  const photoInfoFait = (nom: string) => paysCode === 'TH' ? `/images/infos/${nom}-fait.png` : undefined
 
   useEffect(() => {
     if (!expandedInfo) return
@@ -102,8 +133,8 @@ export default function VoyageTabs({
       const clickedId = target.closest<HTMLElement>('[data-info-id]')?.dataset.infoId ?? null
       if (clickedId !== expandedInfo) setExpandedInfo(null)
     }
-    document.addEventListener('click', handler, true)
-    return () => document.removeEventListener('click', handler, true)
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
   }, [expandedInfo])
 
   const niveauStyle: Record<string, { label: string }> = {
@@ -129,18 +160,18 @@ export default function VoyageTabs({
     setPersonInfoStatus(currentMembreId, infoId, !current)
   }
 
-  const infoCardIds = useMemo(() => {
-    const ids = ['visa', 'vaccins', 'urgences', 'devise', 'prise']
-    if (securite) ids.push('securite')
-    if (Array.isArray(pays?.zones_deconseillees) && pays.zones_deconseillees.length > 0) ids.push('zones')
-    if (pays?.reseau_mobile_info) ids.push('reseau')
-    if (pays?.douane_infos) ids.push('douane')
-    if (pays?.transport_info) ids.push('transport')
-    if (pays?.assurance_info) ids.push('assurance')
-    if (Array.isArray(pays?.sante_details?.trousse_medicale) && pays.sante_details.trousse_medicale.length > 0) ids.push('trousse')
-    if (Array.isArray(pays?.liens_officiels) && pays.liens_officiels.length > 0) ids.push('liens')
-    return ids
-  }, [pays, securite])
+  // Les 10 catégories sont fixes et toujours affichées, même sans contenu
+  // pour l'instant (fiche pays pas encore remplie).
+  const infoCardIds = useMemo(() => (
+    ['visa', 'passeport', 'vaccins', 'urgences', 'devise', 'prise', 'securite', 'reseau', 'douane', 'assurance']
+  ), [])
+
+  // Cartes dont la démarche n'est pas requise pour ce voyage (pas de visa/vaccin nécessaire) :
+  // rien à cocher, elles comptent comme "faites" partout où on calcule une progression.
+  const requisParId: Record<string, boolean> = {
+    visa: !!pays?.visa_requis_france,
+    vaccins: !!pays?.vaccins_obligatoires,
+  }
 
   const [presetDocType, setPresetDocType] = useState<{ type: string; nonce: number } | null>(null)
   const handleAjouterDocument = (docType: string) => {
@@ -148,35 +179,74 @@ export default function VoyageTabs({
     setActive('documents')
   }
 
-  // Mono-personne (solo / partagé) : un seul toggle. Multi-personnes (organisateur, plusieurs membres
-  // gérés) : une case par personne dans extraHeader ; le rond "géré" en haut reflète "tout le monde a fini".
-  const infoCardProps = (id: string) => {
+  // Seules les cartes "importantes" (Sécurité, Passeport, Visa, Santé, Assurance, Douane) ont
+  // un toggle ; les cartes "pratiques" (Internet, Argent, Électricité, Urgences) n'en ont
+  // aucun. Parmi les importantes : celles avec une vraie démarche individuelle et un document
+  // associé (visa, passeport, vaccins, assurance), ET réellement requise pour ce voyage (ex :
+  // un visa est effectivement demandé) : toggle "À FAIRE"/"FAIT", décliné par personne si
+  // plusieurs membres gérés. Les autres importantes (Sécurité, Douane, ou démarche non requise
+  // comme un visa qui n'est pas nécessaire) : un simple toggle global "À LIRE"/"LU".
+  const infoCardProps = (id: string, requisIndividuellement: boolean = true) => {
+    if (!IMPORTANT_IDS.includes(id)) {
+      // Pas de toggle sur ces cartes : jamais "fait", toujours la photo couleur.
+      return { completed: false }
+    }
+    const docType = DOC_TYPE_BY_INFO[id]
+    if (!docType || !requisIndividuellement) {
+      // Sécurité et Visa restent des démarches ("à faire"), même sans document
+      // associé ou quand la démarche n'est pas requise pour ce voyage.
+      const aFaire = id === 'securite' || id === 'visa'
+      return {
+        completed: !!infoStatusLocal[currentMembreId]?.[id],
+        onToggleDone: handleToggleInfo,
+        labelIdle: aFaire ? 'À FAIRE' : 'À LIRE',
+        labelDone: aFaire ? 'FAIT' : 'LU',
+        docType,
+        onAjouterDocument: docType && isOrganisateur ? handleAjouterDocument : undefined,
+      }
+    }
+    const labelIdle = id === 'passeport' ? 'À VALIDER' : undefined
+    const labelDone = id === 'passeport' ? 'VALIDE' : undefined
     if (membresGeres.length <= 1) {
       return {
         completed: !!infoStatusLocal[currentMembreId]?.[id],
         onToggleDone: handleToggleInfo,
-        docType: DOC_TYPE_BY_INFO[id],
+        docType,
         onAjouterDocument: isOrganisateur ? handleAjouterDocument : undefined,
+        labelIdle,
+        labelDone,
       }
     }
     const allDone = membresGeres.every(m => !!infoStatusLocal[m.id]?.[id])
     return {
       completed: allDone,
-      docType: DOC_TYPE_BY_INFO[id],
+      docType,
       onAjouterDocument: isOrganisateur ? handleAjouterDocument : undefined,
       extraHeader: (
-        <div className="flex flex-col gap-1.5 rounded-xl bg-gray-50 p-2.5">
+        <div className="flex flex-col gap-2 rounded-xl bg-gray-50 p-2.5">
           {membresGeres.map(m => {
             const personDone = !!infoStatusLocal[m.id]?.[id]
             return (
-              <button key={m.id} onClick={() => setPersonInfoStatus(m.id, id, !personDone)}
-                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg transition"
-                style={{ background: personDone ? '#D1FAE5' : 'white' }}>
-                <span className="text-xs font-medium text-gray-700">{m.type === 'enfant' ? '👶' : '🧑'} {m.prenom}</span>
-                <span className="text-xs font-semibold" style={{ color: personDone ? '#065F46' : '#9CA3AF' }}>
-                  {personDone ? '✓ Fait' : 'À faire'}
+              <div key={m.id} className="flex items-center justify-between gap-2">
+                <span className="text-xs font-medium text-gray-700 flex-1 min-w-0 truncate">
+                  {m.type === 'enfant' ? '👶' : '🧑'} {m.prenom}
+                  {m.type === 'enfant' && m.dateNaissance && (
+                    <span className="text-gray-400 font-normal"> · {calculerAge(m.dateNaissance)} ans</span>
+                  )}
                 </span>
-              </button>
+                <div className="shrink-0" style={{ width: 190 }}>
+                  <SlideToggle
+                    completed={personDone}
+                    onToggle={() => setPersonInfoStatus(m.id, id, !personDone)}
+                    color="#36A6B2"
+                    handleWidth={40}
+                    handleHeight={22}
+                    fontSize={11}
+                    labelIdle={labelIdle}
+                    labelDone={labelDone}
+                  />
+                </div>
+              </div>
             )
           })}
         </div>
@@ -215,184 +285,273 @@ export default function VoyageTabs({
 
       {/* ─── INFOS ─── */}
       {active === 'infos' && pays && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1.5">
           {infoCardIds.length > 0 && (() => {
             const selfStatus = infoStatusLocal[currentMembreId] ?? {}
 
-            // Plafond à 70% tant que tout "Important" n'est pas coché : les 70%
-            // ne se répartissent qu'entre les items importants présents pour ce
-            // voyage ; une fois tous cochés, les 30% restants viennent du "Pratique".
+            // Seules les cartes "importantes" ont un toggle : la progression ne se
+            // calcule que sur elles (les "pratiques" n'ont rien à cocher).
             const importantIds = infoCardIds.filter(id => IMPORTANT_IDS.includes(id))
-            const pratiqueIds = infoCardIds.filter(id => PRATIQUE_IDS.includes(id))
             const doneImportants = importantIds.filter(id => selfStatus[id]).length
-            const donePratiques = pratiqueIds.filter(id => selfStatus[id]).length
-            const tousImportantsCoches = importantIds.length === 0 || doneImportants === importantIds.length
-            const pct = tousImportantsCoches
-              ? Math.round(70 + (pratiqueIds.length > 0 ? (donePratiques / pratiqueIds.length) * 30 : 30))
-              : Math.round((importantIds.length > 0 ? doneImportants / importantIds.length : 1) * 70)
+            const pct = importantIds.length > 0 ? Math.round((doneImportants / importantIds.length) * 100) : 100
 
             return (
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 rounded-full overflow-hidden bg-gray-100">
-                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: '#2563EB' }} />
+                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: '#004850' }} />
                 </div>
                 <span className="text-xs font-bold text-gray-700 shrink-0">{pct}%</span>
               </div>
             )
           })()}
 
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#004850', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '20px 0 8px 4px' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#004850', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '4px 0 2px 4px' }}>
             Important
           </p>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-2">
           {securite && (
             <InfoCard
               id="securite"
-              title={`${pays.niveau_securite === 'vert' ? '🟢' : pays.niveau_securite === 'orange' ? '🟠' : '🔴'} Sécurité — ${securite.label}`}
+              title={`${pays.niveau_securite === 'vert' ? '🟢' : pays.niveau_securite === 'orange' ? '🟠' : '🔴'} Sécurité`}
               gradient={INFO_GRADIENTS[0]}
+              photo="/images/infos/securite-page-vierge.png"
+              photoFait="/images/infos/securite-page-fait.png"
               expandedId={expandedInfo}
               onToggle={toggleInfo}
+              useModal
               {...infoCardProps('securite')}>
               <div className="flex flex-col gap-3">
-                <InfoBlock type={pays.niveau_securite === 'vert' ? 'info' : 'alerte'}>
-                  <p className="font-semibold mb-1">
-                    {pays.niveau_securite === 'vert' && 'Vigilance normale'}
-                    {pays.niveau_securite === 'orange' && 'Vigilance renforcée'}
-                    {pays.niveau_securite === 'rouge' && 'Déconseillé sauf raison impérative'}
-                  </p>
-                  <p className="leading-relaxed">
-                    {pays.niveau_securite === 'vert' && 'La destination est considérée comme sûre. Adoptez les précautions habituelles en voyage.'}
-                    {pays.niveau_securite === 'orange' && "Des risques existent dans certaines zones. Restez informé de l'actualité locale et évitez les zones à risque."}
-                    {pays.niveau_securite === 'rouge' && 'Le gouvernement français déconseille fortement ce voyage. Consultez impérativement les conseils aux voyageurs avant tout départ.'}
-                  </p>
-                  {pays.infos_securite && <p className="mt-1.5 leading-relaxed">{pays.infos_securite}</p>}
-                </InfoBlock>
+                <div>
+                  <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Niveau de vigilance</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">{pays.infos_securite ?? 'Informations à venir.'}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Zones à éviter</p>
+                  {Array.isArray(pays.zones_deconseillees) && pays.zones_deconseillees.length > 0 ? (
+                    (pays.zones_deconseillees as { zone: string; niveau: string; note: string }[]).map((z, i) => (
+                      <p key={i} className="text-xs text-gray-500 leading-relaxed">{z.note}</p>
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                  )}
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Conseils important</p>
+                  {Array.isArray(pays.conseils_securite) && pays.conseils_securite.length > 0 ? (
+                    <ul className="flex flex-col gap-1">
+                      {(pays.conseils_securite as string[]).map((conseil, i) => (
+                        <li key={i} className="text-xs text-gray-500 leading-relaxed flex gap-1.5">
+                          <span className="text-gray-400">•</span><span>{conseil}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                  )}
+                </div>
+
+                <p className="text-xs italic leading-relaxed rounded-xl px-3 py-2.5 text-gray-500" style={{ background: '#F0FAFA' }}>
+                  Ariane est le service d&apos;inscription du Ministère de l&apos;Europe et des Affaires étrangères. En cas de crise, l&apos;ambassade peut vous contacter. Inscription gratuite et vivement conseillée.
+                </p>
                 <a href={arianeUrl} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-[#f2e6de] rounded-xl px-3 py-2">
-                  <span>Consulter les conseils & s&apos;inscrire sur Ariane</span>
+                  className="flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2" style={{ background: '#004850' }}>
+                  <span>Consulter & s&apos;inscrire sur Ariane</span>
                   <span className="opacity-60">↗</span>
                 </a>
+              </div>
+            </InfoCard>
+          )}
+
+          <InfoCard id="visa" title="🛂 Visa" gradient={INFO_GRADIENTS[1]} photo={photoInfo('visa')} photoFait={photoInfoFait('visa')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('visa', requisParId.visa)}>
+            <div className="flex flex-col gap-3">
+              <div className="rounded-xl px-3 py-2.5" style={{ background: '#FDECEC' }}>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Démarche obligatoire</p>
                 <p className="text-xs text-gray-500 leading-relaxed">
-                  <span className="font-semibold">Ariane</span> est le service d&apos;inscription du Ministère de l&apos;Europe et des Affaires étrangères. En cas de crise, l&apos;ambassade peut vous contacter. Inscription gratuite et vivement conseillée.
+                  {pays.entree_details?.formulaire_arrivee?.nom
+                    ? <>{pays.entree_details.formulaire_arrivee.nom}{pays.entree_details.formulaire_arrivee.delai && ` ${pays.entree_details.formulaire_arrivee.delai}.`}</>
+                    : 'Informations à venir.'}
                 </p>
               </div>
-            </InfoCard>
-          )}
+              {pays.entree_details?.formulaire_arrivee?.lien && (
+                <a href={pays.entree_details.formulaire_arrivee.lien} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2" style={{ background: '#004850' }}>
+                  <span>{pays.entree_details.formulaire_arrivee.lien_label ?? `Obtenir la ${pays.entree_details.formulaire_arrivee.nom}`}</span>
+                  <span className="opacity-60">↗</span>
+                </a>
+              )}
 
-          <InfoCard id="visa" title="🛂 Visa & Entrée" gradient={INFO_GRADIENTS[1]} photo="/images/infos/visa.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('visa')}>
-            <div className="flex flex-col gap-2.5">
               <div>
-                <p className="text-sm font-semibold text-gray-800 mb-1">{pays.visa_requis_france ? 'Visa requis' : 'Visa pas requis'}</p>
-                {pays.visa_details && <p className="text-xs text-gray-500 leading-relaxed">{pays.visa_details}</p>}
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Visa</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.visa_details ?? 'Informations à venir.'}</p>
               </div>
-              {pays.entree_details?.formulaire_arrivee?.obligatoire && (
-                <InfoBlock type="alerte">
-                  <p className="font-semibold mb-1">{pays.entree_details.formulaire_arrivee.nom} obligatoire</p>
-                  {pays.entree_details.formulaire_arrivee.delai && <p className="leading-relaxed">{pays.entree_details.formulaire_arrivee.delai}</p>}
-                  {pays.entree_details.formulaire_arrivee.note && <p className="leading-relaxed mt-1">{pays.entree_details.formulaire_arrivee.note}</p>}
-                </InfoBlock>
-              )}
-              {pays.entree_details?.validite_passeport && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Passeport</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.validite_passeport}</p>
-                </div>
-              )}
-              {pays.entree_details?.billet_retour && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Billet retour</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.billet_retour}</p>
-                </div>
-              )}
-              {pays.entree_details?.preuve_fonds && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Preuve de fonds</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.preuve_fonds}</p>
-                </div>
-              )}
-              {pays.entree_details?.prolongation && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Prolongation de séjour</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details.prolongation}</p>
-                </div>
+
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Visa si séjour {'>'} 60 jours</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.entree_details?.prolongation ?? 'Informations à venir.'}</p>
+              </div>
+              {lienParType('visa') && (
+                <a href={lienParType('visa')!.url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2" style={{ background: '#004850' }}>
+                  <span>{lienParType('visa')!.label}</span>
+                  <span className="opacity-60">↗</span>
+                </a>
               )}
             </div>
           </InfoCard>
 
-          <InfoCard id="vaccins" title="💉 Vaccins" gradient={INFO_GRADIENTS[2]} photo="/images/infos/vaccins.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('vaccins')}>
-            <div className="flex flex-col gap-2.5">
+          <InfoCard id="passeport" title="📔 Passeport" gradient={INFO_GRADIENTS[6]} photo={photoInfo('passeport')} photoFait={photoInfoFait('passeport')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('passeport')}>
+            <div className="flex flex-col gap-3">
               <div>
-                <p className="text-sm font-semibold text-gray-800 mb-1">{pays.vaccins_obligatoires ? 'Obligatoires' : 'Aucun obligatoire'}</p>
-                {pays.vaccins_recommandes && <p className="text-xs text-gray-500 leading-relaxed">{pays.vaccins_recommandes}</p>}
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Conditions de validité</p>
+                {Array.isArray(pays.entree_details?.passeport_conditions) && pays.entree_details.passeport_conditions.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {(pays.entree_details.passeport_conditions as string[]).map((paragraphe, i) => (
+                      <p key={i} className="text-xs text-gray-500 leading-relaxed">{paragraphe}</p>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                )}
               </div>
-              {pays.sante_details?.paludisme && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Paludisme</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.sante_details.paludisme}</p>
-                </div>
-              )}
-              {pays.sante_details?.dengue && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Dengue</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.sante_details.dengue}</p>
-                </div>
-              )}
-              {pays.sante_details?.eau && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Eau potable</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pays.sante_details.eau}</p>
-                </div>
-              )}
             </div>
           </InfoCard>
 
-          {Array.isArray(pays.zones_deconseillees) && pays.zones_deconseillees.length > 0 && (
-            <InfoCard id="zones" title="🚨 Zones à éviter" gradient={INFO_GRADIENTS[3]} photo="/images/infos/zones.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('zones')}>
-              <div className="flex flex-col gap-2">
-                {(pays.zones_deconseillees as { zone: string; niveau: string; note: string }[]).map((z, i) => {
-                  const emoji = z.niveau === 'rouge' ? '🔴' : '🟠'
-                  return (
-                    <InfoBlock key={i} type="alerte">
-                      <p className="font-semibold mb-1">{z.zone}</p>
-                      <p className="leading-relaxed">{z.note}</p>
-                    </InfoBlock>
-                  )
-                })}
+          <InfoCard id="vaccins" title="💉 Santé" gradient={INFO_GRADIENTS[2]} photo={photoInfo('sante')} photoFait={photoInfoFait('sante')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('vaccins', requisParId.vaccins)}>
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Vaccins obligatoire</p>
+                {Array.isArray(pays.sante_details?.vaccins_obligatoire) && pays.sante_details.vaccins_obligatoire.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {(pays.sante_details.vaccins_obligatoire as string[]).map((paragraphe, i) => (
+                      <p key={i} className="text-xs text-gray-500 leading-relaxed">{renderBold(paragraphe)}</p>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                )}
               </div>
-            </InfoCard>
-          )}
 
-          {pays.assurance_info && (
-            <InfoCard id="assurance" title="🏥 Assurance voyage" gradient={INFO_GRADIENTS[2]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('assurance')}>
-              <p className="text-xs text-gray-600 leading-relaxed">{pays.assurance_info}</p>
-            </InfoCard>
-          )}
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Vaccins recommandé</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.vaccins_recommandes ? renderBold(pays.vaccins_recommandes) : 'Informations à venir.'}</p>
+              </div>
 
-          {pays.douane_infos && (
-            <InfoCard id="douane" title="🧳 Douane" gradient={INFO_GRADIENTS[0]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('douane')}>
-              <p className="text-xs text-gray-600 leading-relaxed">{pays.douane_infos}</p>
-            </InfoCard>
-          )}
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>À savoir</p>
+                {Array.isArray(pays.sante_details?.a_savoir) && pays.sante_details.a_savoir.length > 0 ? (
+                  <ul className="flex flex-col gap-1">
+                    {(pays.sante_details.a_savoir as string[]).map((point, i) => (
+                      <li key={i} className="text-xs text-gray-500 leading-relaxed flex gap-1.5">
+                        <span className="text-gray-400">•</span><span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                )}
+              </div>
+
+              <p className="text-xs italic leading-relaxed rounded-xl px-3 py-2.5 text-gray-500" style={{ background: '#F0FAFA' }}>
+                Les recommandations peuvent évoluer. Consultez le site de l&apos;Institut Pasteur, idéalement 4 à 6 semaines avant votre départ.
+              </p>
+              <button disabled
+                className="w-full flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2 cursor-not-allowed"
+                style={{ background: '#004850' }}>
+                <span>Consulter les conseils de l&apos;Institut Pasteur</span>
+                <span className="opacity-60">↗</span>
+              </button>
+
+              <button disabled
+                className="w-full flex items-center justify-center text-xs font-semibold rounded-xl px-3 py-2 border opacity-50 cursor-not-allowed"
+                style={{ background: '#E8F5E9', color: '#2E7D32', borderColor: '#2E7D3233' }}>
+                Générer ma trousse de secours
+              </button>
+            </div>
+          </InfoCard>
+
+          <InfoCard id="assurance" title="🏥 Assurance" gradient={INFO_GRADIENTS[2]} photo={photoInfo('assurance')} photoFait={photoInfoFait('assurance')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('assurance')}>
+            <div className="flex flex-col gap-3">
+              {Array.isArray(pays.assurance_info) && pays.assurance_info.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  {(pays.assurance_info as string[]).map((paragraphe, i) => (
+                    <p key={i} className="text-xs text-gray-500 leading-relaxed">{renderBold(paragraphe)}</p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+              )}
+              <button disabled
+                className="w-full flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2 cursor-not-allowed"
+                style={{ background: '#004850' }}>
+                <span>Souscrire à une assurance</span>
+                <span className="opacity-60">↗</span>
+              </button>
+            </div>
+          </InfoCard>
+
+          <InfoCard id="douane" title="🧳 Douane" gradient={INFO_GRADIENTS[0]} photo={photoInfo('douane')} photoFait={photoInfoFait('douane')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('douane')}>
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>À l&apos;aller</p>
+                {Array.isArray(pays.douane_details?.a_laller) && pays.douane_details.a_laller.length > 0 ? (
+                  <ul className="flex flex-col gap-1">
+                    {(pays.douane_details.a_laller as string[]).map((point, i) => (
+                      <li key={i} className="text-xs text-gray-500 leading-relaxed flex gap-1.5">
+                        <span className="text-gray-400">•</span><span>{renderBold(point)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Au retour</p>
+                {Array.isArray(pays.douane_details?.au_retour) && pays.douane_details.au_retour.length > 0 ? (
+                  <ul className="flex flex-col gap-1">
+                    {(pays.douane_details.au_retour as string[]).map((point, i) => (
+                      <li key={i} className="text-xs text-gray-500 leading-relaxed flex gap-1.5">
+                        <span className="text-gray-400">•</span><span>{renderBold(point)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-gray-500 leading-relaxed">Informations à venir.</p>
+                )}
+              </div>
+
+              {lienParType('douane') && (
+                <a href={lienParType('douane')!.url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2" style={{ background: '#004850' }}>
+                  <span>{lienParType('douane')!.label}</span>
+                  <span className="opacity-60">↗</span>
+                </a>
+              )}
+            </div>
+          </InfoCard>
           </div>
 
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#004850', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '24px 0 8px 4px' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#004850', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '10px 0 2px 4px' }}>
             Pratique
           </p>
 
-          <div className="grid grid-cols-3 gap-3">
-          <InfoCard id="urgences" title="🆘 Numéros d'urgence" gradient={INFO_GRADIENTS[4]} photo="/images/infos/urgences.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('urgences')}>
+          <div className="grid grid-cols-2 gap-2">
+          <InfoCard id="urgences" title="🆘 Numéros d'urgence" gradient={INFO_GRADIENTS[4]} photo={photoInfo('urgences')} photoFait={photoInfoFait('urgences')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('urgences')}>
             <div className="flex flex-col gap-3">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex flex-col gap-2">
                 {[
-                  { label: 'Police', number: pays.urgence_police, emoji: '🚔' },
-                  { label: 'Ambulance', number: pays.urgence_ambulance, emoji: '🚑' },
-                  { label: 'Ambassade', number: pays.urgence_ambassade_france, emoji: '🇫🇷' },
+                  { label: 'Police', number: pays.urgence_police, Icon: Siren },
+                  { label: 'Ambulance', number: pays.urgence_ambulance, Icon: AmbulanceIcon },
+                  { label: 'Ambassade', number: pays.urgence_ambassade_france, Icon: Landmark },
                 ].map(u => (
-                  <div key={u.label} className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-gray-50 text-center">
-                    <span className="text-2xl">{u.emoji}</span>
-                    <span className="text-xs text-gray-400 leading-tight">{u.label}</span>
-                    <span className="text-sm font-bold text-gray-800 break-all">{u.number ?? '–'}</span>
+                  <div key={u.label} className="flex items-center gap-2.5 p-3 rounded-xl bg-gray-50">
+                    <u.Icon size={20} color="#9CA3AF" className="shrink-0" />
+                    <span className="text-xs text-gray-400 flex-1">{u.label}</span>
+                    <span className="text-sm font-bold text-gray-800">{u.number ?? '–'}</span>
                   </div>
                 ))}
               </div>
@@ -408,110 +567,92 @@ export default function VoyageTabs({
               )}
               {pays.ambassade_info?.adresse && (
                 <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Ambassade de France</p>
+                  <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Ambassade de France</p>
                   <p className="text-xs text-gray-500 leading-relaxed">{pays.ambassade_info.adresse}</p>
                   {pays.ambassade_info.tel_urgence && <p className="text-xs text-gray-500 leading-relaxed mt-1">Urgence consulaire : {pays.ambassade_info.tel_urgence}</p>}
                 </div>
               )}
-              {paysCode && (
-                <Link href={`/outils?pays=${paysCode}&open=urgences`}
-                  className="flex items-center justify-between text-xs font-semibold text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
-                  <span>Voir dans Outils (n&apos;importe quel pays)</span>
-                  <span className="opacity-60">↗</span>
-                </Link>
-              )}
             </div>
           </InfoCard>
 
-          <InfoCard id="devise" title="💰 Devise" gradient={INFO_GRADIENTS[5]} photo="/images/infos/devise.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('devise')}>
-            <DeviseConverter devise={pays.devise ?? null} symbole={pays.symbole_devise ?? null} tauxLive={tauxLive} tauxApprox={pays.taux_change_approx ?? null} />
+          <InfoCard id="devise" title="💰 Argent" gradient={INFO_GRADIENTS[5]} photo={photoInfo('argent')} photoFait={photoInfoFait('argent')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('devise')}>
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Devise</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.devise ?? 'Informations à venir.'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Paiement</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.argent_notes ?? 'Informations à venir.'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>💱 Convertisseur : EUR ⇄ {pays.devise_code ?? ''}</p>
+                <DeviseConverter devise={null} symbole={pays.symbole_devise ?? null} tauxLive={tauxLive} tauxApprox={pays.taux_change_approx ?? null} showLabel={false} />
+              </div>
+            </div>
           </InfoCard>
 
-          <InfoCard id="prise" title="🔌 Prise électrique" gradient={INFO_GRADIENTS[6]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('prise')}>
-            <p className="text-sm font-semibold text-gray-800">{pays.type_prise_electrique ?? '–'}</p>
+          <InfoCard id="prise" title="🔌 Électricité" gradient={INFO_GRADIENTS[6]} photo={photoInfo('electricite')} photoFait={photoInfoFait('electricite')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('prise')}>
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Voltage</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.electricite_details?.voltage ?? 'Informations à venir.'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Prise</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.electricite_details?.types_prise ?? 'Informations à venir.'}</p>
+                {pays.electricite_details?.adaptateur && (
+                  <p className="text-xs text-gray-500 leading-relaxed mt-1">{renderBold(pays.electricite_details.adaptateur)}</p>
+                )}
+              </div>
+            </div>
           </InfoCard>
 
-          {pays.reseau_mobile_info && (
-            <InfoCard id="reseau" title="📶 Réseau & SIM" gradient={INFO_GRADIENTS[7]} photo="/images/infos/reseau.jpg" expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('reseau')}>
-              <p className="text-xs text-gray-600 leading-relaxed">{pays.reseau_mobile_info}</p>
-            </InfoCard>
-          )}
-
-          {pays.transport_info && (
-            <InfoCard id="transport" title="✈️ Vols & Aéroports" gradient={INFO_GRADIENTS[1]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('transport')}>
-              <div className="flex flex-col gap-2.5">
-                {pays.transport_info.duree_vol && (
-                  <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                    <p className="text-xs font-semibold text-gray-700 mb-0.5">🕐 Durée de vol</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{pays.transport_info.duree_vol}</p>
-                  </div>
-                )}
-                {Array.isArray(pays.transport_info.compagnies_directes) && pays.transport_info.compagnies_directes.length > 0 && (
-                  <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                    <p className="text-xs font-semibold text-gray-700 mb-0.5">✈️ Vols directs</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{pays.transport_info.compagnies_directes.join(', ')}</p>
-                  </div>
-                )}
-                {Array.isArray(pays.transport_info.compagnies_escale) && pays.transport_info.compagnies_escale.length > 0 && (
-                  <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                    <p className="text-xs font-semibold text-gray-700 mb-0.5">🔄 Avec escale</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{pays.transport_info.compagnies_escale.join(', ')}</p>
-                  </div>
-                )}
-                {Array.isArray(pays.transport_info.aeroports) && pays.transport_info.aeroports.length > 0 && (
-                  <div className="flex flex-col">
-                    {(pays.transport_info.aeroports as { code: string; nom: string }[]).map((a, i) => (
-                      <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                        <span className="text-xs font-bold text-gray-800">{a.code}</span>
-                        <span className="text-xs text-gray-500 text-right">{a.nom}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+          <InfoCard id="reseau" title="📶 Internet" gradient={INFO_GRADIENTS[7]} photo={photoInfo('internet')} photoFait={photoInfoFait('internet')} expandedId={expandedInfo} onToggle={toggleInfo} useModal {...infoCardProps('reseau')}>
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Avant le départ</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.reseau_details?.avant_depart ? renderBold(pays.reseau_details.avant_depart) : 'Informations à venir.'}</p>
               </div>
-            </InfoCard>
-          )}
-
-          {Array.isArray(pays.sante_details?.trousse_medicale) && pays.sante_details.trousse_medicale.length > 0 && (
-            <InfoCard id="trousse" title="💊 Trousse médicale" gradient={INFO_GRADIENTS[3]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('trousse')}>
-              <div className="flex flex-col gap-3">
-                <ul className="flex flex-col gap-1.5">
-                  {(pays.sante_details.trousse_medicale as string[]).map((item, i) => (
-                    <li key={i} className="text-xs text-gray-600 leading-relaxed flex gap-2">
-                      <span className="text-gray-400">•</span><span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                {paysCode && (
-                  <Link href={`/outils?pays=${paysCode}&open=medical`}
-                    className="flex items-center justify-between text-xs font-semibold text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
-                    <span>Voir dans Outils (n&apos;importe quel pays)</span>
-                    <span className="opacity-60">↗</span>
-                  </Link>
-                )}
+              {['eSIM Airalo', 'eSIM Holafly', 'eSIM Nomad'].map(label => (
+                <button key={label} disabled
+                  className="w-full flex items-center justify-between text-xs font-semibold text-white rounded-xl px-3 py-2 cursor-not-allowed"
+                  style={{ background: '#004850' }}>
+                  <span>{label}</span>
+                  <span className="opacity-60">↗</span>
+                </button>
+              ))}
+              <div>
+                <p className="text-xs font-bold uppercase text-[#004850] mb-0.5" style={{ letterSpacing: '-0.02em' }}>Sur place</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{pays.reseau_details?.sur_place ? renderBold(pays.reseau_details.sur_place) : 'Informations à venir.'}</p>
               </div>
-            </InfoCard>
-          )}
+            </div>
+          </InfoCard>
 
-          {Array.isArray(pays.liens_officiels) && pays.liens_officiels.length > 0 && (
-            <InfoCard id="liens" title="🔗 Liens officiels" gradient={INFO_GRADIENTS[5]} expandedId={expandedInfo} onToggle={toggleInfo} {...infoCardProps('liens')}>
-              <div className="flex flex-col gap-2">
-                {(pays.liens_officiels as { label: string; url: string; type: string }[]).map((lien, i) => (
-                  <a key={i} href={lien.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-between text-xs font-semibold text-gray-700 bg-[#f2e6de] rounded-xl px-3 py-2">
-                    <span>{lien.label}</span><span className="opacity-60">↗</span>
-                  </a>
-                ))}
-              </div>
-            </InfoCard>
-          )}
           </div>
         </div>
       )}
 
       {/* ─── ACTIVITÉS ─── */}
       {active === 'activites' && (
-        <ActivitesSection activites={activites} wishlistIds={wishlistActiviteIds} voyageId={voyageId} />
+        <ActivitesSection activites={activites} wishlistIds={wishlistActiviteIds} voyageId={voyageId} jours={planningJours} />
+      )}
+
+      {/* ─── PLANNING ─── */}
+      {active === 'planning' && (
+        <PlanningSection
+          voyageId={voyageId}
+          voyageNom={voyageNom}
+          jours={planningJours}
+          hebergements={planningHebergements}
+          transports={planningTransports}
+          activites={planningActivites}
+          repas={planningRepas}
+          activitesFavorites={activitesFavorites}
+          jourDepart={jourDepart}
+          jourRetour={jourRetour}
+          documentsVoyage={documentsVoyage}
+        />
       )}
 
       {/* ─── CHECKLIST + VALISE (fusionnées, toujours perso sauf override organisateur) ─── */}
@@ -542,11 +683,9 @@ export default function VoyageTabs({
       {active === 'amis' && (
         <EntreAmisTab
           voyageId={voyageId}
-          membres={tousLesMembres}
+          membres={tousLesMembres.filter(m => m.type === 'adulte')}
           depensesInitiales={depenses}
           budgetTotal={budgetTotal}
-          budgetQuotidien={pays?.budget_quotidien ?? null}
-          argentNotes={pays?.argent_notes ?? null}
         />
       )}
     </div>

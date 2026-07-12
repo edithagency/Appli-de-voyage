@@ -6,6 +6,7 @@ import VoyageEditButton from './VoyageEditButton'
 import VoyageTabs from './VoyageTabs'
 import { quitterVoyage } from './quitter-actions'
 import { getPaysCode } from '@/lib/utils/paysCode'
+import { getPlanningData } from './planning-data'
 
 const AVATAR_COLORS = ['#36A6B2', '#1D9E75', '#D97706', '#E11D48', '#2563EB', '#0D9488']
 
@@ -35,7 +36,7 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
   // Tous les membres du voyage (organisateur compris — il a toujours sa propre ligne)
   const { data: tousLesMembresRaw } = await supabase
     .from('voyage_membres')
-    .select('id, prenom, type, role, statut_invitation, token_invitation, token_expire_at, user_id, compagnie_aerienne, utilisateur:users(avatar_url, emoji_avatar)')
+    .select('id, prenom, type, role, statut_invitation, token_invitation, token_expire_at, user_id, compagnie_aerienne, date_naissance, utilisateur:users(avatar_url, emoji_avatar)')
     .eq('voyage_id', id)
     .order('created_at')
 
@@ -47,11 +48,15 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
 
   if (!isOrganisateur && !currentMembre) notFound()
 
-  // Membres gérés par le viewer courant : en mode organisateur, l'organisateur gère tout
-  // le monde ; sinon (solo/partagé) chacun ne gère que soi-même.
+  // Membres gérés par le viewer courant : en mode organisateur, l'organisateur gère tout le
+  // monde ; sinon (solo/partagé), chaque adulte gère son propre profil ET tous les enfants du
+  // voyage (un enfant n'a jamais sa propre session — n'importe quel adulte du voyage peut agir
+  // pour lui depuis son propre compte connecté).
   const membresGeres = (voyage.mode_gestion === 'organisateur' && isOrganisateur)
     ? tousLesMembres
-    : (currentMembre ? [currentMembre] : tousLesMembres)
+    : (currentMembre
+        ? tousLesMembres.filter(m => m.id === currentMembre.id || m.type === 'enfant')
+        : tousLesMembres)
 
   const membresGeresIds = membresGeres.map(m => m.id)
   const currentMembreId = currentMembre?.id ?? tousLesMembres.find(m => m.role === 'organisateur')?.id ?? ''
@@ -119,11 +124,19 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
     participants: (d.participants_membre_ids ?? []).map((mid: string) => membreById[mid] ?? '?'),
   }))
 
+  // Onglet Planning : jours générés automatiquement entre date_depart et date_retour
+  const planningData = await getPlanningData(id, voyage.date_depart, voyage.date_retour)
+  const wishlistIds = (wishlist ?? []).map(w => w.activite_id)
+  const activitesFavorites = (activites ?? [])
+    .filter(a => wishlistIds.includes(a.id))
+    .map(a => ({ id: a.id, titre: a.titre, ville: a.ville }))
+
   const jours = joursAvantDepart(voyage.date_depart)
   const duree = dureeVoyage(voyage.date_depart, voyage.date_retour)
   const code = getPaysCode(voyage.pays_code, voyage.destination)
   const photo = code ? `/images/pays/${code}.png` : null
-  const avatars = tousLesMembres.slice(0, 3)
+  // Les enfants n'ont pas de compte, donc pas d'avatar à afficher ici.
+  const avatars = tousLesMembres.filter(m => m.type === 'adulte').slice(0, 3)
 
   const codeDevise = pays?.devise?.match(/\(([A-Z]{3})\)/)?.[1] ?? null
   let tauxLive: number | null = null
@@ -230,8 +243,8 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
           <VoyageTabs
             pays={pays}
             documents={documents ?? []}
-            tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant', avatarUrl: m.avatarUrl, emoji: m.emoji }))}
-            membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant', avatarUrl: m.avatarUrl, emoji: m.emoji }))}
+            tousLesMembres={tousLesMembres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant', avatarUrl: m.avatarUrl, emoji: m.emoji, dateNaissance: m.date_naissance }))}
+            membresGeres={membresGeres.map(m => ({ id: m.id, prenom: m.prenom, type: m.type as 'adulte' | 'enfant', avatarUrl: m.avatarUrl, emoji: m.emoji, dateNaissance: m.date_naissance }))}
             valises={valises}
             voyageId={id}
             voyageNom={voyage.nom}
@@ -241,10 +254,19 @@ export default async function VoyagePage({ params }: { params: Promise<{ id: str
             depenses={depenses}
             budgetTotal={voyage.budget_total ?? 0}
             activites={activites ?? []}
-            wishlistActiviteIds={(wishlist ?? []).map(w => w.activite_id)}
+            wishlistActiviteIds={wishlistIds}
             tauxLive={tauxLive}
             infoStatusParPersonne={infoStatusParPersonne}
             jours={duree}
+            planningJours={planningData.jours}
+            planningHebergements={planningData.hebergements}
+            planningTransports={planningData.transports}
+            planningActivites={planningData.activites}
+            planningRepas={planningData.repas}
+            activitesFavorites={activitesFavorites}
+            jourDepart={planningData.jourDepart}
+            jourRetour={planningData.jourRetour}
+            documentsVoyage={planningData.documentsVoyage}
             modeGestion={voyage.mode_gestion}
             isOrganisateur={isOrganisateur}
             currentMembreId={currentMembreId}

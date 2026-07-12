@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { CalendarPlus, X } from 'lucide-react'
 import { toggleWishlistActivite } from './activites-actions'
+import { assignerActiviteAuJour } from './planning-actions'
 import InfoBlock from '@/components/InfoBlock'
 
 type Activite = {
@@ -15,6 +17,13 @@ type Activite = {
   notes: string | null
   photo_url: string | null
   ordre: number
+}
+
+type JourPlanning = { id: string; date: string }
+
+function formatDateJour(date: string, index: number) {
+  const label = new Date(date + 'T00:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+  return `Jour ${index + 1} — ${label}`
 }
 
 const CATEGORIES: Record<string, { emoji: string; label: string; gradient: string }> = {
@@ -65,17 +74,30 @@ function NoteLines({ notes }: { notes: string }) {
 }
 
 export default function ActivitesSection({
-  activites, wishlistIds, voyageId,
+  activites, wishlistIds, voyageId, jours,
 }: {
   activites: Activite[]
   wishlistIds: string[]
   voyageId: string
+  jours: JourPlanning[]
 }) {
   const [selectedVille, setSelectedVille] = useState('Toutes')
   const [selectedCategorie, setSelectedCategorie] = useState('Toutes')
   const [showWishlistOnly, setShowWishlistOnly] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [wishlist, setWishlist] = useState<Set<string>>(new Set(wishlistIds))
+  const [openAssignJour, setOpenAssignJour] = useState<string | null>(null)
+  const [assignedFeedback, setAssignedFeedback] = useState<string | null>(null)
+
+  function handleAssignerJour(activite: Activite, jourId: string) {
+    setOpenAssignJour(null)
+    assignerActiviteAuJour(voyageId, jourId, { id: activite.id, titre: activite.titre, ville: activite.ville }).then(result => {
+      if (!result?.error) {
+        setAssignedFeedback(activite.id)
+        setTimeout(() => setAssignedFeedback(null), 2000)
+      }
+    })
+  }
 
   // Ferme l'activité ouverte si on clique en dehors d'elle
   useEffect(() => {
@@ -224,12 +246,48 @@ export default function ActivitesSection({
                         <p className="text-sm text-gray-700 leading-relaxed">{a.description}</p>
                       )}
                       {a.notes && <NoteLines notes={a.notes} />}
+                      {jours.length > 0 && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setOpenAssignJour(a.id) }}
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition"
+                          style={{
+                            background: assignedFeedback === a.id ? '#D1FAE5' : '#F0FAFA',
+                            color: assignedFeedback === a.id ? '#065F46' : '#36A6B2',
+                          }}>
+                          <CalendarPlus size={14} />
+                          {assignedFeedback === a.id ? 'Ajouté au programme' : 'Ajouter au programme'}
+                        </button>
+                      )}
                     </>
                   )}
                 </div>
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Sélecteur de jour — "Ajouter au programme" */}
+      {openAssignJour && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.4)' }} onClick={() => setOpenAssignJour(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-gray-900">Ajouter à quel jour ?</h3>
+              <button onClick={() => setOpenAssignJour(null)} className="text-gray-300 hover:text-gray-500"><X size={18} /></button>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {jours.map((j, i) => (
+                <button key={j.id} type="button"
+                  onClick={() => {
+                    const activite = activites.find(a => a.id === openAssignJour)
+                    if (activite) handleAssignerJour(activite, j.id)
+                  }}
+                  className="text-left px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+                  {formatDateJour(j.date, i)}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

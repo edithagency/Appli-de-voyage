@@ -1,7 +1,11 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
+import {
+  Building2, Utensils, Car, FerrisWheel, Plane, ShoppingCart, PartyPopper, Gift, Pill, CreditCard,
+} from 'lucide-react'
 import { ajouterDepense, supprimerDepense, mettreAJourBudget } from './depenses-actions'
+import InfoBlock from '@/components/InfoBlock'
 
 type Depense = {
   id: string
@@ -15,21 +19,21 @@ type Depense = {
 
 type Membre = { id: string; prenom: string; type: string; avatarUrl?: string | null; emoji?: string | null }
 
-const CATEGORIES: { key: string; emoji: string; label: string }[] = [
-  { key: 'hebergement', emoji: '🏨', label: 'Hôtel' },
-  { key: 'repas',       emoji: '🍽️', label: 'Repas' },
-  { key: 'transport',   emoji: '🚕', label: 'Transport' },
-  { key: 'activite',    emoji: '🎡', label: 'Activité' },
-  { key: 'vol',         emoji: '✈️', label: 'Vol' },
-  { key: 'courses',     emoji: '🛒', label: 'Courses' },
-  { key: 'soiree',      emoji: '🎉', label: 'Soirée' },
-  { key: 'shopping',    emoji: '🎁', label: 'Shopping' },
-  { key: 'sante',       emoji: '💊', label: 'Santé' },
-  { key: 'autre',       emoji: '💳', label: 'Autre' },
+const CATEGORIES: { key: string; icon: typeof CreditCard; label: string }[] = [
+  { key: 'hebergement', icon: Building2,    label: 'Hôtel' },
+  { key: 'repas',       icon: Utensils,     label: 'Repas' },
+  { key: 'transport',   icon: Car,          label: 'Transport' },
+  { key: 'activite',    icon: FerrisWheel,  label: 'Activité' },
+  { key: 'vol',         icon: Plane,        label: 'Vol' },
+  { key: 'courses',     icon: ShoppingCart, label: 'Courses' },
+  { key: 'soiree',      icon: PartyPopper,  label: 'Soirée' },
+  { key: 'shopping',    icon: Gift,         label: 'Shopping' },
+  { key: 'sante',       icon: Pill,         label: 'Santé' },
+  { key: 'autre',       icon: CreditCard,   label: 'Autre' },
 ]
 
-function getEmoji(categorie: string) {
-  return CATEGORIES.find(c => c.key === categorie)?.emoji ?? '💳'
+function getIcon(categorie: string) {
+  return CATEGORIES.find(c => c.key === categorie)?.icon ?? CreditCard
 }
 
 function formatDate(dateStr: string) {
@@ -64,17 +68,13 @@ function calculerRemboursements(depenses: Depense[]) {
   return { balances, transactions }
 }
 
-type BudgetQuotidien = { emoji: string; label: string; montant: string }
-
 export default function EntreAmisTab({
-  voyageId, membres, depensesInitiales, budgetTotal, budgetQuotidien, argentNotes,
+  voyageId, membres, depensesInitiales, budgetTotal,
 }: {
   voyageId: string
   membres: Membre[]
   depensesInitiales: Depense[]
   budgetTotal: number
-  budgetQuotidien: BudgetQuotidien[] | null
-  argentNotes: string | null
 }) {
   const [depenses, setDepenses] = useState(depensesInitiales)
   const [showAll, setShowAll] = useState(false)
@@ -165,24 +165,6 @@ export default function EntreAmisTab({
   return (
     <div className="flex flex-col gap-4">
 
-      {/* Coût de la vie */}
-      {((budgetQuotidien && budgetQuotidien.length > 0) || argentNotes) && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-5">
-          <h3 className="font-bold text-gray-900 mb-3">💰 Coût de la vie</h3>
-          <div className="flex flex-col gap-2.5">
-            {budgetQuotidien?.map((b, i) => (
-              <div key={i} className="flex items-center gap-2.5 bg-gray-50 rounded-xl px-3 py-2.5">
-                <span className="text-xl">{b.emoji}</span>
-                <div>
-                  <p className="text-xs font-semibold text-gray-700">{b.label}</p>
-                  <p className="text-xs text-gray-500">{b.montant}</p>
-                </div>
-              </div>
-            ))}
-            {argentNotes && <p className="text-xs text-gray-500 leading-relaxed">{argentNotes}</p>}
-          </div>
-        </div>
-      )}
 
       {/* En-tête participants + total */}
       <div className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
@@ -289,7 +271,7 @@ export default function EntreAmisTab({
                     background: filterCategorie === c.key ? '#36A6B2' : '#F3F4F6',
                     color: filterCategorie === c.key ? 'white' : '#6B7280',
                   }}>
-                  <span>{c.emoji}</span>{c.label}
+                  <c.icon size={14} />{c.label}
                 </button>
               ))}
             </div>
@@ -352,11 +334,11 @@ export default function EntreAmisTab({
             <div className="divide-y divide-gray-50">
               {visibles.map(d => {
                 const part = d.montant / d.participants.length
+                const CategorieIcon = getIcon(d.categorie)
                 return (
                   <div key={d.id} className="flex items-start gap-4 px-5 py-5">
-                    {/* Emoji catégorie */}
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 bg-gray-50">
-                      {getEmoji(d.categorie)}
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-gray-50">
+                      <CategorieIcon size={22} color="#36A6B2" />
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -411,31 +393,31 @@ export default function EntreAmisTab({
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
           style={{ background: 'rgba(0,0,0,0.4)' }}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+          <div className="bg-white rounded-2xl w-full max-w-md p-5 shadow-2xl max-h-[85vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-gray-900 text-lg">Nouvelle dépense</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold uppercase" style={{ color: '#004850', fontSize: 18, letterSpacing: '-0.02em' }}>Nouvelle dépense</h3>
               <button onClick={() => setShowModal(false)} className="text-gray-300 text-2xl">×</button>
             </div>
 
-            <div className="flex flex-col gap-5">
-              {/* Catégorie / Emoji */}
+            <div className="flex flex-col gap-3.5">
+              {/* Catégorie */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Catégorie</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Catégorie</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
                   {CATEGORIES.map(c => (
                     <button key={c.key} type="button" onClick={() => setForm(f => ({ ...f, categorie: c.key }))}
                       style={{
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                        gap: 4, padding: '10px 4px', borderRadius: 14, transition: 'all 0.15s',
+                        gap: 3, padding: '8px 4px', borderRadius: 12, transition: 'all 0.15s',
                         background: form.categorie === c.key ? '#DBEAFE' : '#F9FAFB',
                         border: `2px solid ${form.categorie === c.key ? '#36A6B2' : 'transparent'}`,
-                        height: 78,
+                        height: 60,
                       }}>
-                      <span style={{ fontSize: 20, lineHeight: 1 }}>{c.emoji}</span>
+                      <c.icon size={17} color={form.categorie === c.key ? '#36A6B2' : '#6B7280'} />
                       <span style={{
-                        fontSize: 10, color: form.categorie === c.key ? '#36A6B2' : '#6B7280', fontWeight: 500,
-                        textAlign: 'center', lineHeight: 1.15,
+                        fontSize: 9, color: form.categorie === c.key ? '#36A6B2' : '#6B7280', fontWeight: 500,
+                        textAlign: 'center', lineHeight: 1.1,
                         display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                       }}>{c.label}</span>
                     </button>
@@ -445,30 +427,30 @@ export default function EntreAmisTab({
 
               {/* Label */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description</label>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
                 <input value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))}
                   placeholder="Ex : Dîner au restaurant, Hôtel..."
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]"
+                  className="w-full px-3.5 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]"
                   autoFocus />
               </div>
 
               {/* Montant */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Montant (€)</label>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Montant (€)</label>
                 <input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))}
                   placeholder="0.00"
-                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
+                  className="w-full px-3.5 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#36A6B2]" />
               </div>
 
               {/* Qui a payé */}
               {membres.length > 0 && (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Qui a payé ?</label>
-                  <div className="flex flex-wrap gap-2">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Qui a payé ?</label>
+                  <div className="flex flex-wrap gap-1.5">
                     {membres.map(m => (
                       <button key={m.id} type="button"
                         onClick={() => setForm(f => ({ ...f, payeur_prenom: m.prenom }))}
-                        className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                        className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                         style={{
                           background: form.payeur_prenom === m.prenom ? colorFor(m.prenom) : `${colorFor(m.prenom)}15`,
                           color: form.payeur_prenom === m.prenom ? 'white' : colorFor(m.prenom),
@@ -483,13 +465,13 @@ export default function EntreAmisTab({
               {/* Participants */}
               {membres.length > 0 && (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                     Répartir entre
                     {form.montant && form.participants.length > 0
                       ? ` · ${(parseFloat(form.montant) / form.participants.length).toFixed(2)}€/pers.`
                       : ''}
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {(() => {
                       const tousSelectionnes = membres.every(m => form.participants.includes(m.prenom))
                       return (
@@ -498,10 +480,10 @@ export default function EntreAmisTab({
                             ...f,
                             participants: tousSelectionnes ? [] : membres.map(m => m.prenom),
                           }))}
-                          className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                          className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                           style={{
-                            background: tousSelectionnes ? '#36A6B2' : '#36A6B215',
-                            color: tousSelectionnes ? 'white' : '#36A6B2',
+                            background: tousSelectionnes ? '#004850' : '#00485015',
+                            color: tousSelectionnes ? 'white' : '#004850',
                           }}>
                           {tousSelectionnes ? '✓ ' : ''}Tout le monde
                         </button>
@@ -511,7 +493,7 @@ export default function EntreAmisTab({
                       const sel = form.participants.includes(m.prenom)
                       return (
                         <button key={m.id} type="button" onClick={() => toggleParticipant(m.prenom)}
-                          className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                          className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                           style={{
                             background: sel ? colorFor(m.prenom) : `${colorFor(m.prenom)}15`,
                             color: sel ? 'white' : colorFor(m.prenom),
@@ -525,14 +507,12 @@ export default function EntreAmisTab({
               )}
 
               {formError && (
-                <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">
-                  {formError}
-                </div>
+                <InfoBlock type="erreur">{formError}</InfoBlock>
               )}
 
               <button onClick={handleAjouter}
                 disabled={saving || !form.label.trim() || !form.montant || form.participants.length === 0}
-                className="w-full py-3.5 rounded-2xl font-semibold text-white disabled:opacity-40"
+                className="w-full py-3 rounded-2xl font-semibold text-white disabled:opacity-40"
                 style={{ background: 'linear-gradient(135deg, #36A6B2, #8BD4DC)' }}>
                 {saving ? 'Enregistrement...' : 'Ajouter la dépense'}
               </button>

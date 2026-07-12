@@ -3,12 +3,13 @@
 import { useState } from 'react'
 
 export default function DeviseConverter({
-  devise, symbole, tauxLive, tauxApprox,
+  devise, symbole, tauxLive, tauxApprox, showLabel = true,
 }: {
   devise: string | null
   symbole: string | null
   tauxLive: number | null
   tauxApprox: number | null
+  showLabel?: boolean
 }) {
   // 1 EUR = taux unités de devise locale
   const taux = tauxLive ?? (tauxApprox ? 1 / tauxApprox : null)
@@ -31,7 +32,7 @@ export default function DeviseConverter({
 
   return (
     <div className="flex flex-col gap-2.5">
-      <p className="text-sm font-semibold text-gray-800">{devise ?? '–'}</p>
+      {showLabel && <p className="text-sm font-semibold text-gray-800">{devise ?? '–'}</p>}
 
       {taux && taux !== 1 ? (
         <>
@@ -58,9 +59,6 @@ export default function DeviseConverter({
               <span className="text-xs text-gray-400 shrink-0">{symbole ?? ''}</span>
             </div>
           </div>
-          <p className="text-xs text-gray-400">
-            {tauxLive ? '🔄 Taux de change en temps réel' : 'Taux de change approximatif'}
-          </p>
         </>
       ) : (
         <p className="text-xs text-gray-500">Même devise — pas de change</p>

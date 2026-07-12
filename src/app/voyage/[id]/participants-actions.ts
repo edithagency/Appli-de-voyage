@@ -4,7 +4,12 @@ import { randomBytes } from 'crypto'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 
-export async function creerInvitation(voyageId: string, prenom: string, type: 'adulte' | 'enfant') {
+export async function creerInvitation(
+  voyageId: string,
+  prenom: string,
+  type: 'adulte' | 'enfant',
+  enfantInfo?: { dateNaissance?: string | null; parentId?: string | null }
+) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Non connecté.' }
@@ -17,9 +22,22 @@ export async function creerInvitation(voyageId: string, prenom: string, type: 'a
     await supabase.from('voyages').update({ mode_gestion: 'organisateur' }).eq('id', voyageId)
   }
 
+  // Un enfant n'a jamais de compte ni de lien d'invitation propre.
+  const insertData = {
+    voyage_id: voyageId,
+    prenom,
+    type,
+    role: 'membre' as const,
+    user_id: null as string | null,
+    token_invitation: type === 'enfant' ? null : undefined,
+    statut_invitation: type === 'enfant' ? ('na' as const) : ('pending' as const),
+    date_naissance: type === 'enfant' ? (enfantInfo?.dateNaissance || null) : null,
+    parent_id: type === 'enfant' ? (enfantInfo?.parentId || null) : null,
+  }
+
   const { data, error } = await supabase
     .from('voyage_membres')
-    .insert({ voyage_id: voyageId, prenom, type, role: 'membre', statut_invitation: 'pending' })
+    .insert(insertData)
     .select('id, statut_invitation')
     .single()
 

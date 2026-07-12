@@ -4,12 +4,15 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Target, Link2, User, Baby, Check, X } from 'lucide-react'
 import { creerVoyage } from '../actions'
+import { ORGANISATEUR_SENTINEL } from '@/lib/utils/participants'
 
 type Pays = { code: string; nom_fr: string; emoji: string | null }
 
 type Participant = {
   prenom: string
   type: 'adulte' | 'enfant'
+  // Enfant uniquement : prénom d'un adulte déjà ajouté, ou ORGANISATEUR_SENTINEL ("moi").
+  parentRef?: string | null
 }
 
 const MODE_GESTION = [
@@ -24,8 +27,8 @@ const MODE_GESTION = [
     value: 'partage',
     label: 'On gère ensemble',
     icon: Link2,
-    desc: 'Chacun garde la main sur ses propres affaires.',
-    exemple: 'Amis, couple...',
+    desc: "Chaque adulte peut organiser le voyage et l'itinéraire.",
+    exemple: 'Amis, famille, couple...',
   },
 ]
 
@@ -76,7 +79,11 @@ export default function NouveauVoyageForm({ pays, onClose, step: controlledStep,
   function ajouterParticipant() {
     const prenom = newPrenom.trim()
     if (!prenom) return
-    setParticipants(prev => [...prev, { prenom, type: newType }])
+    setParticipants(prev => [...prev, {
+      prenom,
+      type: newType,
+      parentRef: newType === 'enfant' ? ORGANISATEUR_SENTINEL : null,
+    }])
     setNewPrenom('')
     setNewType('adulte')
   }
@@ -232,9 +239,10 @@ export default function NouveauVoyageForm({ pays, onClose, step: controlledStep,
               <div className="flex flex-col gap-2 mb-4">
                 {participants.map((p, i) => (
                   <div key={i} className="flex items-center gap-3 px-3 py-2 bg-blue-50 rounded-2xl border border-blue-100">
-                    {p.type === 'enfant' ? <Baby size={18} color="#36A6B2" /> : <User size={18} color="#36A6B2" />}
-                    <span className="font-medium text-gray-800 flex-1 text-sm">{p.prenom}</span>
-                    <span className="text-xs text-gray-400 capitalize">{p.type}</span>
+                    {p.type === 'enfant' ? <Baby size={18} color="#9CA3AF" /> : <User size={18} color="#9CA3AF" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-800 text-sm">{p.prenom}</p>
+                    </div>
                     <button
                       type="button"
                       onClick={() => supprimerParticipant(i)}
@@ -255,18 +263,39 @@ export default function NouveauVoyageForm({ pays, onClose, step: controlledStep,
                   value={newPrenom}
                   onChange={e => setNewPrenom(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), ajouterParticipant())}
-                  placeholder="Prénom"
+                  placeholder={newType === 'enfant' ? "Prénom de l'enfant" : 'Prénom'}
                   className="flex-1 min-w-0 px-4 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
                 />
-                <select
-                  value={newType}
-                  onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                  className="shrink-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] transition text-sm"
-                >
-                  <option value="adulte">Adulte</option>
-                  <option value="enfant">Enfant</option>
-                </select>
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    type="button"
+                    title="Adulte"
+                    onClick={() => setNewType('adulte')}
+                    style={{
+                      width: 40, height: 40, borderRadius: 12,
+                      border: newType === 'adulte' ? '2px solid #36A6B2' : '2px solid #F0F0F0',
+                      background: newType === 'adulte' ? '#F0FAFA' : 'white',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                    }}
+                  >
+                    <User size={16} color="#9CA3AF" />
+                  </button>
+                  <button
+                    type="button"
+                    title="Enfant"
+                    onClick={() => setNewType('enfant')}
+                    style={{
+                      width: 40, height: 40, borderRadius: 12,
+                      border: newType === 'enfant' ? '2px solid #36A6B2' : '2px solid #F0F0F0',
+                      background: newType === 'enfant' ? '#F0FAFA' : 'white',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                    }}
+                  >
+                    <Baby size={16} color="#9CA3AF" />
+                  </button>
+                </div>
               </div>
+
               <button
                 type="button"
                 onClick={ajouterParticipant}
@@ -342,7 +371,7 @@ export default function NouveauVoyageForm({ pays, onClose, step: controlledStep,
               <div className="flex flex-wrap gap-2">
                 {participants.map((p, i) => (
                   <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#36A6B2] text-xs font-semibold">
-                    {p.type === 'enfant' ? <Baby size={14} /> : <User size={14} />} {p.prenom}
+                    {p.type === 'enfant' ? <Baby size={14} color="#9CA3AF" /> : <User size={14} color="#9CA3AF" />} {p.prenom}
                   </span>
                 ))}
               </div>

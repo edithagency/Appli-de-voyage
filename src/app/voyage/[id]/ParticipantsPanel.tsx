@@ -1,14 +1,17 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Check, Link2, RefreshCw, X, Baby, User } from 'lucide-react'
+import { Check, Link2, RefreshCw, X, User } from 'lucide-react'
 import { retirerParticipant, renouvelerLienVoyage } from './participants-actions'
 
+// N'affiche que des adultes : les enfants n'ont pas de compte et ne peuvent
+// jamais rejoindre un voyage via le lien d'invitation.
 type Membre = {
   id: string
   prenom: string
   type: string
-  statut_invitation: 'pending' | 'lien_copie' | 'joined'
+  statut_invitation: 'pending' | 'lien_copie' | 'joined' | 'na'
+  role?: string
 }
 
 export default function ParticipantsPanel({
@@ -85,7 +88,7 @@ export default function ParticipantsPanel({
           {expired ? (
             <button type="button" onClick={handleRenouveler} disabled={renewing}
               className="w-full py-2.5 rounded-2xl font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-1.5"
-              style={{ background: '#FFE4E6', color: '#9F1239' }}>
+              style={{ background: '#ffe9ba', color: '#7A4A00' }}>
               <RefreshCw size={14} /> {renewing ? '...' : 'RENOUVELER LE LIEN EXPIRÉ'}
             </button>
           ) : (
@@ -105,14 +108,14 @@ export default function ParticipantsPanel({
       <div className="flex flex-col gap-2">
         {membres.map(p => (
           <div key={p.id} className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50">
-            {p.type === 'enfant' ? <Baby size={18} color="#36A6B2" /> : <User size={18} color="#36A6B2" />}
+            <User size={18} color="#36A6B2" />
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-800 text-sm">{p.prenom}</p>
               {modeGestion === 'partage' ? (
                 <span className="text-xs font-medium px-2 py-0.5 rounded-full"
                   style={{
-                    background: p.statut_invitation === 'joined' ? '#D1FAE5' : '#F3F4F6',
-                    color: p.statut_invitation === 'joined' ? '#065F46' : '#9CA3AF',
+                    background: p.statut_invitation === 'joined' ? '#e7f8ce' : '#F3F4F6',
+                    color: p.statut_invitation === 'joined' ? '#2D5A1B' : '#9CA3AF',
                   }}>
                   {p.statut_invitation === 'joined' ? 'A rejoint' : 'En attente'}
                 </span>
@@ -120,6 +123,12 @@ export default function ParticipantsPanel({
                 <span className="text-xs text-gray-400 capitalize">{p.type}</span>
               )}
             </div>
+            {p.role === 'organisateur' && (
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
+                style={{ color: '#36A6B2', background: '#F0FAFA' }}>
+                Organisateur
+              </span>
+            )}
             <button type="button" onClick={() => handleRetirer(p)} title={`Retirer ${p.prenom}`}
               className="shrink-0 text-gray-300 hover:text-red-400 transition">
               <X size={16} />

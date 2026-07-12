@@ -5,13 +5,16 @@ import { createPortal } from 'react-dom'
 import { X, ArrowLeft } from 'lucide-react'
 
 export default function ModalShell({
-  open, onClose, onBack, title, backdropClose = true, children,
+  open, onClose, onBack, title, backdropClose = true, verticalPadding = 8, children,
 }: {
   open: boolean
   onClose: () => void
   onBack?: () => void
   title: string
   backdropClose?: boolean
+  // Marge verticale mini entre la modale et le haut/bas de l'écran (px) — augmente-la
+  // pour des contenus longs (ex: sheet Planning) afin qu'elle ne monte/descende pas trop.
+  verticalPadding?: number
   children: React.ReactNode
 }) {
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
@@ -30,8 +33,8 @@ export default function ModalShell({
   // même niveau qu'eux (en absolute, pas fixed) règle ça.
   return createPortal(
     <div
-      className="absolute inset-0 z-50 flex items-center justify-center py-2 px-7"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
+      className="absolute inset-0 z-50 flex items-center justify-center px-7"
+      style={{ paddingTop: verticalPadding, paddingBottom: verticalPadding, background: 'rgba(0,0,0,0.45)' }}
       onClick={backdropClose ? onClose : undefined}
     >
       <div
@@ -57,7 +60,7 @@ export default function ModalShell({
         </div>
 
         {/* Contenu — seule zone scrollable */}
-        <div className="overflow-y-auto px-6 pb-6">
+        <div className="overflow-y-auto min-h-0 px-6 pb-6">
           {children}
         </div>
       </div>

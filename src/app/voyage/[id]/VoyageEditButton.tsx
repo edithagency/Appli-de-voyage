@@ -7,12 +7,14 @@ import { modifierVoyage } from './voyage-edit-actions'
 import { creerInvitation, retirerParticipant } from './participants-actions'
 import ParticipantsPanel from './ParticipantsPanel'
 import ModalShell from '@/components/ModalShell'
+import { calculerAge } from '@/lib/utils/calculerAge'
 
 type Membre = {
   id: string
   prenom: string
   type: string
-  statut_invitation: 'pending' | 'lien_copie' | 'joined'
+  statut_invitation: 'pending' | 'lien_copie' | 'joined' | 'na'
+  date_naissance?: string | null
 }
 
 type Voyage = {
@@ -45,6 +47,7 @@ export default function VoyageEditButton({
   const [membres, setMembres] = useState(membresInitiaux)
   const [newPrenom, setNewPrenom] = useState('')
   const [newType, setNewType] = useState<'adulte' | 'enfant'>('adulte')
+  const [newDateNaissance, setNewDateNaissance] = useState('')
   const [addingMembre, setAddingMembre] = useState(false)
   const [showAddParticipant, setShowAddParticipant] = useState(false)
 
@@ -53,7 +56,10 @@ export default function VoyageEditButton({
   async function handleAjouterMembre(prenom: string, type: 'adulte' | 'enfant') {
     if (!prenom.trim()) return
     setAddingMembre(true)
-    const result = await creerInvitation(voyage.id, prenom.trim(), type)
+    const result = await creerInvitation(
+      voyage.id, prenom.trim(), type,
+      type === 'enfant' ? { dateNaissance: newDateNaissance || null } : undefined
+    )
     setAddingMembre(false)
     if (result.error || !result.membre) {
       setError(result.error ?? "Erreur lors de l'ajout du participant.")
@@ -64,9 +70,11 @@ export default function VoyageEditButton({
       prenom: prenom.trim(),
       type,
       statut_invitation: result.membre!.statut_invitation as Membre['statut_invitation'],
+      date_naissance: type === 'enfant' ? (newDateNaissance || null) : null,
     }])
     setNewPrenom('')
     setNewType('adulte')
+    setNewDateNaissance('')
     setShowAddParticipant(false)
     router.refresh()
   }
@@ -145,9 +153,15 @@ export default function VoyageEditButton({
             <div className="flex flex-col gap-2">
               {membres.map(p => (
                 <div key={p.id} className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50">
-                  {p.type === 'enfant' ? <Baby size={18} color="#36A6B2" /> : <User size={18} color="#36A6B2" />}
-                  <span className="text-sm font-medium text-gray-800 flex-1">{p.prenom}</span>
-                  <span className="text-xs text-gray-400 capitalize">{p.type}</span>
+                  {p.type === 'enfant' ? <Baby size={18} color="#534AB7" /> : <User size={18} color="#36A6B2" />}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-800">
+                      {p.prenom}
+                      {p.type === 'enfant' && p.date_naissance && (
+                        <span className="font-normal text-gray-400 text-xs ml-1.5">{calculerAge(p.date_naissance)} ans</span>
+                      )}
+                    </p>
+                  </div>
                   <button type="button" onClick={() => handleRetirerMembre(p)}
                     className="text-gray-300 hover:text-red-400 transition ml-1">
                     <X size={14} />
@@ -158,25 +172,55 @@ export default function VoyageEditButton({
               {/* Ajout manuel */}
               {showAddParticipant ? (
                 <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newPrenom}
-                      onChange={e => setNewPrenom(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAjouterMembre(newPrenom, newType))}
-                      placeholder="Prénom"
-                      autoFocus
-                      className="flex-1 min-w-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
-                    />
-                    <select
-                      value={newType}
-                      onChange={e => setNewType(e.target.value as 'adulte' | 'enfant')}
-                      className="shrink-0 px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button
+                      type="button"
+                      onClick={() => setNewType('adulte')}
+                      style={{
+                        flex: 1, padding: '10px 12px', borderRadius: 12,
+                        border: newType === 'adulte' ? '2px solid #36A6B2' : '2px solid #F0F0F0',
+                        background: newType === 'adulte' ? '#F0FAFA' : 'white',
+                        display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+                      }}
                     >
-                      <option value="adulte">Adulte</option>
-                      <option value="enfant">Enfant</option>
-                    </select>
+                      <User size={16} color="#36A6B2" />
+                      <span style={{ fontWeight: 700, fontSize: 13 }}>Adulte</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNewType('enfant')}
+                      style={{
+                        flex: 1, padding: '10px 12px', borderRadius: 12,
+                        border: newType === 'enfant' ? '2px solid #36A6B2' : '2px solid #F0F0F0',
+                        background: newType === 'enfant' ? '#F0FAFA' : 'white',
+                        display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+                      }}
+                    >
+                      <Baby size={16} color="#534AB7" />
+                      <span style={{ fontWeight: 700, fontSize: 13 }}>Enfant</span>
+                    </button>
                   </div>
+
+                  <input
+                    type="text"
+                    value={newPrenom}
+                    onChange={e => setNewPrenom(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAjouterMembre(newPrenom, newType))}
+                    placeholder={newType === 'enfant' ? "Prénom de l'enfant" : 'Prénom'}
+                    autoFocus
+                    className="w-full px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
+                  />
+
+                  {newType === 'enfant' && (
+                    <input
+                      type="date"
+                      value={newDateNaissance}
+                      max={new Date().toISOString().split('T')[0]}
+                      onChange={e => setNewDateNaissance(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#36A6B2] text-sm"
+                    />
+                  )}
+
                   <button
                     type="button"
                     disabled={addingMembre || !newPrenom.trim()}
@@ -210,18 +254,18 @@ export default function VoyageEditButton({
         </div>
       </ModalShell>
 
-      {/* Modal partage */}
+      {/* Modal partage — les enfants n'ont pas de compte, ils ne peuvent jamais rejoindre via le lien */}
       <ModalShell open={showShare} onClose={() => setShowShare(false)} title="Partager ce voyage">
         <p className="text-sm text-gray-500 mb-4">
           {modeEffectif === 'partage'
             ? "Un seul lien pour tout le monde : chaque participant choisit qui il est en le rejoignant."
             : 'Membres du groupe — tu gères tout pour eux.'}
         </p>
-        {membres.length === 0 && (
+        {membres.filter(m => m.type === 'adulte').length === 0 && (
           <p className="text-sm text-gray-500 mb-4">Ajoute d&apos;abord des participants depuis &quot;Modifier le voyage&quot; pour qu&apos;ils puissent se reconnaître en rejoignant.</p>
         )}
         <ParticipantsPanel
-          participants={membres}
+          participants={membres.filter(m => m.type === 'adulte')}
           modeGestion={modeEffectif}
           voyageId={voyage.id}
           voyageToken={voyage.token_invitation}

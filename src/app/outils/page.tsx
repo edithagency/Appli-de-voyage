@@ -20,6 +20,16 @@ export default async function OutilsPage({
     `)
     .order('nom_fr')
 
+  // Colonne ajoutée par la migration 20240020 — requête séparée pour ne pas
+  // casser les autres outils si la migration n'a pas encore été appliquée.
+  const { data: budgetRows } = await supabase
+    .from('pays')
+    .select('code, budget_estimations')
+  const budgetMap: Record<string, Record<string, Record<string, number>> | null> = {}
+  if (budgetRows) budgetRows.forEach(r => { budgetMap[r.code] = (r.budget_estimations as Record<string, Record<string, number>>) ?? null })
+
+  const paysWithBudget = (pays ?? []).map(p => ({ ...p, budget_estimations: budgetMap[p.code] ?? null }))
+
   // Page accessible sans compte : les favoris ne se chargent depuis Supabase
   // que si l'utilisateur est connecté, sinon OutilsClient retombe sur le
   // localStorage (pas de sync entre appareils dans ce cas).
@@ -36,7 +46,7 @@ export default async function OutilsPage({
 
   return (
     <OutilsClient
-      pays={pays ?? []}
+      pays={paysWithBudget}
       defaultPaysCode={paysParam ?? null}
       autoOpenTool={open ?? null}
       isLoggedIn={!!user}

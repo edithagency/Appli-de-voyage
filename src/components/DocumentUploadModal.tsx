@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { uploadDocument } from '@/app/coffre-fort/actions'
 import ModalShell from './ModalShell'
+import InfoBlock from './InfoBlock'
 
 const TYPES = [
   { value: 'passeport', label: 'Passeport', icon: IdCard },
@@ -274,7 +275,7 @@ export default function DocumentUploadModal({
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">{error}</div>
+          <InfoBlock type="erreur">{error}</InfoBlock>
         )}
 
         <button type="submit" disabled={loading}

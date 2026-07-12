@@ -8,11 +8,13 @@ export async function toggleWishlistActivite(voyageId: string, activiteId: strin
   if (!user) return { error: 'Non connecté.' }
 
   if (add) {
+    // Un enfant n'a pas de compte : ajoute_par ne référence donc jamais qu'un adulte.
     const { data: membre } = await supabase
       .from('voyage_membres')
       .select('id')
       .eq('voyage_id', voyageId)
       .eq('user_id', user.id)
+      .eq('type', 'adulte')
       .maybeSingle()
 
     const { error } = await supabase

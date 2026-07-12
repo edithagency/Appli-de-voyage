@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Baby, User } from 'lucide-react'
+import { User } from 'lucide-react'
 import { rejoindreVoyage, rejoindreVoyageConnecte } from './actions'
 
+// Toujours des adultes : un enfant n'a pas de compte, il ne peut jamais rejoindre via ce lien.
 type MembreDisponible = { id: string; prenom: string; type: string }
 
 type Props = {
@@ -57,7 +58,7 @@ export default function RejoindreForm({ token, voyageId, membresDisponibles, isL
             onClick={() => { setSelectedMembre(m); setError(null) }}
             className="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-[#36A6B2] transition text-left"
           >
-            {m.type === 'enfant' ? <Baby size={20} color="#36A6B2" /> : <User size={20} color="#36A6B2" />}
+            <User size={20} color="#36A6B2" />
             <span className="font-semibold text-gray-800">{m.prenom}</span>
           </button>
         ))}

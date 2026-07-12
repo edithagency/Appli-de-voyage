@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import InfoBlock from '@/components/InfoBlock'
 
 export default function ConfirmEmailPage({
   searchParams,
@@ -18,10 +19,10 @@ export default function ConfirmEmailPage({
         Vérifie aussi tes spams si tu ne le vois pas.
       </p>
 
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-4 mb-6">
-        <p className="text-sm text-blue-700 dark:text-blue-300">
+      <div className="mb-6">
+        <InfoBlock type="info">
           Une fois confirmé, tu seras redirigé vers Bon Vol pour finaliser ton profil.
-        </p>
+        </InfoBlock>
       </div>
 
       <Link

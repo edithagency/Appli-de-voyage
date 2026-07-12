@@ -1,8 +1,15 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { ORGANISATEUR_SENTINEL } from '@/lib/utils/participants'
 
-type ParticipantInput = { prenom: string; type: 'adulte' | 'enfant' }
+type ParticipantInput = {
+  prenom: string
+  type: 'adulte' | 'enfant'
+  dateNaissance?: string | null
+  // Enfant uniquement : prénom d'un adulte du groupe, ou ORGANISATEUR_SENTINEL.
+  parentRef?: string | null
+}
 
 type CreerVoyageInput = {
   nom: string
@@ -63,7 +70,11 @@ export async function creerVoyage(input: CreerVoyageInput) {
   const { data: orgProfile } = await supabase.from('users').select('prenom').eq('id', user.id).single()
   const orgPrenom = orgProfile?.prenom ?? user.user_metadata?.prenom ?? 'Organisateur'
 
-  const { data: membresInseres } = await supabase.from('voyage_membres').insert([
+  const adultes = participants.filter(p => p.type === 'adulte')
+  const enfants = participants.filter(p => p.type === 'enfant')
+
+  // 1) Organisateur + adultes d'abord : les enfants ont besoin de leurs ids pour parent_id.
+  const { data: membresAdultesInseres } = await supabase.from('voyage_membres').insert([
     {
       voyage_id: voyage.id,
       user_id: user.id,
@@ -73,17 +84,43 @@ export async function creerVoyage(input: CreerVoyageInput) {
       statut_invitation: 'joined' as const,
       rejoint_le: new Date().toISOString(),
     },
-    ...participants.map(p => ({
+    ...adultes.map(p => ({
       voyage_id: voyage.id,
       prenom: p.prenom,
-      type: p.type,
+      type: 'adulte' as const,
       role: 'membre' as const,
       statut_invitation: 'pending' as const,
     })),
-  ]).select('id')
+  ]).select('id, prenom')
+
+  const parentIdByRef: Record<string, string> = {}
+  if (membresAdultesInseres) {
+    parentIdByRef[ORGANISATEUR_SENTINEL] = membresAdultesInseres[0].id
+    adultes.forEach((p, i) => { parentIdByRef[p.prenom] = membresAdultesInseres[i + 1].id })
+  }
+
+  // 2) Enfants : jamais de compte ni d'invitation ; parent_id résolu ci-dessus.
+  let membresEnfantsInseres: { id: string }[] | null = null
+  if (enfants.length > 0) {
+    ;({ data: membresEnfantsInseres } = await supabase.from('voyage_membres').insert(
+      enfants.map(p => ({
+        voyage_id: voyage.id,
+        prenom: p.prenom,
+        type: 'enfant' as const,
+        role: 'membre' as const,
+        user_id: null,
+        token_invitation: null,
+        statut_invitation: 'na' as const,
+        date_naissance: p.dateNaissance || null,
+        parent_id: p.parentRef ? (parentIdByRef[p.parentRef] ?? null) : null,
+      }))
+    ).select('id'))
+  }
+
+  const membresInseres = [...(membresAdultesInseres ?? []), ...(membresEnfantsInseres ?? [])]
 
   // Chaque membre démarre avec sa propre valise/checklist
-  if (membresInseres && membresInseres.length > 0) {
+  if (membresInseres.length > 0) {
     await supabase.from('checklist_valises').insert(
       membresInseres.map(m => ({ voyage_id: voyage.id, voyage_membre_id: m.id }))
     )

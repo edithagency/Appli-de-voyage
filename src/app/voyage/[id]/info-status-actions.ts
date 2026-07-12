@@ -10,6 +10,7 @@ export async function toggleInfoStatus(
   voyageMembreId: string
 ) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data: existing } = await supabase
     .from('voyage_info_status')
@@ -18,7 +19,13 @@ export async function toggleInfoStatus(
     .eq('info_id', infoId)
     .maybeSingle()
 
-  const payload = { completed, completed_at: completed ? new Date().toISOString() : null }
+  // completed_by = qui a coché (souvent un parent agissant pour son enfant), distinct
+  // de voyage_membre_id = à qui appartient la case.
+  const payload = {
+    completed,
+    completed_at: completed ? new Date().toISOString() : null,
+    completed_by: completed ? (user?.id ?? null) : null,
+  }
 
   const { error } = existing
     ? await supabase.from('voyage_info_status').update(payload).eq('id', existing.id)

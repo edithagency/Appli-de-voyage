@@ -474,7 +474,7 @@ export default function ChecklistSection({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-sm font-medium text-gray-800" style={item.completed ? { textDecoration: 'line-through', textDecorationColor: cat.color, textDecorationThickness: '2px' } : {}}>{item.label}</span>
-                              {item.obligatoire && !item.completed && <span className="text-xs px-2 py-0.5 rounded-full font-semibold shrink-0" style={{ background: '#FEF3C7', color: '#92400E' }}>⚠️ Requis</span>}
+                              {item.obligatoire && !item.completed && <span className="text-xs px-2 py-0.5 rounded-full font-semibold shrink-0" style={{ background: '#ffe9ba', color: '#7A4A00' }}>⚠️ Requis</span>}
                             </div>
                             {item.description && <div className="text-xs text-gray-400 mt-0.5">{item.description}</div>}
                           </div>
@@ -548,8 +548,8 @@ export default function ChecklistSection({
                             <div className="flex items-center flex-wrap gap-1">
                               <span className="text-sm font-medium text-gray-800" style={item.completed ? { textDecoration: 'line-through', textDecorationColor: sc.color, textDecorationThickness: '2px' } : {}}>{item.label}</span>
                               {item.quantite && <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: sc.light, color: sc.color }}>{item.quantite}</span>}
-                              {item.obligatoire && !item.completed && <span className="text-xs px-2 py-0.5 rounded-full font-semibold shrink-0" style={{ background: '#FEF3C7', color: '#92400E' }}>⚠️ Requis</span>}
-                              {getAviationBadge(item.label) && <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#FEF3C7', color: '#92400E' }}>{getAviationBadge(item.label)}</span>}
+                              {item.obligatoire && !item.completed && <span className="text-xs px-2 py-0.5 rounded-full font-semibold shrink-0" style={{ background: '#ffe9ba', color: '#7A4A00' }}>⚠️ Requis</span>}
+                              {getAviationBadge(item.label) && <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#ffe9ba', color: '#7A4A00' }}>{getAviationBadge(item.label)}</span>}
                             </div>
                           </div>
                           <div className="flex items-center gap-1 shrink-0 self-center">

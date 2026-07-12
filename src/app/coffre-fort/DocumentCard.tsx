@@ -33,9 +33,9 @@ function expirationStatus(dateStr: string | null): { color: string; bg: string; 
   const now = new Date()
   const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
 
-  if (diffDays < 0) return { color: '#DC2626', bg: '#FEE2E2', label: 'Expiré' }
-  if (diffDays < 180) return { color: '#D97706', bg: '#FEF3C7', label: `Expire dans ${diffDays}j` }
-  return { color: '#1D9E75', bg: '#D1FAE5', label: `Valide jusqu'au ${new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}` }
+  if (diffDays < 0) return { color: '#7A4A00', bg: '#ffe9ba', label: 'Expiré' }
+  if (diffDays < 180) return { color: '#7A4A00', bg: '#ffe9ba', label: `Expire dans ${diffDays}j` }
+  return { color: '#2D5A1B', bg: '#e7f8ce', label: `Valide jusqu'au ${new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}` }
 }
 
 export default function DocumentCard({ doc, voyageNom, shared }: { doc: Doc; voyageNom?: string; shared?: boolean }) {

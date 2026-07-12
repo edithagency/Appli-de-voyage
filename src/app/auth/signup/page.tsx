@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { signup } from '../actions'
+import InfoBlock from '@/components/InfoBlock'
 
 const DEFAULT_EMOJI = '🐼'
 
@@ -114,9 +115,7 @@ export default function SignupPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl px-4 py-3 text-sm">
-            {error}
-          </div>
+          <InfoBlock type="erreur">{error}</InfoBlock>
         )}
 
         <button
@@ -129,10 +128,12 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <p className="text-center text-xs text-gray-400 mt-2">
-        En créant un compte tu acceptes<br />
-        nos <Link href="/politique-confidentialite" className="underline hover:text-[#36A6B2]">conditions de confidentialité</Link>.
-      </p>
+      <div className="mt-2">
+        <InfoBlock type="disclaimer">
+          En créant un compte tu acceptes nos{' '}
+          <Link href="/politique-confidentialite" className="underline hover:text-[#36A6B2]">conditions de confidentialité</Link>.
+        </InfoBlock>
+      </div>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
         Déjà un compte ?{' '}

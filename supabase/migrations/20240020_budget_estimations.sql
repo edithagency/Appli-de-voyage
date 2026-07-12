@@ -1,0 +1,70 @@
+-- ============================================================
+-- Estimations budgétaires par pays pour le calculateur de budget.
+-- hebergement = coût chambre/nuit (chambre partagée pour le groupe).
+-- repas / transport / activites = coût par personne par jour en EUR.
+-- ============================================================
+
+ALTER TABLE public.pays ADD COLUMN IF NOT EXISTS budget_estimations JSONB;
+
+-- ── Asie du Sud-Est ──────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":15,"repas":6,"transport":4,"activites":6},"confort":{"hebergement":60,"repas":18,"transport":12,"activites":18},"luxe":{"hebergement":200,"repas":50,"transport":35,"activites":45},"zone":"asie_sud_est"}'::jsonb WHERE code = 'TH';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":12,"repas":5,"transport":3,"activites":6},"confort":{"hebergement":45,"repas":15,"transport":8,"activites":15},"luxe":{"hebergement":130,"repas":40,"transport":25,"activites":35},"zone":"asie_sud_est"}'::jsonb WHERE code = 'VN';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":15,"repas":6,"transport":4,"activites":8},"confort":{"hebergement":65,"repas":18,"transport":12,"activites":20},"luxe":{"hebergement":200,"repas":50,"transport":35,"activites":50},"zone":"asie_sud_est"}'::jsonb WHERE code = 'ID';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":10,"repas":5,"transport":3,"activites":6},"confort":{"hebergement":40,"repas":14,"transport":8,"activites":15},"luxe":{"hebergement":130,"repas":40,"transport":25,"activites":40},"zone":"asie_sud_est"}'::jsonb WHERE code = 'KH';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":12,"repas":5,"transport":3,"activites":6},"confort":{"hebergement":40,"repas":14,"transport":8,"activites":14},"luxe":{"hebergement":120,"repas":38,"transport":22,"activites":38},"zone":"asie_sud_est"}'::jsonb WHERE code = 'LA';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":14,"repas":6,"transport":4,"activites":7},"confort":{"hebergement":55,"repas":18,"transport":10,"activites":18},"luxe":{"hebergement":160,"repas":45,"transport":30,"activites":42},"zone":"asie_sud_est"}'::jsonb WHERE code = 'MY';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":12,"repas":5,"transport":3,"activites":7},"confort":{"hebergement":45,"repas":16,"transport":9,"activites":16},"luxe":{"hebergement":140,"repas":40,"transport":25,"activites":40},"zone":"asie_sud_est"}'::jsonb WHERE code = 'PH';
+
+-- ── Asie développée ──────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":40,"repas":18,"transport":10,"activites":15},"confort":{"hebergement":120,"repas":40,"transport":18,"activites":35},"luxe":{"hebergement":350,"repas":100,"transport":50,"activites":80},"zone":"asie_developpee"}'::jsonb WHERE code = 'JP';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":35,"repas":12,"transport":8,"activites":12},"confort":{"hebergement":100,"repas":30,"transport":15,"activites":30},"luxe":{"hebergement":280,"repas":80,"transport":40,"activites":70},"zone":"asie_developpee"}'::jsonb WHERE code = 'KR';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":50,"repas":12,"transport":6,"activites":15},"confort":{"hebergement":150,"repas":35,"transport":12,"activites":35},"luxe":{"hebergement":500,"repas":100,"transport":35,"activites":80},"zone":"asie_developpee"}'::jsonb WHERE code = 'SG';
+
+-- ── Asie du Sud ───────────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":12,"repas":5,"transport":3,"activites":6},"confort":{"hebergement":50,"repas":15,"transport":8,"activites":15},"luxe":{"hebergement":150,"repas":40,"transport":28,"activites":40},"zone":"asie_sud"}'::jsonb WHERE code = 'IN';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":10,"repas":5,"transport":3,"activites":5},"confort":{"hebergement":40,"repas":14,"transport":7,"activites":12},"luxe":{"hebergement":120,"repas":35,"transport":22,"activites":35},"zone":"asie_sud"}'::jsonb WHERE code = 'LK';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":8,"repas":4,"transport":2,"activites":5},"confort":{"hebergement":35,"repas":12,"transport":6,"activites":12},"luxe":{"hebergement":100,"repas":30,"transport":20,"activites":30},"zone":"asie_sud"}'::jsonb WHERE code = 'NP';
+
+-- ── Europe de l'Ouest ─────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":35,"repas":15,"transport":6,"activites":10},"confort":{"hebergement":110,"repas":30,"transport":12,"activites":25},"luxe":{"hebergement":280,"repas":80,"transport":35,"activites":60},"zone":"europe_ouest"}'::jsonb WHERE code = 'ES';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":40,"repas":18,"transport":7,"activites":12},"confort":{"hebergement":120,"repas":35,"transport":15,"activites":30},"luxe":{"hebergement":300,"repas":90,"transport":40,"activites":70},"zone":"europe_ouest"}'::jsonb WHERE code = 'IT';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":30,"repas":13,"transport":6,"activites":8},"confort":{"hebergement":90,"repas":28,"transport":12,"activites":20},"luxe":{"hebergement":220,"repas":70,"transport":30,"activites":50},"zone":"europe_ouest"}'::jsonb WHERE code = 'PT';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":35,"repas":16,"transport":8,"activites":10},"confort":{"hebergement":110,"repas":32,"transport":14,"activites":25},"luxe":{"hebergement":300,"repas":80,"transport":40,"activites":60},"zone":"europe_ouest"}'::jsonb WHERE code = 'DE';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":50,"repas":18,"transport":10,"activites":12},"confort":{"hebergement":150,"repas":40,"transport":20,"activites":30},"luxe":{"hebergement":400,"repas":90,"transport":50,"activites":70},"zone":"europe_ouest"}'::jsonb WHERE code = 'GB';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":40,"repas":17,"transport":8,"activites":12},"confort":{"hebergement":130,"repas":35,"transport":15,"activites":28},"luxe":{"hebergement":350,"repas":80,"transport":40,"activites":65},"zone":"europe_ouest"}'::jsonb WHERE code = 'NL';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":35,"repas":14,"transport":6,"activites":10},"confort":{"hebergement":100,"repas":30,"transport":12,"activites":25},"luxe":{"hebergement":280,"repas":75,"transport":35,"activites":55},"zone":"europe_ouest"}'::jsonb WHERE code = 'GR';
+
+-- ── Europe de l'Est ───────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":22,"repas":9,"transport":4,"activites":7},"confort":{"hebergement":70,"repas":22,"transport":8,"activites":18},"luxe":{"hebergement":200,"repas":55,"transport":25,"activites":45},"zone":"europe_est"}'::jsonb WHERE code = 'PL';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":25,"repas":10,"transport":4,"activites":8},"confort":{"hebergement":75,"repas":24,"transport":9,"activites":20},"luxe":{"hebergement":210,"repas":58,"transport":26,"activites":48},"zone":"europe_est"}'::jsonb WHERE code = 'CZ';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":22,"repas":9,"transport":4,"activites":7},"confort":{"hebergement":68,"repas":22,"transport":8,"activites":18},"luxe":{"hebergement":190,"repas":54,"transport":24,"activites":44},"zone":"europe_est"}'::jsonb WHERE code = 'HU';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":35,"repas":14,"transport":6,"activites":10},"confort":{"hebergement":100,"repas":28,"transport":12,"activites":22},"luxe":{"hebergement":260,"repas":70,"transport":32,"activites":50},"zone":"europe_est"}'::jsonb WHERE code = 'HR';
+
+-- ── Afrique du Nord ───────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":20,"repas":7,"transport":4,"activites":6},"confort":{"hebergement":70,"repas":18,"transport":10,"activites":15},"luxe":{"hebergement":220,"repas":50,"transport":30,"activites":40},"zone":"afrique_nord"}'::jsonb WHERE code = 'MA';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":20,"repas":7,"transport":3,"activites":5},"confort":{"hebergement":60,"repas":15,"transport":8,"activites":12},"luxe":{"hebergement":160,"repas":40,"transport":25,"activites":30},"zone":"afrique_nord"}'::jsonb WHERE code = 'TN';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":20,"repas":6,"transport":3,"activites":8},"confort":{"hebergement":65,"repas":18,"transport":8,"activites":20},"luxe":{"hebergement":200,"repas":50,"transport":25,"activites":50},"zone":"afrique_nord"}'::jsonb WHERE code = 'EG';
+
+-- ── Afrique subsaharienne ─────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":25,"repas":8,"transport":4,"activites":8},"confort":{"hebergement":80,"repas":20,"transport":12,"activites":18},"luxe":{"hebergement":220,"repas":55,"transport":35,"activites":45},"zone":"afrique_sub"}'::jsonb WHERE code = 'SN';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":30,"repas":10,"transport":6,"activites":15},"confort":{"hebergement":90,"repas":25,"transport":15,"activites":35},"luxe":{"hebergement":270,"repas":70,"transport":40,"activites":80},"zone":"afrique_sub"}'::jsonb WHERE code = 'ZA';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":28,"repas":9,"transport":5,"activites":12},"confort":{"hebergement":85,"repas":22,"transport":14,"activites":28},"luxe":{"hebergement":250,"repas":60,"transport":38,"activites":70},"zone":"afrique_sub"}'::jsonb WHERE code = 'KE';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":28,"repas":9,"transport":5,"activites":15},"confort":{"hebergement":88,"repas":22,"transport":14,"activites":30},"luxe":{"hebergement":260,"repas":62,"transport":38,"activites":75},"zone":"afrique_sub"}'::jsonb WHERE code = 'TZ';
+
+-- ── Moyen-Orient ─────────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":70,"repas":20,"transport":8,"activites":20},"confort":{"hebergement":180,"repas":45,"transport":20,"activites":45},"luxe":{"hebergement":600,"repas":120,"transport":60,"activites":100},"zone":"moyen_orient"}'::jsonb WHERE code = 'AE';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":20,"repas":7,"transport":4,"activites":7},"confort":{"hebergement":65,"repas":18,"transport":10,"activites":18},"luxe":{"hebergement":200,"repas":50,"transport":30,"activites":45},"zone":"moyen_orient"}'::jsonb WHERE code = 'TR';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":25,"repas":9,"transport":5,"activites":10},"confort":{"hebergement":80,"repas":22,"transport":12,"activites":22},"luxe":{"hebergement":230,"repas":60,"transport":35,"activites":55},"zone":"moyen_orient"}'::jsonb WHERE code = 'JO';
+
+-- ── Amériques ─────────────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":60,"repas":25,"transport":12,"activites":20},"confort":{"hebergement":180,"repas":50,"transport":25,"activites":40},"luxe":{"hebergement":500,"repas":100,"transport":70,"activites":90},"zone":"amerique_nord"}'::jsonb WHERE code = 'US';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":55,"repas":22,"transport":10,"activites":18},"confort":{"hebergement":160,"repas":45,"transport":22,"activites":35},"luxe":{"hebergement":450,"repas":90,"transport":60,"activites":80},"zone":"amerique_nord"}'::jsonb WHERE code = 'CA';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":20,"repas":8,"transport":4,"activites":8},"confort":{"hebergement":75,"repas":20,"transport":12,"activites":20},"luxe":{"hebergement":220,"repas":55,"transport":35,"activites":50},"zone":"amerique_centrale"}'::jsonb WHERE code = 'MX';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":18,"repas":6,"transport":3,"activites":8},"confort":{"hebergement":60,"repas":18,"transport":8,"activites":20},"luxe":{"hebergement":180,"repas":50,"transport":25,"activites":45},"zone":"amerique_sud"}'::jsonb WHERE code = 'CO';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":18,"repas":6,"transport":3,"activites":10},"confort":{"hebergement":60,"repas":18,"transport":8,"activites":22},"luxe":{"hebergement":180,"repas":50,"transport":25,"activites":50},"zone":"amerique_sud"}'::jsonb WHERE code = 'PE';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":20,"repas":7,"transport":4,"activites":8},"confort":{"hebergement":65,"repas":22,"transport":10,"activites":20},"luxe":{"hebergement":200,"repas":60,"transport":30,"activites":50},"zone":"amerique_sud"}'::jsonb WHERE code = 'BR';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":30,"repas":10,"transport":5,"activites":10},"confort":{"hebergement":90,"repas":28,"transport":14,"activites":26},"luxe":{"hebergement":260,"repas":70,"transport":38,"activites":60},"zone":"amerique_sud"}'::jsonb WHERE code = 'AR';
+
+-- ── Océanie ───────────────────────────────────────────────────
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":50,"repas":22,"transport":12,"activites":18},"confort":{"hebergement":150,"repas":45,"transport":25,"activites":35},"luxe":{"hebergement":450,"repas":100,"transport":60,"activites":80},"zone":"oceanie"}'::jsonb WHERE code = 'AU';
+UPDATE public.pays SET budget_estimations = '{"budget":{"hebergement":45,"repas":20,"transport":10,"activites":16},"confort":{"hebergement":140,"repas":42,"transport":22,"activites":32},"luxe":{"hebergement":420,"repas":95,"transport":55,"activites":75},"zone":"oceanie"}'::jsonb WHERE code = 'NZ';
